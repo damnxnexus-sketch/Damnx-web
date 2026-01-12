@@ -7,7 +7,7 @@
 - Professional appearance matching portfolio
 - Fully functional chat interface
 - Smart intent detection
-
+ 
 ### 2. API Endpoints (Production-Ready)
 - `/api/chatbot/query` - Handle chat messages
 - `/api/meetings/schedule` - Book meetings
