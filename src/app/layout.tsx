@@ -112,7 +112,7 @@ export default function RootLayout({
               "@type": "Organization",
               "name": "DamnX",
               "url": "https://damnx.co.in",
-              "logo": "https://damnx.co.in/public/logo.png",
+              "logo": "https://damnx.co.in/public/logobg.png",
               "description": "Leading website and software development company in India, specializing in custom web applications, mobile apps, and enterprise solutions.",
               "address": {
                 "@type": "PostalAddress",
@@ -145,10 +145,10 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "ProfessionalService",
               "name": "DamnX - Software Development Company",
-              "image": "https://damnx.co.in/logo.png",
+              "image": "https://damnx.co.in/logobg.png",
               "url": "https://damnx.co.in",
               "telephone": "+91 6388037374",
-              "priceRange": "$$",
+              "priceRange": "$100-$25000",
               "address": {
                 "@type": "PostalAddress",
                 "addressCountry": "IN"
