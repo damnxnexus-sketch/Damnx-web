@@ -13,10 +13,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL('https://damnx.co.in'),
   title: {
-    default: "DamnX - Best Website & Software Development Company in India | Custom Web Solutions",
+    default: "DamnX - Best Website & Software Development Company India | Custom Solutions",
     template: "%s | DamnX - Leading Software Development Company"
   },
-  description: "DamnX is India's premier website and software development company, delivering cutting-edge web applications, mobile apps, and enterprise software solutions. Expert team specializing in React, Next.js, AI integration, and scalable cloud architecture.",
+  description: "DamnX delivers custom websites, mobile apps, web applications, and software development services. Transform your ideas into powerful digital solutions with India's leading development company. Expert React, Next.js & AI integration.",
   keywords: [
     "best website development company",
     "best software development company",
@@ -112,7 +112,7 @@ export default function RootLayout({
               "@type": "Organization",
               "name": "DamnX",
               "url": "https://damnx.co.in",
-              "logo": "https://damnx.co.in/logo.png",
+              "logo": "https://damnx.co.in/public/logo.png",
               "description": "Leading website and software development company in India, specializing in custom web applications, mobile apps, and enterprise solutions.",
               "address": {
                 "@type": "PostalAddress",
@@ -147,8 +147,8 @@ export default function RootLayout({
               "name": "DamnX - Software Development Company",
               "image": "https://damnx.co.in/logo.png",
               "url": "https://damnx.co.in",
-              "telephone": "+91-6388037374",
-              "priceRange": "$100-$25000",
+              "telephone": "+91 6388037374",
+              "priceRange": "$$",
               "address": {
                 "@type": "PostalAddress",
                 "addressCountry": "IN"
@@ -165,9 +165,7 @@ export default function RootLayout({
                   "Tuesday",
                   "Wednesday",
                   "Thursday",
-                  "Friday",
-                  "Saturday",
-                  "Sunday"
+                  "Friday"
                 ],
                 "opens": "09:00",
                 "closes": "18:00"
@@ -183,13 +181,69 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              "name": "Damnx Solutions",
+              "name": "DamnX",
               "url": "https://damnx.co.in",
               "potentialAction": {
                 "@type": "SearchAction",
                 "target": "https://damnx.co.in/search?q={search_term_string}",
                 "query-input": "required name=search_term_string"
               }
+            })
+          }}
+        />
+
+        {/* FAQ Schema for Featured Snippets */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": [
+                {
+                  "@type": "Question",
+                  "name": "What services does DamnX offer?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "DamnX offers custom website development, mobile app development, web applications, enterprise software solutions, React/Next.js development, AI integration services, cloud architecture, and UI/UX design services."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Why choose DamnX for software development?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "DamnX is India's leading software development company with expertise in cutting-edge technologies like React, Next.js, and AI integration. We deliver scalable, high-performance solutions tailored to your business needs."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "What technologies does DamnX specialize in?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "DamnX specializes in React, Next.js, Node.js, TypeScript, Python, mobile app development (React Native, Flutter), AI/ML integration, cloud services (AWS, Azure), and modern DevOps practices."
+                  }
+                }
+              ]
+            })
+          }}
+        />
+
+        {/* Breadcrumb Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://damnx.co.in"
+                }
+              ]
             })
           }}
         />
