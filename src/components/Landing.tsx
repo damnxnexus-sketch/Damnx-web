@@ -231,6 +231,8 @@ export default function DamnXHero() {
               <Image 
                 src="/Landing_robot.png" 
                 alt="AI Robot" 
+                width={500}
+                height={500}
                 className="w-full max-w-[320px] sm:max-w-[380px] lg:max-w-lg xl:max-w-xl h-auto object-contain animate-floatSlow"
                 style={{
                   filter: 'drop-shadow(0 20px 60px rgba(239, 68, 68, 0.3))'
