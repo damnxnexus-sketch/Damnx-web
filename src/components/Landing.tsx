@@ -229,7 +229,7 @@ export default function DamnXHero() {
               }}
             >
               <Image 
-                src="/Landing_robot.png" 
+                src="/Landing_Robot.png" 
                 alt="AI Robot" 
                 width={500}
                 height={500}
