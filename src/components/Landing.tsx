@@ -196,7 +196,7 @@ export default function DamnXHero() {
 
             <div className="flex flex-wrap justify-center lg:justify-start gap-8 sm:gap-10 animate-fadeInUp opacity-0" style={{ animationDelay: '1.2s', animationFillMode: 'forwards' }}>
               {[
-                { num: "500+", label: "PROJECTS" },
+                { num: "100+", label: "PROJECTS" },
                 { num: "98%", label: "SATISFACTION" },
                 { num: "24/7", label: "SUPPORT" }
               ].map((stat, idx) => (
