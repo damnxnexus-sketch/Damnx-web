@@ -4,7 +4,7 @@ import { ArrowRight, Globe, Smartphone, Palette, Layout, Code2 } from 'lucide-re
 import { useChat } from '@/app/context/ChatContext';
 import Image from "next/image";
 
-export default function DamnXHero() {
+export default function DamnXHero() { 
   const [currentWord, setCurrentWord] = useState(0);
   const [isChanging, setIsChanging] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
