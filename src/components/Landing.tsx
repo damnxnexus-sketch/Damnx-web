@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight, Globe, Smartphone, Palette, Layout, Code2 } from 'lucide-react';
 import { useChat } from '@/app/context/ChatContext';
+import Image from "next/image";
 
 export default function DamnXHero() {
   const [currentWord, setCurrentWord] = useState(0);
@@ -227,7 +228,7 @@ export default function DamnXHero() {
                 transform: `perspective(1000px) rotateX(${mousePosition.y * 0.3}deg) rotateY(${mousePosition.x * 0.3}deg)`
               }}
             >
-              <img 
+              <Image 
                 src="/Landing_robot.png" 
                 alt="AI Robot" 
                 className="w-full max-w-[320px] sm:max-w-[380px] lg:max-w-lg xl:max-w-xl h-auto object-contain animate-floatSlow"
