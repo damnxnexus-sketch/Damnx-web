@@ -233,6 +233,7 @@ export default function DamnXHero() {
                 alt="AI Robot" 
                 width={500}
                 height={500}
+                priority
                 className="w-full max-w-[320px] sm:max-w-[380px] lg:max-w-lg xl:max-w-xl h-auto object-contain animate-floatSlow"
                 style={{
                   filter: 'drop-shadow(0 20px 60px rgba(239, 68, 68, 0.3))'
