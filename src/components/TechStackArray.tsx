@@ -315,7 +315,7 @@ export default function PremiumTechStack() {
           {/* Stats Section */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
             {[
-              { value: `${ALL_TECHS.length}+`, label: 'Technologies Mastered' },
+              { value: `80+`, label: 'Technologies Mastered' },
               { value: '100+', label: 'Projects Delivered' },
               { value: '98%', label: 'Client Satisfaction' },
             ].map((stat, idx) => (
