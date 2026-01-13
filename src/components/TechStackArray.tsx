@@ -40,18 +40,18 @@ const categories = ['All', ...Array.from(new Set(ALL_TECHS.map(t => t.category))
 
 export default function PremiumTechStack() {
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [hoveredTech, setHoveredTech] = useState(null);
+  const [hoveredTech, setHoveredTech] = useState<string | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [cursorVariant, setCursorVariant] = useState('default');
-  const cursorRef = useRef(null);
-  const cursorDotRef = useRef(null);
+  const [cursorVariant, setCursorVariant] = useState<'default' | 'hover'>('default');
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const cursorDotRef = useRef<HTMLDivElement>(null);
 
   const filteredTechs = selectedCategory === 'All' 
     ? ALL_TECHS 
     : ALL_TECHS.filter(tech => tech.category === selectedCategory);
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       const x = e.clientX;
       const y = e.clientY;
       
@@ -70,264 +70,11 @@ export default function PremiumTechStack() {
   }, []);
 
   return (
-    <div className="relative w-full min-h-screen bg-black overflow-hidden">
-      {/* Custom Cursor - Hidden on mobile */}
-      <div className="hidden md:block">
-        <div 
-          ref={cursorRef}
-          className="fixed top-0 left-0 pointer-events-none z-50 mix-blend-difference"
-          style={{
-            width: cursorVariant === 'hover' ? '80px' : '40px',
-            height: cursorVariant === 'hover' ? '80px' : '40px',
-            transition: 'width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-          }}
-        >
-          <div 
-            className="w-full h-full rounded-full border-2 border-white"
-            style={{
-              transform: 'translate(-50%, -50%)',
-              transition: 'opacity 0.3s ease',
-              opacity: cursorVariant === 'hover' ? 0.8 : 0.5,
-            }}
-          />
-        </div>
-        
-        <div 
-          ref={cursorDotRef}
-          className="fixed top-0 left-0 w-2 h-2 pointer-events-none z-50"
-          style={{
-            transform: 'translate(-50%, -50%)',
-          }}
-        >
-          <div 
-            className="w-full h-full rounded-full"
-            style={{
-              background: cursorVariant === 'hover' 
-                ? 'radial-gradient(circle, #ef4444 0%, #dc2626 100%)' 
-                : '#ffffff',
-              boxShadow: cursorVariant === 'hover' 
-                ? '0 0 20px #ef4444, 0 0 40px #ef444480' 
-                : '0 0 10px #ffffff80',
-              transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            }}
-          />
-        </div>
-      </div>
-      {/* Animated Gradient Background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 opacity-30">
-          <div 
-            className="absolute w-[600px] h-[600px] rounded-full blur-3xl"
-            style={{
-              background: 'radial-gradient(circle, #dc2626 0%, transparent 70%)',
-              top: '10%',
-              left: '10%',
-              animation: 'float 20s ease-in-out infinite',
-            }}
-          />
-          <div 
-            className="absolute w-[800px] h-[800px] rounded-full blur-3xl"
-            style={{
-              background: 'radial-gradient(circle, #991b1b 0%, transparent 70%)',
-              bottom: '10%',
-              right: '10%',
-              animation: 'float 25s ease-in-out infinite reverse',
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Mouse Follow Spotlight - Hidden on mobile */}
-      <div 
-        className="hidden md:block absolute w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transition-all duration-300 ease-out"
-        style={{
-          background: 'radial-gradient(circle, #ef4444 0%, transparent 70%)',
-          left: `${mousePosition.x - 192}px`,
-          top: `${mousePosition.y - 192}px`,
-        }}
-      />
-
-      {/* Noise Texture Overlay */}
-      <div className="absolute inset-0 opacity-5" style={{
-        backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="3.5" numOctaves="4" /%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" /%3E%3C/svg%3E")',
-      }} />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-        {/* Header Section */}
-        <div className="text-center mb-12 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 sm:mb-8 rounded-full border border-red-500/30 bg-red-500/5 backdrop-blur-sm">
-            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            <span className="text-red-400 text-xs sm:text-sm font-medium tracking-wider uppercase">Tech Excellence</span>
-          </div>
-
-          <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black mb-4 sm:mb-6 tracking-tight leading-tight">
-            <span className="block text-white mb-2">Our Technology</span>
-            <span className="block bg-gradient-to-r from-red-500 via-red-400 to-red-600 bg-clip-text text-transparent">
-              Arsenal
-            </span>
-          </h1>
-
-          <p className="text-gray-400 text-base sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed px-4">
-            Crafting digital masterpieces with industry-leading tools and frameworks
-          </p>
-        </div>
-
-        {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12 sm:mb-16 px-4">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className="group relative px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-medium text-xs sm:text-sm transition-all duration-300 overflow-hidden"
-              style={{
-                background: selectedCategory === category 
-                  ? 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)'
-                  : 'transparent',
-                border: selectedCategory === category
-                  ? 'none'
-                  : '1px solid rgba(239, 68, 68, 0.2)',
-                color: selectedCategory === category ? 'white' : '#9ca3af',
-              }}
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{
-                  background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
-                }}
-              />
-              <span className="relative z-10">{category}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Tech Grid */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-12 sm:mb-20">
-          {filteredTechs.map((tech, idx) => (
-            <div
-              key={`${tech.name}-${idx}`}
-              className="group relative cursor-none"
-              onMouseEnter={() => {
-                setHoveredTech(tech.name);
-                setCursorVariant('hover');
-              }}
-              onMouseLeave={() => {
-                setHoveredTech(null);
-                setCursorVariant('default');
-              }}
-              style={{
-                animation: `fadeInUp 0.6s ease-out ${idx * 0.03}s both`,
-              }}
-            >
-              {/* Card Background */}
-              <div className="relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-500 group-hover:scale-105">
-                {/* Gradient Border Effect */}
-                <div className="absolute inset-0 rounded-xl sm:rounded-2xl p-[1px] bg-gradient-to-br from-red-500/50 via-transparent to-red-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
-                {/* Card Content */}
-                <div className="absolute inset-[1px] rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl flex flex-col items-center justify-center p-2 sm:p-4 md:p-6">
-                  {/* Corner Decorations */}
-                  <div className="absolute top-1 left-1 sm:top-2 sm:left-2 w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 border-t-2 border-l-2 border-red-500/50 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:w-3 group-hover:h-3 sm:group-hover:w-4 sm:group-hover:h-4 md:group-hover:w-6 md:group-hover:h-6" />
-                  <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 border-b-2 border-r-2 border-red-500/50 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:w-3 group-hover:h-3 sm:group-hover:w-4 sm:group-hover:h-4 md:group-hover:w-6 md:group-hover:h-6" />
-                  
-                  {/* Radial Glow */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    style={{
-                      background: 'radial-gradient(circle at 50% 50%, rgba(220, 38, 38, 0.15), transparent 70%)',
-                    }}
-                  />
-
-                  {/* Tech Icon */}
-                  <div className="relative z-10 mb-1 sm:mb-2 transition-transform duration-500 group-hover:scale-110">
-                    <img 
-                      src={tech.icon}
-                      alt={tech.name}
-                      className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain"
-                      style={{
-                        filter: `${tech.invertLogo ? 'invert(1) ' : ''}${hoveredTech === tech.name 
-                          ? 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.6)) brightness(1.2)'
-                          : 'brightness(0.9)'}`,
-                        transition: 'filter 0.3s ease',
-                      }}
-                      loading="eager"
-                      crossOrigin="anonymous"
-                      onError={(e) => {
-                        const target = e.target;
-                        target.onerror = null;
-                        target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ctext x='50' y='50' font-size='40' text-anchor='middle' dominant-baseline='middle' fill='%23dc2626'%3E${tech.name[0]}%3C/text%3E%3C/svg%3E`;
-                      }}
-                    />
-                  </div>
-
-                  {/* Tech Name */}
-                  <div className="text-white text-[10px] sm:text-xs md:text-sm font-semibold text-center opacity-60 group-hover:opacity-100 transition-opacity duration-300 px-1">
-                    {tech.name}
-                  </div>
-
-                  {/* Category Badge */}
-                  <div className="absolute -bottom-1 sm:-bottom-2 left-1/2 -translate-x-1/2 px-1.5 py-0.5 sm:px-2 sm:py-0.5 md:px-3 md:py-1 rounded-full text-[8px] sm:text-[10px] md:text-xs font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:-translate-y-1 sm:group-hover:-translate-y-2"
-                    style={{
-                      background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
-                      color: 'white',
-                    }}
-                  >
-                    {tech.category}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Stats Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
-          {[
-            { value: `${ALL_TECHS.length}+`, label: 'Technologies Mastered' },
-            { value: '100+', label: 'Projects Delivered' },
-            { value: '98%', label: 'Client Satisfaction' },
-          ].map((stat, idx) => (
-            <div
-              key={idx}
-              className="group relative overflow-hidden rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-500 hover:scale-105"
-              style={{
-                background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%)',
-                border: '1px solid rgba(239, 68, 68, 0.1)',
-                backdropFilter: 'blur(20px)',
-              }}
-            >
-              {/* Hover Gradient */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, transparent 100%)',
-                }}
-              />
-
-              <div className="relative z-10 text-center">
-                <div className="text-3xl sm:text-5xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent mb-2 sm:mb-3">
-                  {stat.value}
-                </div>
-                <div className="text-gray-400 text-xs sm:text-sm font-medium tracking-wide">
-                  {stat.label}
-                </div>
-              </div>
-
-              {/* Corner Accent */}
-              <div className="absolute top-0 right-0 w-16 sm:w-24 h-16 sm:h-24 opacity-20 group-hover:opacity-40 transition-opacity duration-500"
-                style={{
-                  background: 'radial-gradient(circle at 100% 0%, #dc2626 0%, transparent 70%)',
-                }}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <style jsx>{`
-        * {
-          cursor: none !important;
-        }
-        
-        @media (max-width: 768px) {
-          * {
-            cursor: auto !important;
+    <>
+      <style>{`
+        @media (min-width: 768px) {
+          .tech-stack-container * {
+            cursor: none !important;
           }
         }
 
@@ -353,7 +100,261 @@ export default function PremiumTechStack() {
             transform: translateY(0);
           }
         }
+
+        .float-anim {
+          animation: float 20s ease-in-out infinite;
+        }
+
+        .float-anim-reverse {
+          animation: float 25s ease-in-out infinite reverse;
+        }
       `}</style>
-    </div>
+
+      <div className="tech-stack-container relative w-full min-h-screen bg-black overflow-hidden">
+        {/* Custom Cursor - Hidden on mobile */}
+        <div className="hidden md:block">
+          <div 
+            ref={cursorRef}
+            className="fixed top-0 left-0 pointer-events-none z-50 mix-blend-difference transition-all duration-300"
+            style={{
+              width: cursorVariant === 'hover' ? '80px' : '40px',
+              height: cursorVariant === 'hover' ? '80px' : '40px',
+            }}
+          >
+            <div 
+              className="w-full h-full rounded-full border-2 border-white transition-opacity duration-300"
+              style={{
+                transform: 'translate(-50%, -50%)',
+                opacity: cursorVariant === 'hover' ? 0.8 : 0.5,
+              }}
+            />
+          </div>
+          
+          <div 
+            ref={cursorDotRef}
+            className="fixed top-0 left-0 w-2 h-2 pointer-events-none z-50"
+            style={{
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            <div 
+              className="w-full h-full rounded-full transition-all duration-300"
+              style={{
+                background: cursorVariant === 'hover' 
+                  ? 'radial-gradient(circle, #ef4444 0%, #dc2626 100%)' 
+                  : '#ffffff',
+                boxShadow: cursorVariant === 'hover' 
+                  ? '0 0 20px #ef4444, 0 0 40px #ef444480' 
+                  : '0 0 10px #ffffff80',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Animated Gradient Background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 opacity-30">
+            <div 
+              className="float-anim absolute w-[600px] h-[600px] rounded-full blur-3xl"
+              style={{
+                background: 'radial-gradient(circle, #dc2626 0%, transparent 70%)',
+                top: '10%',
+                left: '10%',
+              }}
+            />
+            <div 
+              className="float-anim-reverse absolute w-[800px] h-[800px] rounded-full blur-3xl"
+              style={{
+                background: 'radial-gradient(circle, #991b1b 0%, transparent 70%)',
+                bottom: '10%',
+                right: '10%',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Mouse Follow Spotlight - Hidden on mobile */}
+        <div 
+          className="hidden md:block absolute w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transition-all duration-300 ease-out"
+          style={{
+            background: 'radial-gradient(circle, #ef4444 0%, transparent 70%)',
+            left: `${mousePosition.x - 192}px`,
+            top: `${mousePosition.y - 192}px`,
+          }}
+        />
+
+        {/* Noise Texture Overlay */}
+        <div className="absolute inset-0 opacity-5" style={{
+          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'3.5\' numOctaves=\'4\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' /%3E%3C/svg%3E")',
+        }} />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+          {/* Header Section */}
+          <div className="text-center mb-12 sm:mb-20">
+            <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 sm:mb-8 rounded-full border border-red-500/30 bg-red-500/5 backdrop-blur-sm">
+              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span className="text-red-400 text-xs sm:text-sm font-medium tracking-wider uppercase">Tech Excellence</span>
+            </div>
+
+            <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black mb-4 sm:mb-6 tracking-tight leading-tight">
+              <span className="block text-white mb-2">Our Technology</span>
+              <span className="block bg-gradient-to-r from-red-500 via-red-400 to-red-600 bg-clip-text text-transparent">
+                Arsenal
+              </span>
+            </h1>
+
+            <p className="text-gray-400 text-base sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed px-4">
+              Crafting digital masterpieces with industry-leading tools and frameworks
+            </p>
+          </div>
+
+          {/* Category Filter */}
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12 sm:mb-16 px-4">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className="group relative px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-medium text-xs sm:text-sm transition-all duration-300 overflow-hidden"
+                style={{
+                  background: selectedCategory === category 
+                    ? 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)'
+                    : 'transparent',
+                  border: selectedCategory === category
+                    ? 'none'
+                    : '1px solid rgba(239, 68, 68, 0.2)',
+                  color: selectedCategory === category ? 'white' : '#9ca3af',
+                }}
+              >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
+                  }}
+                />
+                <span className="relative z-10">{category}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Tech Grid */}
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-12 sm:mb-20">
+            {filteredTechs.map((tech, idx) => (
+              <div
+                key={`${tech.name}-${idx}`}
+                className="group relative"
+                onMouseEnter={() => {
+                  setHoveredTech(tech.name);
+                  setCursorVariant('hover');
+                }}
+                onMouseLeave={() => {
+                  setHoveredTech(null);
+                  setCursorVariant('default');
+                }}
+                style={{
+                  animation: `fadeInUp 0.6s ease-out ${idx * 0.03}s both`,
+                }}
+              >
+                {/* Card Background */}
+                <div className="relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-500 group-hover:scale-105">
+                  {/* Gradient Border Effect */}
+                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl p-[1px] bg-gradient-to-br from-red-500/50 via-transparent to-red-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  {/* Card Content */}
+                  <div className="absolute inset-[1px] rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl flex flex-col items-center justify-center p-2 sm:p-4 md:p-6">
+                    {/* Corner Decorations */}
+                    <div className="absolute top-1 left-1 sm:top-2 sm:left-2 w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 border-t-2 border-l-2 border-red-500/50 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:w-3 group-hover:h-3 sm:group-hover:w-4 sm:group-hover:h-4 md:group-hover:w-6 md:group-hover:h-6" />
+                    <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 border-b-2 border-r-2 border-red-500/50 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:w-3 group-hover:h-3 sm:group-hover:w-4 sm:group-hover:h-4 md:group-hover:w-6 md:group-hover:h-6" />
+                    
+                    {/* Radial Glow */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      style={{
+                        background: 'radial-gradient(circle at 50% 50%, rgba(220, 38, 38, 0.15), transparent 70%)',
+                      }}
+                    />
+
+                    {/* Tech Icon */}
+                    <div className="relative z-10 mb-1 sm:mb-2 transition-transform duration-500 group-hover:scale-110">
+                      <img 
+                        src={tech.icon}
+                        alt={tech.name}
+                        className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain transition-all duration-300"
+                        style={{
+                          filter: `${tech.invertLogo ? 'invert(1) ' : ''}${hoveredTech === tech.name 
+                            ? 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.6)) brightness(1.2)'
+                            : 'brightness(0.9)'}`,
+                        }}
+                        loading="eager"
+                        crossOrigin="anonymous"
+                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                          const target = e.target as HTMLImageElement;
+                          target.onerror = null;
+                          target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ctext x='50' y='50' font-size='40' text-anchor='middle' dominant-baseline='middle' fill='%23dc2626'%3E${tech.name[0]}%3C/text%3E%3C/svg%3E`;
+                        }}
+                      />
+                    </div>
+
+                    {/* Tech Name */}
+                    <div className="text-white text-[10px] sm:text-xs md:text-sm font-semibold text-center opacity-60 group-hover:opacity-100 transition-opacity duration-300 px-1">
+                      {tech.name}
+                    </div>
+
+                    {/* Category Badge */}
+                    <div className="absolute -bottom-1 sm:-bottom-2 left-1/2 -translate-x-1/2 px-1.5 py-0.5 sm:px-2 sm:py-0.5 md:px-3 md:py-1 rounded-full text-[8px] sm:text-[10px] md:text-xs font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:-translate-y-1 sm:group-hover:-translate-y-2"
+                      style={{
+                        background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
+                        color: 'white',
+                      }}
+                    >
+                      {tech.category}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Stats Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
+            {[
+              { value: `${ALL_TECHS.length}+`, label: 'Technologies Mastered' },
+              { value: '100+', label: 'Projects Delivered' },
+              { value: '98%', label: 'Client Satisfaction' },
+            ].map((stat, idx) => (
+              <div
+                key={idx}
+                className="group relative overflow-hidden rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-500 hover:scale-105"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%)',
+                  border: '1px solid rgba(239, 68, 68, 0.1)',
+                  backdropFilter: 'blur(20px)',
+                }}
+              >
+                {/* Hover Gradient */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, transparent 100%)',
+                  }}
+                />
+
+                <div className="relative z-10 text-center">
+                  <div className="text-3xl sm:text-5xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent mb-2 sm:mb-3">
+                    {stat.value}
+                  </div>
+                  <div className="text-gray-400 text-xs sm:text-sm font-medium tracking-wide">
+                    {stat.label}
+                  </div>
+                </div>
+
+                {/* Corner Accent */}
+                <div className="absolute top-0 right-0 w-16 sm:w-24 h-16 sm:h-24 opacity-20 group-hover:opacity-40 transition-opacity duration-500"
+                  style={{
+                    background: 'radial-gradient(circle at 100% 0%, #dc2626 0%, transparent 70%)',
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
