@@ -1,39 +1,39 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const ALL_TECHS = [
-  { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg', category: 'Frontend' },
-  { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', category: 'Frontend' },
-  { name: 'TypeScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg', category: 'Frontend' },
-  { name: 'Tailwind', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg', category: 'Frontend' },
-  { name: 'Vue.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg', category: 'Frontend' },
-  { name: 'Vite', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg', category: 'Frontend' },
-  { name: 'React Native', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg', category: 'Mobile' },
-  { name: 'Flutter', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg', category: 'Mobile' },
-  { name: 'Android', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg', category: 'Mobile' },
-  { name: 'iOS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg', category: 'Mobile' },
-  { name: 'Shopify', icon: 'https://cdn.worldvectorlogo.com/logos/shopify.svg', category: 'E-Commerce' },
-  { name: 'WordPress', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/wordpress/wordpress-plain.svg', category: 'CMS' },
-  { name: 'WooCommerce', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/woocommerce/woocommerce-original.svg', category: 'E-Commerce' },
-  { name: 'Stripe', icon: 'https://cdn.worldvectorlogo.com/logos/stripe-4.svg', category: 'E-Commerce' },
-  { name: 'Figma', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg', category: 'Design' },
-  { name: 'Adobe XD', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/xd/xd-plain.svg', category: 'Design' },
-  { name: 'Photoshop', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/photoshop/photoshop-plain.svg', category: 'Design' },
-  { name: 'Illustrator', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/illustrator/illustrator-plain.svg', category: 'Design' },
-  { name: 'Three.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/threejs/threejs-original.svg', category: '3D' },
-  { name: 'Blender', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/blender/blender-original.svg', category: '3D' },
-  { name: 'After Effects', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/aftereffects/aftereffects-original.svg', category: '3D' },
-  { name: 'Node.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg', category: 'Backend' },
-  { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg', category: 'Backend' },
-  { name: 'MongoDB', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg', category: 'Backend' },
-  { name: 'PostgreSQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg', category: 'Backend' },
-  { name: 'Docker', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg', category: 'Backend' },
-  { name: 'GraphQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/graphql/graphql-plain.svg', category: 'Backend' },
-  { name: 'Firebase', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg', category: 'Backend' },
-  { name: 'Google Ads', icon: 'https://cdn.worldvectorlogo.com/logos/google-ads-1.svg', category: 'Marketing' },
-  { name: 'Meta', icon: 'https://cdn.worldvectorlogo.com/logos/meta-1.svg', category: 'Marketing' },
-  { name: 'Google Analytics', icon: 'https://cdn.worldvectorlogo.com/logos/google-analytics-1.svg', category: 'Marketing' },
+  { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg', category: 'Frontend', invertLogo: false },
+  { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', category: 'Frontend', invertLogo: true },
+  { name: 'TypeScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg', category: 'Frontend', invertLogo: false },
+  { name: 'Tailwind', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg', category: 'Frontend', invertLogo: false },
+  { name: 'Vue.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg', category: 'Frontend', invertLogo: false },
+  { name: 'Vite', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg', category: 'Frontend', invertLogo: false },
+  { name: 'React Native', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg', category: 'Mobile', invertLogo: false },
+  { name: 'Flutter', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg', category: 'Mobile', invertLogo: false },
+  { name: 'Android', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg', category: 'Mobile', invertLogo: false },
+  { name: 'iOS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg', category: 'Mobile', invertLogo: true },
+  { name: 'Shopify', icon: 'https://cdn.worldvectorlogo.com/logos/shopify.svg', category: 'E-Commerce', invertLogo: false },
+  { name: 'WordPress', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/wordpress/wordpress-plain.svg', category: 'CMS', invertLogo: false },
+  { name: 'WooCommerce', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/woocommerce/woocommerce-original.svg', category: 'E-Commerce', invertLogo: false },
+  { name: 'Stripe', icon: 'https://cdn.worldvectorlogo.com/logos/stripe-4.svg', category: 'E-Commerce', invertLogo: false },
+  { name: 'Figma', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg', category: 'Design', invertLogo: false },
+  { name: 'Adobe XD', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/xd/xd-plain.svg', category: 'Design', invertLogo: false },
+  { name: 'Photoshop', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/photoshop/photoshop-plain.svg', category: 'Design', invertLogo: false },
+  { name: 'Illustrator', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/illustrator/illustrator-plain.svg', category: 'Design', invertLogo: false },
+  { name: 'Three.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/threejs/threejs-original.svg', category: '3D', invertLogo: true },
+  { name: 'Blender', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/blender/blender-original.svg', category: '3D', invertLogo: false },
+  { name: 'After Effects', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/aftereffects/aftereffects-original.svg', category: '3D', invertLogo: false },
+  { name: 'Node.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg', category: 'Backend', invertLogo: false },
+  { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg', category: 'Backend', invertLogo: false },
+  { name: 'MongoDB', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg', category: 'Backend', invertLogo: false },
+  { name: 'PostgreSQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg', category: 'Backend', invertLogo: false },
+  { name: 'Docker', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg', category: 'Backend', invertLogo: false },
+  { name: 'GraphQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/graphql/graphql-plain.svg', category: 'Backend', invertLogo: false },
+  { name: 'Firebase', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg', category: 'Backend', invertLogo: false },
+  { name: 'Google Ads', icon: 'https://cdn.worldvectorlogo.com/logos/google-ads-1.svg', category: 'Marketing', invertLogo: false },
+  { name: 'Meta', icon: 'https://cdn.worldvectorlogo.com/logos/meta-1.svg', category: 'Marketing', invertLogo: true },
+  { name: 'Google Analytics', icon: 'https://cdn.worldvectorlogo.com/logos/google-analytics-1.svg', category: 'Marketing', invertLogo: false },
 ];
 
 const categories = ['All', ...Array.from(new Set(ALL_TECHS.map(t => t.category)))];
@@ -42,6 +42,9 @@ export default function PremiumTechStack() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [hoveredTech, setHoveredTech] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [cursorVariant, setCursorVariant] = useState('default');
+  const cursorRef = useRef(null);
+  const cursorDotRef = useRef(null);
 
   const filteredTechs = selectedCategory === 'All' 
     ? ALL_TECHS 
@@ -49,14 +52,67 @@ export default function PremiumTechStack() {
 
   useEffect(() => {
     const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      const x = e.clientX;
+      const y = e.clientY;
+      
+      setMousePosition({ x, y });
+      
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate(${x}px, ${y}px)`;
+      }
+      if (cursorDotRef.current) {
+        cursorDotRef.current.style.transform = `translate(${x}px, ${y}px)`;
+      }
     };
+
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   return (
     <div className="relative w-full min-h-screen bg-black overflow-hidden">
+      {/* Custom Cursor - Hidden on mobile */}
+      <div className="hidden md:block">
+        <div 
+          ref={cursorRef}
+          className="fixed top-0 left-0 pointer-events-none z-50 mix-blend-difference"
+          style={{
+            width: cursorVariant === 'hover' ? '80px' : '40px',
+            height: cursorVariant === 'hover' ? '80px' : '40px',
+            transition: 'width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+          }}
+        >
+          <div 
+            className="w-full h-full rounded-full border-2 border-white"
+            style={{
+              transform: 'translate(-50%, -50%)',
+              transition: 'opacity 0.3s ease',
+              opacity: cursorVariant === 'hover' ? 0.8 : 0.5,
+            }}
+          />
+        </div>
+        
+        <div 
+          ref={cursorDotRef}
+          className="fixed top-0 left-0 w-2 h-2 pointer-events-none z-50"
+          style={{
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <div 
+            className="w-full h-full rounded-full"
+            style={{
+              background: cursorVariant === 'hover' 
+                ? 'radial-gradient(circle, #ef4444 0%, #dc2626 100%)' 
+                : '#ffffff',
+              boxShadow: cursorVariant === 'hover' 
+                ? '0 0 20px #ef4444, 0 0 40px #ef444480' 
+                : '0 0 10px #ffffff80',
+              transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            }}
+          />
+        </div>
+      </div>
       {/* Animated Gradient Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 opacity-30">
@@ -81,9 +137,9 @@ export default function PremiumTechStack() {
         </div>
       </div>
 
-      {/* Mouse Follow Spotlight */}
+      {/* Mouse Follow Spotlight - Hidden on mobile */}
       <div 
-        className="absolute w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transition-all duration-300 ease-out"
+        className="hidden md:block absolute w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transition-all duration-300 ease-out"
         style={{
           background: 'radial-gradient(circle, #ef4444 0%, transparent 70%)',
           left: `${mousePosition.x - 192}px`,
@@ -144,27 +200,33 @@ export default function PremiumTechStack() {
         </div>
 
         {/* Tech Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6 mb-12 sm:mb-20">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-12 sm:mb-20">
           {filteredTechs.map((tech, idx) => (
             <div
               key={`${tech.name}-${idx}`}
-              className="group relative"
-              onMouseEnter={() => setHoveredTech(tech.name)}
-              onMouseLeave={() => setHoveredTech(null)}
+              className="group relative cursor-none"
+              onMouseEnter={() => {
+                setHoveredTech(tech.name);
+                setCursorVariant('hover');
+              }}
+              onMouseLeave={() => {
+                setHoveredTech(null);
+                setCursorVariant('default');
+              }}
               style={{
                 animation: `fadeInUp 0.6s ease-out ${idx * 0.03}s both`,
               }}
             >
               {/* Card Background */}
-              <div className="relative aspect-square rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-500 group-hover:scale-105">
+              <div className="relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-500 group-hover:scale-105">
                 {/* Gradient Border Effect */}
-                <div className="absolute inset-0 rounded-2xl sm:rounded-3xl p-[1px] bg-gradient-to-br from-red-500/50 via-transparent to-red-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 rounded-xl sm:rounded-2xl p-[1px] bg-gradient-to-br from-red-500/50 via-transparent to-red-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
                 {/* Card Content */}
-                <div className="absolute inset-[1px] rounded-2xl sm:rounded-3xl bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl flex flex-col items-center justify-center p-4 sm:p-6">
+                <div className="absolute inset-[1px] rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl flex flex-col items-center justify-center p-2 sm:p-4 md:p-6">
                   {/* Corner Decorations */}
-                  <div className="absolute top-2 left-2 w-3 h-3 sm:w-4 sm:h-4 border-t-2 border-l-2 border-red-500/50 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:w-4 group-hover:h-4 sm:group-hover:w-6 sm:group-hover:h-6" />
-                  <div className="absolute bottom-2 right-2 w-3 h-3 sm:w-4 sm:h-4 border-b-2 border-r-2 border-red-500/50 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:w-4 group-hover:h-4 sm:group-hover:w-6 sm:group-hover:h-6" />
+                  <div className="absolute top-1 left-1 sm:top-2 sm:left-2 w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 border-t-2 border-l-2 border-red-500/50 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:w-3 group-hover:h-3 sm:group-hover:w-4 sm:group-hover:h-4 md:group-hover:w-6 md:group-hover:h-6" />
+                  <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 border-b-2 border-r-2 border-red-500/50 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:w-3 group-hover:h-3 sm:group-hover:w-4 sm:group-hover:h-4 md:group-hover:w-6 md:group-hover:h-6" />
                   
                   {/* Radial Glow */}
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -174,15 +236,15 @@ export default function PremiumTechStack() {
                   />
 
                   {/* Tech Icon */}
-                  <div className="relative z-10 mb-2 sm:mb-3 transition-transform duration-500 group-hover:scale-110">
+                  <div className="relative z-10 mb-1 sm:mb-2 transition-transform duration-500 group-hover:scale-110">
                     <img 
                       src={tech.icon}
                       alt={tech.name}
-                      className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 object-contain"
+                      className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain"
                       style={{
-                        filter: hoveredTech === tech.name 
+                        filter: `${tech.invertLogo ? 'invert(1) ' : ''}${hoveredTech === tech.name 
                           ? 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.6)) brightness(1.2)'
-                          : 'brightness(0.9)',
+                          : 'brightness(0.9)'}`,
                         transition: 'filter 0.3s ease',
                       }}
                       loading="eager"
@@ -196,12 +258,12 @@ export default function PremiumTechStack() {
                   </div>
 
                   {/* Tech Name */}
-                  <div className="text-white text-xs sm:text-sm font-semibold text-center opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="text-white text-[10px] sm:text-xs md:text-sm font-semibold text-center opacity-60 group-hover:opacity-100 transition-opacity duration-300 px-1">
                     {tech.name}
                   </div>
 
                   {/* Category Badge */}
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:-translate-y-2"
+                  <div className="absolute -bottom-1 sm:-bottom-2 left-1/2 -translate-x-1/2 px-1.5 py-0.5 sm:px-2 sm:py-0.5 md:px-3 md:py-1 rounded-full text-[8px] sm:text-[10px] md:text-xs font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:-translate-y-1 sm:group-hover:-translate-y-2"
                     style={{
                       background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
                       color: 'white',
@@ -219,8 +281,8 @@ export default function PremiumTechStack() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
           {[
             { value: `${ALL_TECHS.length}+`, label: 'Technologies Mastered' },
-            { value: '500+', label: 'Projects Delivered' },
-            { value: '99.9%', label: 'Client Satisfaction' },
+            { value: '100+', label: 'Projects Delivered' },
+            { value: '98%', label: 'Client Satisfaction' },
           ].map((stat, idx) => (
             <div
               key={idx}
@@ -259,6 +321,16 @@ export default function PremiumTechStack() {
       </div>
 
       <style jsx>{`
+        * {
+          cursor: none !important;
+        }
+        
+        @media (max-width: 768px) {
+          * {
+            cursor: auto !important;
+          }
+        }
+
         @keyframes float {
           0%, 100% {
             transform: translate(0, 0) scale(1);
