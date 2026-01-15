@@ -3,13 +3,23 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Mail, Instagram, Linkedin, Phone } from 'lucide-react';
+import LaserFlow from './LaserFlow';
 
 export default function Footer() {
   return (
-    <footer className="bg-black border-t border-white/10 text-white">
-      <div className="max-w-7xl mx-auto px-6 py-16">
+    <footer className="relative bg-black border-t border-white/10 text-white overflow-hidden">
+      <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
+        <LaserFlow
+          color="#dc2626"
+          flowSpeed={0.3}
+          fogIntensity={0.3}
+          horizontalBeamOffset={0}
+          verticalBeamOffset={-0.45}
+        />
+      </div>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-          
+
           {/* Logo & Description */}
           <div className="space-y-4">
             <Image
