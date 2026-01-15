@@ -1,4 +1,4 @@
-import DamnXHero from "@/components/Landing";
+import DamnXHero from "@/components/hero";
 import TrophyCabinet from "@/components/Trophy";
 import VideoHeroSection from "@/components/Video_heading";
 import ServicesShowcase from "@/components/Services";
