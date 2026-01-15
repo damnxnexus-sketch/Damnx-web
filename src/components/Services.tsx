@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Sparkles } from 'lucide-react';
-
+import Lightning from './Lightning';
 const services = [
   {
     id: 1,
@@ -189,7 +189,11 @@ export default function ServicesShowcase() {
   return (
     <div className="bg-black min-h-screen relative overflow-hidden font-sans selection:bg-red-500/30 selection:text-white">
       {/* Global Background Effects */}
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900/20 via-black to-black pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900/20 via-black to-black pointer-events-none" />
+
+      <div className="absolute inset-0 pointer-events-none z-0 opacity-40">
+        <Lightning hue={0} speed={0.2} intensity={0.8} />
+      </div>
 
       <div className="relative pt-32 pb-20 px-6 text-center z-10">
         <motion.div
