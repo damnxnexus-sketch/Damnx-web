@@ -77,7 +77,7 @@ export default function VideoHeroSection() {
         }}
       >
         {/* Top Boundary Blur Mask */}
-        <div 
+        <div
           className="absolute top-0 left-0 right-0 h-8 md:h-12 pointer-events-none z-50 transition-all duration-100"
           style={{
             background: 'linear-gradient(to bottom, rgba(0,0,0,0.95), transparent)',
@@ -87,7 +87,7 @@ export default function VideoHeroSection() {
         />
 
         {/* Bottom Boundary Blur Mask */}
-        <div 
+        <div
           className="absolute bottom-0 left-0 right-0 h-8 md:h-12 pointer-events-none z-50 transition-all duration-100"
           style={{
             background: 'linear-gradient(to top, rgba(0,0,0,0.95), transparent)',
@@ -95,7 +95,7 @@ export default function VideoHeroSection() {
             WebkitBackdropFilter: `blur(${bottomBlur * 0.3}px)`,
           }}
         />
-        
+
         {/* Background Video with Parallax */}
         <div
           className="absolute inset-0 w-full h-full"
@@ -133,7 +133,7 @@ export default function VideoHeroSection() {
               animation: 'fadeInUp 1s ease-out'
             }}
           >
-            <span 
+            <span
               className="relative inline-block damn-text"
               style={{
                 position: 'relative'
@@ -171,7 +171,7 @@ export default function VideoHeroSection() {
               }}>X</span>
             </span>
             <br />
-            <span 
+            <span
               className="relative inline-block solution-text"
               style={{
                 color: '#ffffff',
@@ -199,7 +199,7 @@ export default function VideoHeroSection() {
               letterSpacing: '0.02em'
             }}
           >
-            &quot;Where innovation meets excellence. Transforming visions into digital reality with 
+            &quot;Where innovation meets excellence. Transforming visions into digital reality with
             cutting-edge software solutions that empower businesses to thrive in the digital age.&quot;
           </p>
         </div>
