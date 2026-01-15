@@ -187,7 +187,7 @@ const ServiceCard = ({ service, index }: { service: typeof services[0], index: n
 
 export default function ServicesShowcase() {
   return (
-    <div className="bg-black min-h-screen relative overflow-hidden font-sans selection:bg-red-500/30 selection:text-white">
+    <div className="bg-black min-h-[100dvh] relative overflow-x-hidden font-sans selection:bg-red-500/30 selection:text-white">
       {/* Global Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900/20 via-black to-black pointer-events-none" />
 

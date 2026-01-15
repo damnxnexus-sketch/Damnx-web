@@ -85,17 +85,17 @@ const StageSection = ({ stage, index }: { stage: Stage; index: number }) => {
   const opacity = useSpring(useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]), springConfig);
   const scale = useSpring(useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.9, 1, 1, 0.9]), springConfig);
   const rotateX = useSpring(useTransform(scrollYProgress, [0, 0.5, 1], [10, 0, -10]), springConfig);
-  
+
   const imageOpacity = useTransform(scrollYProgress, [0, 0.2, 0.5, 0.8, 1], [0, 0.3, 0.4, 0.3, 0]);
   const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.2, 1, 1.2]);
 
   return (
-    <section ref={ref} className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20 overflow-hidden">
+    <section ref={ref} className="relative min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20 overflow-x-hidden">
       <motion.div
         style={{ opacity: imageOpacity, scale: imageScale }}
         className="absolute inset-0 z-0"
       >
-        <img 
+        <img
           src={stage.imageUrl}
           alt={stage.title}
           className="absolute inset-0 w-full h-full object-cover"
@@ -172,7 +172,7 @@ const StageSection = ({ stage, index }: { stage: Stage; index: number }) => {
       </motion.div>
 
       <motion.div
-        style={{ 
+        style={{
           y: useTransform(scrollYProgress, [0, 1], [0, 100]),
           opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0.03, 0.1, 0.03])
         }}
@@ -185,7 +185,7 @@ const StageSection = ({ stage, index }: { stage: Stage; index: number }) => {
 
       {index < stages.length - 1 && (
         <motion.div
-          style={{ 
+          style={{
             opacity: useTransform(scrollYProgress, [0.7, 1], [0, 1]),
             scale: useTransform(scrollYProgress, [0.7, 1], [0.5, 1])
           }}
@@ -222,9 +222,9 @@ const DevelopmentJourney = () => {
         className="fixed top-0 right-0 w-1 h-screen bg-red-600 origin-top z-50"
       />
 
-      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20 overflow-hidden">
+      <section className="relative min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20 overflow-x-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
+          <img
             src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&q=80&auto=format&fit=crop"
             alt="Hero Background"
             className="absolute inset-0 w-full h-full object-cover"
@@ -324,9 +324,9 @@ const DevelopmentJourney = () => {
         <StageSection key={stage.id} stage={stage} index={index} />
       ))}
 
-      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20 overflow-hidden">
+      <section className="relative min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20 overflow-x-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
+          <img
             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80&auto=format&fit=crop"
             alt="Closing Background"
             className="absolute inset-0 w-full h-full object-cover"

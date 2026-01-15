@@ -63,7 +63,7 @@ export default function VideoHeroSection() {
       {/* Video Hero Section */}
       <section
         ref={sectionRef}
-        className="relative h-screen w-full overflow-hidden flex flex-col items-center justify-center"
+        className="relative min-h-[100dvh] w-full overflow-x-hidden flex flex-col items-center justify-center"
       >
         {/* ColorBends Background */}
         <div className="absolute inset-0 w-full h-full z-0">
@@ -72,7 +72,7 @@ export default function VideoHeroSection() {
           />
           {/* Enhanced Overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60 pointer-events-none" />
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px] pointer-events-none" />
         </div>
 
         {/* Content Container */}

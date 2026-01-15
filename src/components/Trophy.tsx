@@ -165,7 +165,7 @@ const TrophyCabinet = () => {
 
       <section
         ref={sectionRef}
-        className="relative min-h-[85vh] py-16 px-6 overflow-hidden"
+        className="relative min-h-[85vh] py-16 px-6 overflow-x-hidden"
         style={{ backgroundColor: '#000' }}
       >
         {/* Top Blur Mask - Smooth transition from previous component */}

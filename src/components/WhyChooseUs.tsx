@@ -27,10 +27,10 @@ export default function WhyChooseUs() {
   const { toggleChat } = useChat();
 
   return (
-    <div ref={containerRef} className="relative bg-black min-h-screen py-20 sm:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <div ref={containerRef} className="relative bg-black min-h-[100dvh] py-20 sm:py-32 px-4 sm:px-6 lg:px-8 overflow-x-hidden">
       {/* Animated background gradients */}
-      <div className="absolute inset-0 opacity-20">
-        <motion.div 
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
+        <motion.div
           className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-600 rounded-full blur-[150px]"
           animate={{
             scale: [1, 1.2, 1],
@@ -42,7 +42,7 @@ export default function WhyChooseUs() {
             ease: "easeInOut"
           }}
         />
-        <motion.div 
+        <motion.div
           className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-red-600 rounded-full blur-[150px]"
           animate={{
             scale: [1.2, 1, 1.2],
@@ -84,7 +84,7 @@ export default function WhyChooseUs() {
             </div>
           </motion.div>
 
-          <motion.h2 
+          <motion.h2
             className="text-5xl sm:text-6xl lg:text-8xl font-bold text-white mb-6 tracking-tight"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -93,7 +93,7 @@ export default function WhyChooseUs() {
           >
             Why Choose <span className="bg-gradient-to-r from-red-600 via-red-500 to-red-600 bg-clip-text text-transparent">Us</span>?
           </motion.h2>
-          
+
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
@@ -118,10 +118,10 @@ export default function WhyChooseUs() {
             >
               {/* Glow effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-red-600/20 via-red-500/10 to-transparent rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500" />
-              
+
               {/* Chrome shine effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
+
               <div className="relative bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 border-2 border-red-600/50 rounded-3xl p-8 sm:p-12 lg:p-16 overflow-hidden backdrop-blur-sm">
                 {/* Animated orb */}
                 <motion.div
@@ -136,10 +136,10 @@ export default function WhyChooseUs() {
                     ease: "easeInOut"
                   }}
                 />
-                
+
                 {/* Glass morphism overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none" />
-                
+
                 <div className="relative z-10">
                   <motion.div
                     initial={{ scale: 0 }}
@@ -152,8 +152,8 @@ export default function WhyChooseUs() {
                       Hero Feature
                     </div>
                   </motion.div>
-                  
-                  <motion.h3 
+
+                  <motion.h3
                     className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6"
                     initial={{ opacity: 0, x: -30 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -168,19 +168,19 @@ export default function WhyChooseUs() {
                       FREE Maintenance
                     </span>
                   </motion.h3>
-                  
-                  <motion.p 
+
+                  <motion.p
                     className="text-zinc-400 text-lg sm:text-xl lg:text-2xl max-w-3xl leading-relaxed"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.6 }}
                     viewport={{ once: true }}
                   >
-                    We stand behind our work with 24 months of complimentary maintenance. 
+                    We stand behind our work with 24 months of complimentary maintenance.
                     Your peace of mind is our commitment—updates, fixes, and support included.
                   </motion.p>
 
-                  <motion.div 
+                  <motion.div
                     className="mt-8 sm:mt-10 flex flex-wrap gap-3 sm:gap-4"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -221,7 +221,7 @@ export default function WhyChooseUs() {
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 to-transparent rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
+
                 <div className="relative bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 border border-white/10 rounded-3xl p-8 sm:p-10 h-full backdrop-blur-sm">
                   <motion.div
                     animate={{
@@ -244,7 +244,7 @@ export default function WhyChooseUs() {
                     <br />
                     <span className="bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">Solutions</span>
                   </h3>
-                  
+
                   <p className="text-zinc-400 text-base sm:text-lg mb-6 sm:mb-8 leading-relaxed">
                     From concept to launch and beyond—we handle everything. Logo design, UI/UX, development, deployment, and marketing. A complete ecosystem working in perfect harmony.
                   </p>
@@ -266,7 +266,7 @@ export default function WhyChooseUs() {
                         whileHover={{ x: 10 }}
                         className="flex items-center gap-3 text-white group/item cursor-pointer"
                       >
-                        <motion.div 
+                        <motion.div
                           className="w-2 h-2 bg-gradient-to-r from-red-600 to-red-500 rounded-full shadow-lg shadow-red-600/50"
                           whileHover={{ scale: 1.5 }}
                         />
@@ -293,7 +293,7 @@ export default function WhyChooseUs() {
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 to-transparent rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
+
                 <div className="relative bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 border border-white/10 rounded-3xl p-8 sm:p-10 h-full backdrop-blur-sm">
                   <motion.div
                     className="mb-6"
@@ -321,7 +321,7 @@ export default function WhyChooseUs() {
                     <br />
                     Genuine Pricing
                   </h3>
-                  
+
                   <p className="text-zinc-400 text-base sm:text-lg mb-6 sm:mb-8 leading-relaxed">
                     Industry-level coding practices meet honest pricing. We deliver clean, scalable, and maintainable software without compromising on quality or cutting corners.
                   </p>
@@ -369,7 +369,7 @@ export default function WhyChooseUs() {
             whileTap={{ scale: 0.95 }}
             className="inline-block"
           >
-            <button 
+            <button
               onClick={toggleChat}
               className="relative group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold text-lg sm:text-xl px-10 sm:px-12 py-4 sm:py-6 rounded-full transition-all duration-300 shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:shadow-[0_0_50px_rgba(220,38,38,0.5)]"
             >
