@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Check, Sparkles } from 'lucide-react';
 
 const services = [
   {
@@ -80,416 +82,139 @@ const benefitsData: Record<number, Array<{ title: string; desc: string }>> = {
   ]
 };
 
-export default function ServicesShowcase() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
+const ServiceCard = ({ service, index }: { service: typeof services[0], index: number }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!sectionRef.current) return;
-
-      const cards = sectionRef.current.querySelectorAll('.service-card');
-      
-      cards.forEach((card) => {
-        const htmlCard = card as HTMLElement;
-        const rect = htmlCard.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        
-        let blurAmount = 0;
-        if (rect.top < 0) {
-          const distanceAbove = Math.abs(rect.top);
-          blurAmount = Math.min(12, (distanceAbove / 200) * 12);
-        }
-        
-        htmlCard.style.filter = `blur(${blurAmount}px)`;
-        
-        const img = htmlCard.querySelector('.parallax-img') as HTMLElement;
-        if (img && rect.top < windowHeight && rect.bottom > -windowHeight) {
-          const yPos = -(rect.top * 0.2);
-          img.style.transform = `translateY(${yPos}px)`;
-        }
-
-        if (rect.top < windowHeight * 0.8 && rect.bottom > 0) {
-          htmlCard.style.opacity = '1';
-        } else if (rect.bottom < 0) {
-          htmlCard.style.opacity = '0.7';
-        }
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   return (
-    <div style={{ backgroundColor: '#000', minHeight: '100vh' }}>
-      <div className="services-header">
-        <h1 className="main-title">
-          Our <span style={{ color: '#dc0000' }}>Services</span>
-        </h1>
-        <p className="main-subtitle">
-          Comprehensive solutions tailored to transform your vision into reality
-        </p>
-      </div>
+    <motion.div
+      ref={ref}
+      style={{ opacity }}
+      className={`min-h-screen flex flex-col ${service.reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center justify-center gap-12 lg:gap-24 px-6 lg:px-20 py-20 relative`}
+    >
+      {/* Background Decor */}
+      <div className={`absolute top-1/2 ${service.reverse ? 'left-0' : 'right-0'} w-1/2 h-1/2 bg-red-900/10 blur-[120px] rounded-full -translate-y-1/2 pointer-events-none`} />
 
-      <div ref={sectionRef} style={{ position: 'relative', width: '100%' }}>
-        {services.map((service) => (
+      {/* Text Content */}
+      <div className="w-full lg:w-1/2 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, x: service.reverse ? 50 : -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <span className="inline-block text-red-500 font-bold tracking-[0.2em] mb-4 text-sm uppercase">
+            0{service.id} — Service
+          </span>
+          <h2 className="text-4xl lg:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
+            {service.title}
+          </h2>
+          <p className="text-lg text-zinc-400 leading-relaxed mb-8 max-w-xl">
+            {service.description}
+          </p>
+
+          {/* Interactive Benefits Area */}
           <div
-            key={service.id}
-            className="service-card"
-            style={{
-              minHeight: isMobile ? 'auto' : '100vh',
-              display: 'flex',
-              flexDirection: isMobile ? 'column' : (service.reverse ? 'row-reverse' : 'row'),
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: isMobile ? '60px 24px' : '0 8%',
-              backgroundColor: '#000',
-              gap: isMobile ? '40px' : '4%',
-              opacity: 1,
-              transition: 'opacity 0.3s ease, filter 0.05s ease-out'
-            }}
+            className="relative group"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
           >
-            <div 
-              className="text-side"
-              style={{ 
-                width: isMobile ? '100%' : '48%', 
-                zIndex: 10, 
-                position: 'relative',
-                minHeight: isMobile ? 'auto' : '500px'
-              }}
-              onMouseEnter={() => !isMobile && setHoveredCard(service.id)}
-              onMouseLeave={() => !isMobile && setHoveredCard(null)}
-            >
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <span className="service-number">
-                  0{service.id}
+            <div className={`p-6 rounded-2xl border transition-all duration-500 overflow-hidden ${isHovered ? 'bg-zinc-900/80 border-red-500/30 shadow-2xl shadow-red-900/20' : 'bg-white/5 border-white/10'}`}>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-white font-semibold flex items-center gap-2">
+                  <Sparkles className={`w-4 h-4 ${isHovered ? 'text-red-500' : 'text-zinc-500'} transition-colors`} />
+                  Key Benefits
                 </span>
-                <h2 className="service-title">
-                  {service.title}
-                </h2>
-                <p className="service-description">
-                  {service.description}
-                </p>
-                
-                {isMobile && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setHoveredCard(hoveredCard === service.id ? null : service.id);
-                    }}
-                    style={{
-                      marginTop: '24px',
-                      padding: '14px 28px',
-                      backgroundColor: hoveredCard === service.id ? '#dc0000' : 'transparent',
-                      color: '#fff',
-                      border: '2px solid #dc0000',
-                      borderRadius: '8px',
-                      fontSize: '15px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      letterSpacing: '0.5px'
-                    }}
-                  >
-                    {hoveredCard === service.id ? 'Show Less' : 'View Benefits'}
-                    <span style={{
-                      transform: hoveredCard === service.id ? 'rotate(180deg)' : 'rotate(0deg)',
-                      transition: 'transform 0.3s ease',
-                      display: 'inline-block',
-                      fontSize: '12px'
-                    }}>
-                      ▼
-                    </span>
-                  </button>
-                )}
+                <ArrowRight className={`w-5 h-5 text-zinc-500 transition-transform duration-300 ${isHovered ? 'rotate-90 text-red-500' : ''}`} />
               </div>
-              
-              <div 
-                className="hover-card"
-                style={{
-                  position: isMobile ? 'relative' : 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: isMobile ? 'auto' : 0,
-                  width: '100%',
-                  minHeight: isMobile ? 'auto' : '100%',
-                  marginTop: isMobile ? '30px' : 0,
-                  background: 'rgba(0, 0, 0, 0.95)',
-                  backdropFilter: 'blur(20px)',
-                  WebkitBackdropFilter: 'blur(20px)',
-                  border: '2px solid rgba(220, 0, 0, 0.4)',
-                  borderRadius: '16px',
-                  padding: isMobile ? (hoveredCard === service.id ? '30px' : '0 30px') : '40px',
-                  opacity: hoveredCard === service.id ? 1 : 0,
-                  maxHeight: hoveredCard === service.id && isMobile ? '2000px' : (isMobile ? '0' : 'none'),
-                  overflow: isMobile ? 'hidden' : 'visible',
-                  pointerEvents: hoveredCard === service.id ? 'auto' : 'none',
-                  transition: isMobile 
-                    ? 'opacity 0.5s ease, max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), padding 0.6s cubic-bezier(0.4, 0, 0.2, 1)' 
-                    : 'opacity 0.4s ease',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  zIndex: 20,
-                  boxShadow: hoveredCard === service.id ? '0 10px 40px rgba(220, 0, 0, 0.3)' : 'none'
-                }}
+
+              <motion.div
+                initial={false}
+                animate={{ height: isHovered ? 'auto' : 0, opacity: isHovered ? 1 : 0 }}
+                className="overflow-hidden"
               >
-                <h3 className="hover-title">
-                  How This Helps Your Business
-                </h3>
-                <ul style={{
-                  listStyle: 'none',
-                  padding: 0,
-                  margin: 0
-                }}>
+                <ul className="space-y-4 pt-2">
                   {benefitsData[service.id].map((benefit, idx) => (
-                    <li key={idx} className="benefit-item">
-                      <span className="checkmark">✓</span>
-                      <span className="benefit-text">
-                        <strong>{benefit.title}:</strong> {benefit.desc}
+                    <li key={idx} className="flex items-start gap-3 text-sm">
+                      <span className="mt-1 w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 text-red-500" />
                       </span>
+                      <div>
+                        <strong className="text-white block mb-0.5">{benefit.title}</strong>
+                        <span className="text-zinc-400">{benefit.desc}</span>
+                      </div>
                     </li>
                   ))}
                 </ul>
-              </div>
-            </div>
+              </motion.div>
 
-            <div className="image-container">
-              <div 
-                className="parallax-img"
-                style={{
-                  width: '100%',
-                  height: '130%',
-                  backgroundImage: `url(${service.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  transition: 'transform 0.05s linear',
-                  boxShadow: '0 20px 60px rgba(220, 0, 0, 0.2)',
-                  borderRadius: '16px'
-                }}
-              />
+              {!isHovered && (
+                <p className="text-zinc-500 text-sm">Hover to explore capabilities</p>
+              )}
             </div>
           </div>
+        </motion.div>
+      </div>
+
+      {/* Image Parallax */}
+      <div className="w-full lg:w-1/2 h-[400px] lg:h-[600px] relative">
+        <motion.div
+          style={{ y }}
+          className="w-full h-full rounded-2xl overflow-hidden relative border border-white/10 shadow-2xl group"
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10" />
+          <motion.img
+            src={service.image}
+            alt={service.title}
+            className="w-full h-[120%] object-cover"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.7 }}
+          />
+          {/* Overlay Grid */}
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 z-20 pointer-events-none" />
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default function ServicesShowcase() {
+  return (
+    <div className="bg-black min-h-screen relative overflow-hidden font-sans selection:bg-red-500/30 selection:text-white">
+      {/* Global Background Effects */}
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900/20 via-black to-black pointer-events-none" />
+
+      <div className="relative pt-32 pb-20 px-6 text-center z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="text-5xl lg:text-8xl font-bold text-white mb-6 tracking-tight">
+            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-800">Services</span>
+          </h1>
+          <p className="text-zinc-400 max-w-2xl mx-auto text-lg lg:text-xl font-light">
+            Comprehensive solutions tailored to transform your vision into reality. We build digital excellence.
+          </p>
+        </motion.div>
+      </div>
+
+      <div className="relative z-10">
+        {services.map((service, index) => (
+          <ServiceCard key={service.id} service={service} index={index} />
         ))}
       </div>
 
-      <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        * {
-          font-family: 'Inter', -apple-system, sans-serif;
-        }
-
-        .services-header {
-          padding: 120px 8% 80px;
-          background-color: #000;
-          text-align: center;
-        }
-
-        .main-title {
-          font-size: clamp(36px, 8vw, 72px);
-          font-weight: 700;
-          color: #fff;
-          margin: 0 0 20px 0;
-          line-height: 1.1;
-          letter-spacing: -2px;
-        }
-
-        .main-subtitle {
-          font-size: clamp(14px, 2vw, 18px);
-          font-weight: 300;
-          color: #999;
-          margin: 0 auto;
-          max-width: 600px;
-          line-height: 1.6;
-          padding: 0 20px;
-        }
-
-        .service-number {
-          display: block;
-          font-size: clamp(12px, 1.5vw, 14px);
-          font-weight: 500;
-          color: #dc0000;
-          letter-spacing: 3px;
-          margin-bottom: 20px;
-          text-transform: uppercase;
-        }
-
-        .service-title {
-          font-size: clamp(28px, 5vw, 56px);
-          font-weight: 700;
-          color: #fff;
-          margin: 0 0 30px 0;
-          line-height: 1.1;
-          letter-spacing: -1px;
-        }
-
-        .service-description {
-          font-size: clamp(14px, 2vw, 18px);
-          font-weight: 300;
-          color: #ccc;
-          line-height: 1.8;
-          margin: 0;
-          max-width: 450px;
-        }
-
-        .image-container {
-          width: 100%;
-          height: 70vh;
-          position: relative;
-          overflow: hidden;
-          border-radius: 16px;
-          max-height: 600px;
-        }
-
-        .hover-title {
-          font-size: clamp(20px, 3vw, 28px);
-          font-weight: 700;
-          color: #fff;
-          margin-bottom: 24px;
-          line-height: 1.2;
-        }
-
-        .benefit-item {
-          margin-bottom: 18px;
-          display: flex;
-          align-items: flex-start;
-          gap: 12px;
-        }
-
-        .benefit-item:last-child {
-          margin-bottom: 0;
-        }
-
-        .checkmark {
-          color: #dc0000;
-          font-size: 20px;
-          margin-top: 2px;
-          flex-shrink: 0;
-        }
-
-        .benefit-text {
-          color: #fff;
-          font-size: clamp(13px, 1.8vw, 16px);
-          line-height: 1.6;
-        }
-
-        .benefit-text strong {
-          color: #fff;
-          font-weight: 600;
-        }
-
-        .text-side {
-          transition: transform 0.3s ease;
-        }
-        
-        button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(220, 0, 0, 0.4);
-        }
-        
-        button:active {
-          transform: translateY(0);
-        }
-
-        @media (min-width: 769px) {
-          .text-side:hover {
-            transform: scale(1.01);
-          }
-          
-          .image-container {
-            width: 48%;
-          }
-          
-          .hover-card {
-            min-height: 400px !important;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .services-header {
-            padding: 80px 24px 60px;
-          }
-
-          .service-description {
-            max-width: 100%;
-          }
-
-          .image-container {
-            height: 50vh;
-            min-height: 300px;
-          }
-
-          .text-side {
-            min-height: auto !important;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .services-header {
-            padding: 60px 20px 40px;
-          }
-
-          .service-card {
-            padding: 40px 20px !important;
-          }
-
-          .image-container {
-            height: 45vh;
-            min-height: 280px;
-          }
-
-          .benefit-item {
-            margin-bottom: 14px;
-            gap: 10px;
-          }
-
-          .checkmark {
-            font-size: 18px;
-          }
-          
-          .hover-title {
-            margin-bottom: 20px;
-          }
-        }
-
-        @media (max-width: 360px) {
-          .main-title {
-            font-size: 32px;
-          }
-
-          .service-title {
-            font-size: 24px;
-          }
-
-          .image-container {
-            min-height: 250px;
-          }
-          
-          .benefit-item {
-            margin-bottom: 12px;
-          }
-        }
-      `}</style>
+      {/* Decorative Gradient Line */}
+      <div className="fixed left-6 lg:left-20 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-red-900/20 to-transparent pointer-events-none hidden lg:block" />
+      <div className="fixed right-6 lg:right-20 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-red-900/20 to-transparent pointer-events-none hidden lg:block" />
     </div>
   );
 }
