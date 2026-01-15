@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Ballpit from './Ballpit';
 
 interface CountUpProps {
   end: number;
@@ -17,6 +18,16 @@ const TrophyCabinet = () => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize(); // Check on mount
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const stats = [
     {
@@ -150,32 +161,6 @@ const TrophyCabinet = () => {
         .number-display {
           text-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
         }
-
-        .video-container {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-        }
-
-        .video-container video {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          opacity: 0.3;
-        }
-
-        .video-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.85));
-          pointer-events: none;
-        }
       `}</style>
 
       <section
@@ -205,21 +190,21 @@ const TrophyCabinet = () => {
           }}
         />
 
-        {/* Video Background */}
-        <div className="video-container">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute inset-0"
-          >
-            <source src="/bg4.mp4" type="video/mp4" />
-          </video>
+        {/* Ballpit Background */}
+        <div className="absolute inset-0 z-0 opacity-40">
+          <Ballpit
+            count={100}
+            gravity={0.5}
+            friction={0.995}
+            wallBounce={0.9}
+            followCursor={true}
+            colors={[0xff0000, 0x000000, 0xffffff]}
+            ambientIntensity={0.5}
+            lightIntensity={400}
+            minSize={isMobile ? 0.3 : 0.5}
+            maxSize={isMobile ? 0.6 : 1.0}
+          />
         </div>
-
-        {/* Dark Overlay */}
-        <div className="video-overlay" />
 
         {/* Animated Particles */}
         {[...Array(20)].map((_, i) => (
