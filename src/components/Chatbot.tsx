@@ -51,6 +51,18 @@ const CalendlyChatbot = () => {
     };
   }, []);
 
+  // Prevent body scroll when chat is open on mobile
+  useEffect(() => {
+    if (isChatOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isChatOpen]);
+
   const openCalendly = () => {
     // @ts-ignore
     if (window.Calendly) {
@@ -181,136 +193,153 @@ const CalendlyChatbot = () => {
   };
 
   return (
-    <div className={`fixed bottom-6 right-6 z-[100] font-sans ${isChatOpen ? 'w-[90vw] sm:w-[400px] h-[600px] max-h-[80vh]' : 'w-16 h-16'}`}>
-      <AnimatePresence>
-        {isChatOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: "spring", duration: 0.5 }}
-            className="absolute bottom-20 right-0 w-full h-full flex flex-col bg-black/80 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden"
-            style={{
-              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05)"
-            }}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b border-white/5 bg-gradient-to-r from-red-950/30 to-black/30">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-red-600 to-black p-[2px]">
-                    <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
-                      <span className="font-bold text-white text-xs">DX</span>
-                    </div>
-                  </div>
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-black rounded-full"></span>
-                </div>
-                <div>
-                  <h3 className="font-bold text-white text-sm tracking-wide">DAMN<span className="text-red-500">X</span> ASSISTANT</h3>
-                  <p className="text-[10px] text-zinc-400">Always online</p>
-                </div>
-              </div>
-              <button
-                onClick={closeChat}
-                className="p-2 rounded-full hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
+    <>
+      {/* Mobile Overlay */}
+      {isChatOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99] md:hidden"
+          onClick={closeChat}
+        />
+      )}
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar scroll-smooth">
-              {messages.map((message) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  key={message.id}
-                  className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[85%] p-4 rounded-2xl text-sm leading-6 shadow-sm ${message.isUser
-                      ? 'bg-gradient-to-br from-red-700 to-red-900 text-white rounded-br-sm'
-                      : 'bg-white/5 border border-white/5 text-zinc-200 rounded-bl-sm backdrop-blur-md'
-                      }`}
-                  >
-                    {formatMessage(message.text)}
-
-                    {/* Action Buttons for Bot */}
-                    {!message.isUser && message.hasCalendlyButton && (
-                      <div className="mt-4 flex flex-col gap-2">
-                        <button
-                          onClick={openCalendly}
-                          className="flex items-center justify-center gap-2 w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-red-500/50 rounded-xl text-xs font-semibold text-white transition-all group"
-                        >
-                          <Calendar size={14} className="text-red-500 group-hover:text-red-400" />
-                          <span>Schedule Meeting</span>
-                        </button>
-                        <button
-                          onClick={makePhoneCall}
-                          className="flex items-center justify-center gap-2 w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-red-500/50 rounded-xl text-xs font-semibold text-white transition-all group"
-                        >
-                          <Phone size={14} className="text-red-500 group-hover:text-red-400" />
-                          <span>Emergency Call</span>
-                        </button>
+      <div className={`fixed z-[100] font-sans transition-all duration-300 ${
+        isChatOpen 
+          ? 'inset-0 md:inset-auto md:bottom-6 md:right-6 md:w-[400px] md:h-[600px] md:max-h-[80vh]' 
+          : 'bottom-4 right-4 md:bottom-6 md:right-6 w-14 h-14 md:w-16 md:h-16'
+      }`}>
+        <AnimatePresence>
+          {isChatOpen && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", duration: 0.4, bounce: 0.2 }}
+              className="w-full h-full flex flex-col bg-black/90 md:bg-black/80 backdrop-blur-3xl border-0 md:border md:border-white/10 md:rounded-3xl shadow-2xl overflow-hidden"
+              style={{
+                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05)"
+              }}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 md:p-5 border-b border-white/10 bg-gradient-to-r from-red-950/30 to-black/30">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="relative">
+                    <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-tr from-red-600 to-black p-[2px]">
+                      <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
+                        <span className="font-bold text-white text-xs">DX</span>
                       </div>
-                    )}
+                    </div>
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-black rounded-full"></span>
                   </div>
-                </motion.div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input */}
-            <div className="p-4 border-t border-white/5 bg-black/40">
-              <div className="relative flex items-center bg-zinc-900/50 border border-white/10 rounded-full px-4 py-2 focus-within:border-red-500/50 transition-colors">
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Type a message..."
-                  className="flex-1 bg-transparent text-sm text-white placeholder-zinc-500 focus:outline-none py-1"
-                />
+                  <div>
+                    <h3 className="font-bold text-white text-sm md:text-base tracking-wide">
+                      DAMN<span className="text-red-500">X</span> ASSISTANT
+                    </h3>
+                    <p className="text-[10px] text-zinc-400">Always online</p>
+                  </div>
+                </div>
                 <button
-                  onClick={handleSendMessage}
-                  disabled={!inputValue.trim()}
-                  className="ml-2 p-1.5 rounded-full bg-red-600 text-white disabled:opacity-50 disabled:bg-zinc-800 hover:scale-105 transition-all shadow-lg shadow-red-900/20"
+                  onClick={closeChat}
+                  className="p-2 rounded-full hover:bg-white/10 text-zinc-400 hover:text-white transition-colors active:scale-95"
                 >
-                  <Send size={14} />
+                  <X size={20} className="md:w-[18px] md:h-[18px]" />
                 </button>
               </div>
-              <div className="text-center mt-2">
-                <span className="text-[10px] text-zinc-600 flex items-center justify-center gap-1">
-                  Powered by <span className="font-bold text-zinc-500">DAMNX AI</span>
-                </span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* Launcher */}
-      <ElectricBorder color="#37cbf4ff" borderRadius={100} className="rounded-full">
-        <motion.button
-          onClick={toggleChat}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="relative group bg-black rounded-full p-0 shadow-2xl shadow-red-900/40"
-        >
-          <div className="absolute inset-0 bg-red-600 rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity animate-pulse"></div>
-          <div className="relative w-16 h-16 bg-gradient-to-b from-zinc-800 to-black border border-white/10 rounded-full flex items-center justify-center overflow-hidden">
-            {isChatOpen ? (
-              <X className="text-white" />
-            ) : (
-              <>
-                <MessageSquare className="text-red-500 w-6 h-6" />
-                <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-black"></span>
-              </>
-            )}
-          </div>
-        </motion.button>
-      </ElectricBorder>
-    </div>
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-4 md:space-y-6 custom-scrollbar scroll-smooth">
+                {messages.map((message) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    key={message.id}
+                    className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[85%] md:max-w-[85%] p-3 md:p-4 rounded-2xl text-sm leading-6 shadow-sm ${
+                        message.isUser
+                          ? 'bg-gradient-to-br from-red-700 to-red-900 text-white rounded-br-sm'
+                          : 'bg-white/5 border border-white/5 text-zinc-200 rounded-bl-sm backdrop-blur-md'
+                      }`}
+                    >
+                      {formatMessage(message.text)}
+
+                      {/* Action Buttons for Bot */}
+                      {!message.isUser && message.hasCalendlyButton && (
+                        <div className="mt-3 md:mt-4 flex flex-col gap-2">
+                          <button
+                            onClick={openCalendly}
+                            className="flex items-center justify-center gap-2 w-full py-2.5 md:py-2.5 bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/10 hover:border-red-500/50 rounded-xl text-xs font-semibold text-white transition-all group active:scale-95"
+                          >
+                            <Calendar size={14} className="text-red-500 group-hover:text-red-400" />
+                            <span>Schedule Meeting</span>
+                          </button>
+                          <button
+                            onClick={makePhoneCall}
+                            className="flex items-center justify-center gap-2 w-full py-2.5 md:py-2.5 bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/10 hover:border-red-500/50 rounded-xl text-xs font-semibold text-white transition-all group active:scale-95"
+                          >
+                            <Phone size={14} className="text-red-500 group-hover:text-red-400" />
+                            <span>Emergency Call</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Input */}
+              <div className="p-3 md:p-4 border-t border-white/5 bg-black/40 safe-area-bottom">
+                <div className="relative flex items-center bg-zinc-900/50 border border-white/10 rounded-full px-3 md:px-4 py-2 focus-within:border-red-500/50 transition-colors">
+                  <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Type a message..."
+                    className="flex-1 bg-transparent text-sm text-white placeholder-zinc-500 focus:outline-none py-1"
+                  />
+                  <button
+                    onClick={handleSendMessage}
+                    disabled={!inputValue.trim()}
+                    className="ml-2 p-1.5 rounded-full bg-red-600 text-white disabled:opacity-50 disabled:bg-zinc-800 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-red-900/20"
+                  >
+                    <Send size={14} />
+                  </button>
+                </div>
+                <div className="text-center mt-2">
+                  <span className="text-[10px] text-zinc-600 flex items-center justify-center gap-1">
+                    Powered by <span className="font-bold text-zinc-500">DAMNX AI</span>
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Launcher */}
+        <ElectricBorder color="#37cbf4ff" borderRadius={100} className="rounded-full">
+          <motion.button
+            onClick={toggleChat}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative group bg-black rounded-full p-0 shadow-2xl shadow-red-900/40"
+          >
+            <div className="absolute inset-0 bg-red-600 rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity animate-pulse"></div>
+            <div className="relative w-14 h-14 md:w-16 md:h-16 bg-gradient-to-b from-zinc-800 to-black border border-white/10 rounded-full flex items-center justify-center overflow-hidden">
+              {isChatOpen ? (
+                <X className="text-white w-5 h-5 md:w-6 md:h-6" />
+              ) : (
+                <>
+                  <MessageSquare className="text-red-500 w-5 h-5 md:w-6 md:h-6" />
+                  <span className="absolute top-2.5 right-2.5 md:top-3 md:right-3 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-black"></span>
+                </>
+              )}
+            </div>
+          </motion.button>
+        </ElectricBorder>
+      </div>
+    </>
   );
 };
 
