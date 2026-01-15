@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import DotGrid from './DotGrid';
 
 const ALL_TECHS = [
   { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg', category: 'Frontend', invertLogo: false },
@@ -149,6 +150,17 @@ export default function PremiumTechStack() {
               }}
             />
           </div>
+        </div>
+
+        {/* DotGrid Background */}
+        <div className="absolute inset-0 z-0">
+          <DotGrid
+            baseColor="#222"
+            activeColor="#dc2626"
+            gap={24}
+            dotSize={4}
+            className="w-full h-full"
+          />
         </div>
 
         {/* Animated Gradient Background */}
