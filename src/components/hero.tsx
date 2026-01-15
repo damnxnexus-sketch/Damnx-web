@@ -60,7 +60,7 @@ export default function DamnXHero() {
     }, []);
 
     return (
-        <div className="relative min-h-screen bg-black overflow-hidden">
+        <div className="relative min-h-[100dvh] bg-black overflow-x-hidden">
 
             <div className="absolute bottom-0 left-0 right-0 h-64 overflow-hidden">
                 <svg className="absolute bottom-0 w-full h-full" viewBox="0 0 1440 320" preserveAspectRatio="none">
@@ -127,8 +127,8 @@ export default function DamnXHero() {
                                     <div
                                         key={idx}
                                         className={`absolute inset-0 flex items-center justify-center lg:justify-start transition-all duration-500 ${idx === currentWord && !isChanging
-                                                ? 'opacity-100 scale-100 blur-0'
-                                                : 'opacity-0 scale-90 blur-md pointer-events-none'
+                                            ? 'opacity-100 scale-100 blur-0'
+                                            : 'opacity-0 scale-90 blur-md pointer-events-none'
                                             }`}
                                     >
                                         <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-7xl font-black group">
