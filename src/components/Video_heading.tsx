@@ -1,9 +1,10 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
+import ColorBends from './ColorBends';
 
 export default function VideoHeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+
   const [blur, setBlur] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [topBlur, setTopBlur] = useState(0);
@@ -11,29 +12,20 @@ export default function VideoHeroSection() {
 
   useEffect(() => {
     const section = sectionRef.current;
-    const video = videoRef.current;
-
     const handleScroll = () => {
-      if (!section || !video) return;
+      if (!section || !sectionRef.current) return;
 
       const rect = section.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       const sectionHeight = rect.height;
 
       // Check if section is in viewport
-      const isInViewport = rect.top < windowHeight && rect.bottom > 0;
+      //      const isInViewport = rect.top < windowHeight && rect.bottom > 0;
 
       // Calculate scroll progress through the section
       const scrollTop = -rect.top;
       const progress = Math.max(0, Math.min(1, scrollTop / sectionHeight));
       setScrollProgress(progress);
-
-      // Play/pause video based on viewport
-      if (isInViewport && video.paused) {
-        video.play().catch(e => console.log('Video play failed:', e));
-      } else if (!isInViewport && !video.paused) {
-        video.pause();
-      }
 
       // Calculate blur effect when scrolling down past the section
       if (rect.top < 0) {
@@ -104,19 +96,9 @@ export default function VideoHeroSection() {
             transition: 'transform 0.1s ease-out'
           }}
         >
-          <video
-            ref={videoRef}
-            className="absolute top-0 left-0 w-full h-full object-cover"
-            loop
-            muted
-            playsInline
-            preload="auto"
-          >
-            <source src="/bg4.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-
-          {/* Dark Overlay */}
+          <ColorBends
+            colors={['#000000', '#1a0505', '#450a0a', '#7f1d1d', '#dc2626']}
+          />
           <div className="absolute inset-0 bg-black/40" />
         </div>
 
