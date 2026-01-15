@@ -46,17 +46,17 @@ export default function PremiumTechStack() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorDotRef = useRef<HTMLDivElement>(null);
 
-  const filteredTechs = selectedCategory === 'All' 
-    ? ALL_TECHS 
+  const filteredTechs = selectedCategory === 'All'
+    ? ALL_TECHS
     : ALL_TECHS.filter(tech => tech.category === selectedCategory);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const x = e.clientX;
       const y = e.clientY;
-      
+
       setMousePosition({ x, y });
-      
+
       if (cursorRef.current) {
         cursorRef.current.style.transform = `translate(${x}px, ${y}px)`;
       }
@@ -113,7 +113,7 @@ export default function PremiumTechStack() {
       <div className="tech-stack-container relative w-full min-h-screen bg-black overflow-hidden">
         {/* Custom Cursor - Hidden on mobile */}
         <div className="hidden md:block">
-          <div 
+          <div
             ref={cursorRef}
             className="fixed top-0 left-0 pointer-events-none z-50 mix-blend-difference transition-all duration-300"
             style={{
@@ -121,7 +121,7 @@ export default function PremiumTechStack() {
               height: cursorVariant === 'hover' ? '80px' : '40px',
             }}
           >
-            <div 
+            <div
               className="w-full h-full rounded-full border-2 border-white transition-opacity duration-300"
               style={{
                 transform: 'translate(-50%, -50%)',
@@ -129,22 +129,22 @@ export default function PremiumTechStack() {
               }}
             />
           </div>
-          
-          <div 
+
+          <div
             ref={cursorDotRef}
             className="fixed top-0 left-0 w-2 h-2 pointer-events-none z-50"
             style={{
               transform: 'translate(-50%, -50%)',
             }}
           >
-            <div 
+            <div
               className="w-full h-full rounded-full transition-all duration-300"
               style={{
-                background: cursorVariant === 'hover' 
-                  ? 'radial-gradient(circle, #ef4444 0%, #dc2626 100%)' 
+                background: cursorVariant === 'hover'
+                  ? 'radial-gradient(circle, #ef4444 0%, #dc2626 100%)'
                   : '#ffffff',
-                boxShadow: cursorVariant === 'hover' 
-                  ? '0 0 20px #ef4444, 0 0 40px #ef444480' 
+                boxShadow: cursorVariant === 'hover'
+                  ? '0 0 20px #ef4444, 0 0 40px #ef444480'
                   : '0 0 10px #ffffff80',
               }}
             />
@@ -154,7 +154,7 @@ export default function PremiumTechStack() {
         {/* Animated Gradient Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 opacity-30">
-            <div 
+            <div
               className="float-anim absolute w-[600px] h-[600px] rounded-full blur-3xl"
               style={{
                 background: 'radial-gradient(circle, #dc2626 0%, transparent 70%)',
@@ -162,7 +162,7 @@ export default function PremiumTechStack() {
                 left: '10%',
               }}
             />
-            <div 
+            <div
               className="float-anim-reverse absolute w-[800px] h-[800px] rounded-full blur-3xl"
               style={{
                 background: 'radial-gradient(circle, #991b1b 0%, transparent 70%)',
@@ -174,7 +174,7 @@ export default function PremiumTechStack() {
         </div>
 
         {/* Mouse Follow Spotlight - Hidden on mobile */}
-        <div 
+        <div
           className="hidden md:block absolute w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transition-all duration-300 ease-out"
           style={{
             background: 'radial-gradient(circle, #ef4444 0%, transparent 70%)',
@@ -216,7 +216,7 @@ export default function PremiumTechStack() {
                 onClick={() => setSelectedCategory(category)}
                 className="group relative px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-medium text-xs sm:text-sm transition-all duration-300 overflow-hidden"
                 style={{
-                  background: selectedCategory === category 
+                  background: selectedCategory === category
                     ? 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)'
                     : 'transparent',
                   border: selectedCategory === category
@@ -257,13 +257,13 @@ export default function PremiumTechStack() {
                 <div className="relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-500 group-hover:scale-105">
                   {/* Gradient Border Effect */}
                   <div className="absolute inset-0 rounded-xl sm:rounded-2xl p-[1px] bg-gradient-to-br from-red-500/50 via-transparent to-red-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
+
                   {/* Card Content */}
                   <div className="absolute inset-[1px] rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl flex flex-col items-center justify-center p-2 sm:p-4 md:p-6">
                     {/* Corner Decorations */}
                     <div className="absolute top-1 left-1 sm:top-2 sm:left-2 w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 border-t-2 border-l-2 border-red-500/50 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:w-3 group-hover:h-3 sm:group-hover:w-4 sm:group-hover:h-4 md:group-hover:w-6 md:group-hover:h-6" />
                     <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 border-b-2 border-r-2 border-red-500/50 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:w-3 group-hover:h-3 sm:group-hover:w-4 sm:group-hover:h-4 md:group-hover:w-6 md:group-hover:h-6" />
-                    
+
                     {/* Radial Glow */}
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                       style={{
@@ -273,12 +273,12 @@ export default function PremiumTechStack() {
 
                     {/* Tech Icon */}
                     <div className="relative z-10 mb-1 sm:mb-2 transition-transform duration-500 group-hover:scale-110">
-                      <img 
+                      <img
                         src={tech.icon}
                         alt={tech.name}
                         className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain transition-all duration-300"
                         style={{
-                          filter: `${tech.invertLogo ? 'invert(1) ' : ''}${hoveredTech === tech.name 
+                          filter: `${tech.invertLogo ? 'invert(1) ' : ''}${hoveredTech === tech.name
                             ? 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.6)) brightness(1.2)'
                             : 'brightness(0.9)'}`,
                         }}
