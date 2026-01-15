@@ -228,7 +228,7 @@ export default function DamnXHero() {
               }}
             >
               <img 
-                src="/landing_robot.png" 
+                src="/robo.png" 
                 alt="AI Robot" 
                 className="w-full max-w-[320px] sm:max-w-[380px] lg:max-w-lg xl:max-w-xl h-auto object-contain animate-floatSlow"
                 style={{
