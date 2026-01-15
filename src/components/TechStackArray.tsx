@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import DotGrid from './DotGrid';
 
 const ALL_TECHS = [
@@ -42,43 +42,14 @@ const categories = ['All', ...Array.from(new Set(ALL_TECHS.map(t => t.category))
 export default function PremiumTechStack() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [hoveredTech, setHoveredTech] = useState<string | null>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [cursorVariant, setCursorVariant] = useState<'default' | 'hover'>('default');
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const cursorDotRef = useRef<HTMLDivElement>(null);
 
   const filteredTechs = selectedCategory === 'All'
     ? ALL_TECHS
     : ALL_TECHS.filter(tech => tech.category === selectedCategory);
 
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const x = e.clientX;
-      const y = e.clientY;
-
-      setMousePosition({ x, y });
-
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate(${x}px, ${y}px)`;
-      }
-      if (cursorDotRef.current) {
-        cursorDotRef.current.style.transform = `translate(${x}px, ${y}px)`;
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
   return (
     <>
       <style>{`
-        @media (min-width: 768px) {
-          .tech-stack-container * {
-            cursor: none !important;
-          }
-        }
-
         @keyframes float {
           0%, 100% {
             transform: translate(0, 0) scale(1);
@@ -112,46 +83,6 @@ export default function PremiumTechStack() {
       `}</style>
 
       <div className="tech-stack-container relative w-full min-h-[100dvh] bg-black overflow-x-hidden">
-        {/* Custom Cursor - Hidden on mobile */}
-        <div className="hidden md:block">
-          <div
-            ref={cursorRef}
-            className="fixed top-0 left-0 pointer-events-none z-50 mix-blend-difference transition-all duration-300"
-            style={{
-              width: cursorVariant === 'hover' ? '80px' : '40px',
-              height: cursorVariant === 'hover' ? '80px' : '40px',
-            }}
-          >
-            <div
-              className="w-full h-full rounded-full border-2 border-white transition-opacity duration-300"
-              style={{
-                transform: 'translate(-50%, -50%)',
-                opacity: cursorVariant === 'hover' ? 0.8 : 0.5,
-              }}
-            />
-          </div>
-
-          <div
-            ref={cursorDotRef}
-            className="fixed top-0 left-0 w-2 h-2 pointer-events-none z-50"
-            style={{
-              transform: 'translate(-50%, -50%)',
-            }}
-          >
-            <div
-              className="w-full h-full rounded-full transition-all duration-300"
-              style={{
-                background: cursorVariant === 'hover'
-                  ? 'radial-gradient(circle, #ef4444 0%, #dc2626 100%)'
-                  : '#ffffff',
-                boxShadow: cursorVariant === 'hover'
-                  ? '0 0 20px #ef4444, 0 0 40px #ef444480'
-                  : '0 0 10px #ffffff80',
-              }}
-            />
-          </div>
-        </div>
-
         {/* DotGrid Background */}
         <div className="absolute inset-0 z-0">
           <DotGrid
@@ -184,16 +115,6 @@ export default function PremiumTechStack() {
             />
           </div>
         </div>
-
-        {/* Mouse Follow Spotlight - Hidden on mobile */}
-        <div
-          className="hidden md:block absolute w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transition-all duration-300 ease-out"
-          style={{
-            background: 'radial-gradient(circle, #ef4444 0%, transparent 70%)',
-            left: `${mousePosition.x - 192}px`,
-            top: `${mousePosition.y - 192}px`,
-          }}
-        />
 
         {/* Noise Texture Overlay */}
         <div className="absolute inset-0 opacity-5 pointer-events-none" style={{
@@ -255,11 +176,9 @@ export default function PremiumTechStack() {
                 className="group relative"
                 onMouseEnter={() => {
                   setHoveredTech(tech.name);
-                  setCursorVariant('hover');
                 }}
                 onMouseLeave={() => {
                   setHoveredTech(null);
-                  setCursorVariant('default');
                 }}
                 style={{
                   animation: `fadeInUp 0.6s ease-out ${idx * 0.03}s both`,
