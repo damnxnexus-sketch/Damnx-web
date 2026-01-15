@@ -15,6 +15,8 @@ export default function IntroLoader() {
 
   if (!visible) return null;
 
+  return null; // Temporarily disabled as it might be blocking clicks even with pointer-events: none
+
   const text = "DAMNX SOLUTION ";
   const radius = 40; // small & tight circle
   const size = 80; // container size
@@ -29,6 +31,7 @@ export default function IntroLoader() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        pointerEvents: "none",
       }}
     >
       {/* Local animation */}

@@ -15,7 +15,7 @@ export default function DynamicIslandHeader() {
   const { openChat } = useChat();
 
   return (
-    <div className="fixed top-6 left-1/2 z-50 -translate-x-1/2 font-sans">
+    <div className="fixed top-6 left-1/2 z-50 -translate-x-1/2 font-sans w-auto pointer-events-none">
       <motion.div
         layout
         onMouseEnter={() => setExpanded(true)}
@@ -31,7 +31,7 @@ export default function DynamicIslandHeader() {
           stiffness: 180,
           damping: 20,
         }} // Smooth spring animation
-        className="relative overflow-hidden bg-black/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] flex items-center justify-center p-2"
+        className="relative overflow-hidden bg-black/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] flex items-center justify-center p-2 pointer-events-auto"
       >
         <AnimatePresence mode="popLayout">
           {!expanded ? (

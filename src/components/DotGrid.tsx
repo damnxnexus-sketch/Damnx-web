@@ -79,8 +79,16 @@ const DotGrid: React.FC<DotGridProps> = ({
     lastY: 0
   });
 
+
   const baseRgb = useMemo(() => hexToRgb(baseColor), [baseColor]);
   const activeRgb = useMemo(() => hexToRgb(activeColor), [activeColor]);
+const isMobileRef = useRef(false);
+
+useEffect(() => {
+  isMobileRef.current = window.innerWidth < 768;
+}, []);
+
+
 
   const circlePath = useMemo(() => {
     if (typeof window === 'undefined' || !window.Path2D) return null;
@@ -279,9 +287,9 @@ const DotGrid: React.FC<DotGridProps> = ({
   }, [maxSpeed, speedTrigger, proximity, resistance, returnDuration, shockRadius, shockStrength]);
 
   return (
-    <section className={`p-4 flex items-center justify-center h-full w-full relative ${className}`} style={style}>
+    <section className={`p-4 flex items-center hidden md:flex justify-center h-full w-full relative pointer-events-none ${className}`} style={style}>
       <div ref={wrapperRef} className="w-full h-full relative">
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" />
       </div>
     </section>
   );

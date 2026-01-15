@@ -181,7 +181,7 @@ const CalendlyChatbot = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[100] font-sans">
+    <div className={`fixed bottom-6 right-6 z-[100] font-sans ${isChatOpen ? 'w-[90vw] sm:w-[400px] h-[600px] max-h-[80vh]' : 'w-16 h-16'}`}>
       <AnimatePresence>
         {isChatOpen && (
           <motion.div
@@ -189,7 +189,7 @@ const CalendlyChatbot = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", duration: 0.5 }}
-            className="absolute bottom-20 right-0 w-[90vw] sm:w-[400px] h-[600px] max-h-[80vh] flex flex-col bg-black/80 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden"
+            className="absolute bottom-20 right-0 w-full h-full flex flex-col bg-black/80 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden"
             style={{
               boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05)"
             }}

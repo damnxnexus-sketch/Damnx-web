@@ -103,7 +103,7 @@ const ServiceCard = ({ service, index }: { service: typeof services[0], index: n
       <div className={`absolute top-1/2 ${service.reverse ? 'left-0' : 'right-0'} w-1/2 h-1/2 bg-red-900/10 blur-[120px] rounded-full -translate-y-1/2 pointer-events-none`} />
 
       {/* Text Content */}
-      <div className="w-full lg:w-1/2 relative z-10">
+      <div className="w-full lg:w-1/2 relative z-[15]">
         <motion.div
           initial={{ opacity: 0, x: service.reverse ? 50 : -50 }}
           whileInView={{ opacity: 1, x: 0 }}

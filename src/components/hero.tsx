@@ -341,7 +341,7 @@ export default function DamnXHero() {
                     background: 'linear-gradient(to top, rgba(0,0,0,1), transparent)',
                     backdropFilter: `blur(${Math.max(0, bottomBlur * 0.4)}px)`,
                     WebkitBackdropFilter: `blur(${Math.max(0, bottomBlur * 0.4)}px)`,
-                    zIndex: 50,
+                    zIndex: 5,
                     transition: 'all 0.1s ease-out'
                 }}
             />

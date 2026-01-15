@@ -130,9 +130,7 @@
   }
   
   body {
-    overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-y pan-x;
   }
   
   /* Optimize animations for mobile */
@@ -144,8 +142,11 @@
   }
   
   /* Smooth scrolling with better performance */
-  * {
+  html {
     scroll-behavior: smooth;
+  }
+
+  * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

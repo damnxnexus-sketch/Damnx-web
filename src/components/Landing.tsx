@@ -34,6 +34,7 @@ export default function DamnXHero() {
   }, [words.length]);
 
   useEffect(() => {
+    if (window.innerWidth < 768) return;
     const handleMouseMove = (e: MouseEvent) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 30;
       const y = (e.clientY / window.innerHeight - 0.5) * 30;
@@ -60,7 +61,7 @@ export default function DamnXHero() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-black overflow-hidden">
+    <div className="relative min-h-screen bg-black overflow-hidden touch-auto">
       
       <div className="absolute bottom-0 left-0 right-0 h-64 overflow-hidden">
         <svg className="absolute bottom-0 w-full h-full" viewBox="0 0 1440 320" preserveAspectRatio="none">
@@ -223,10 +224,14 @@ export default function DamnXHero() {
             <div className="absolute bottom-0 lg:top-1/2 lg:-translate-y-1/2 w-[300px] h-[300px] lg:w-[400px] lg:h-[400px] bg-red-600/10 rounded-full blur-[100px] animate-pulse"></div>
 
             <div 
-              className="relative z-10 transform transition-transform duration-200 ease-out"
+              className="relative z-10 transform transition-transform duration-200 ease-out pointer-events-none"
               style={{
-                transform: `perspective(1000px) rotateX(${mousePosition.y * 0.3}deg) rotateY(${mousePosition.x * 0.3}deg)`
-              }}
+  transform:
+    typeof window !== "undefined" && window.innerWidth < 768
+      ? "none"
+      : `perspective(1000px) rotateX(${mousePosition.y * 0.3}deg) rotateY(${mousePosition.x * 0.3}deg)`
+}}
+
             >
               <Image 
                 src="/Landing_Robot.png" 
