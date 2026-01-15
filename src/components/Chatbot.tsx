@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Send, X, Calendar, Phone, Sparkles, MessageSquare } from 'lucide-react';
 import { useChat } from '@/app/context/ChatContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import ElectricBorder from './ElectricBorder';
 
 interface Message {
   id: string;
@@ -228,8 +229,8 @@ const CalendlyChatbot = () => {
                 >
                   <div
                     className={`max-w-[85%] p-4 rounded-2xl text-sm leading-6 shadow-sm ${message.isUser
-                        ? 'bg-gradient-to-br from-red-700 to-red-900 text-white rounded-br-sm'
-                        : 'bg-white/5 border border-white/5 text-zinc-200 rounded-bl-sm backdrop-blur-md'
+                      ? 'bg-gradient-to-br from-red-700 to-red-900 text-white rounded-br-sm'
+                      : 'bg-white/5 border border-white/5 text-zinc-200 rounded-bl-sm backdrop-blur-md'
                       }`}
                   >
                     {formatMessage(message.text)}
@@ -289,24 +290,26 @@ const CalendlyChatbot = () => {
       </AnimatePresence>
 
       {/* Launcher */}
-      <motion.button
-        onClick={toggleChat}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="relative group bg-black rounded-full p-0 shadow-2xl shadow-red-900/40"
-      >
-        <div className="absolute inset-0 bg-red-600 rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity animate-pulse"></div>
-        <div className="relative w-16 h-16 bg-gradient-to-b from-zinc-800 to-black border border-white/10 rounded-full flex items-center justify-center overflow-hidden">
-          {isChatOpen ? (
-            <X className="text-white" />
-          ) : (
-            <>
-              <MessageSquare className="text-red-500 w-6 h-6" />
-              <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-black"></span>
-            </>
-          )}
-        </div>
-      </motion.button>
+      <ElectricBorder color="#37cbf4ff" borderRadius={100} className="rounded-full">
+        <motion.button
+          onClick={toggleChat}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="relative group bg-black rounded-full p-0 shadow-2xl shadow-red-900/40"
+        >
+          <div className="absolute inset-0 bg-red-600 rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity animate-pulse"></div>
+          <div className="relative w-16 h-16 bg-gradient-to-b from-zinc-800 to-black border border-white/10 rounded-full flex items-center justify-center overflow-hidden">
+            {isChatOpen ? (
+              <X className="text-white" />
+            ) : (
+              <>
+                <MessageSquare className="text-red-500 w-6 h-6" />
+                <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-black"></span>
+              </>
+            )}
+          </div>
+        </motion.button>
+      </ElectricBorder>
     </div>
   );
 };
