@@ -278,7 +278,7 @@ const CalendlyChatbot = () => {
                             className="flex items-center justify-center gap-2 w-full py-2.5 md:py-2.5 bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/10 hover:border-red-500/50 rounded-xl text-xs font-semibold text-white transition-all group active:scale-95"
                           >
                             <Phone size={14} className="text-red-500 group-hover:text-red-400" />
-                            <span>Emergency Call</span>
+                            <span>Make A Call</span>
                           </button>
                         </div>
                       )}
