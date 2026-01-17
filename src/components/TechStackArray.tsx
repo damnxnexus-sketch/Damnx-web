@@ -131,7 +131,7 @@ export default function PremiumTechStack() {
 
             <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black mb-4 sm:mb-6 tracking-tight leading-tight">
               <span className="block text-white mb-2">Our Technology</span>
-              <span className="block bg-gradient-to-r from-red-500 via-red-400 to-red-600 bg-clip-text text-transparent">
+              <span className="block text-red-500 ">
                 Arsenal
               </span>
             </h1>
