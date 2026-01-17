@@ -194,8 +194,8 @@ export default function ServicesShowcase() {
 
       <div className="absolute inset-0 pointer-events-none z-0 opacity-40">
         <Waves
-  lineColor="#FF0000"
-  backgroundColor="#000000"
+  lineColor="#ff0000"
+  backgroundColor="#0000"
   waveSpeedX={0.02}
   waveSpeedY={0.01}
   waveAmpX={40}
