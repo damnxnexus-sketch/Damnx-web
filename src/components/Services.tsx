@@ -3,7 +3,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Sparkles } from 'lucide-react';
-import Lightning from './Lightning';
 import Waves from './Waves';
 const services = [
   {
