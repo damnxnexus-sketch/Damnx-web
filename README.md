@@ -89,7 +89,7 @@ Create a `.env.local` file in the root directory:
 ```env
 NEXT_PUBLIC_SITE_URL=https://damnx.co.in
 NEXT_PUBLIC_API_URL=your_api_url_here
-NEXT_PUBLIC_CONTACT_EMAIL=contact@damnx.co.in
+NEXT_PUBLIC_CONTACT_EMAIL=damnx.nexusgmail.com
 ```
 
 4. **Run the development server**
@@ -241,7 +241,7 @@ This project is licensed under the MIT License - License number-> XOU30803089431
 **DAMNX Solutions**
 
 - 🌐 Website: [damnx.co.in](https://damnx.co.in)
-- 📧 Email: contact@damnx.co.in
+- 📧 Email: damnx.nexus@gmail.com
 - 💼 LinkedIn: [DAMNX Solutions](https://linkedin.com/company/damnx-solutions)
 - 🐦 Twitter: [@damnxsolutions](https://twitter.com/damnxsolutions)
 
