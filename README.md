@@ -10,7 +10,7 @@
 
 **Empowering businesses with cutting-edge digital solutions**
 
-[Live Demo](https://damnx.co.in) · [Report Bug](https://github.com/damnx/issues) · [Request Feature](https://github.com/damnx/issues)
+[Live Demo](https://damnx.co.in) · [Report Bug](damnx.nexus@gmail.com )
 
 </div>
 
