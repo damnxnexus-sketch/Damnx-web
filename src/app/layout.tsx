@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ChatProvider } from './context/ChatContext';
+import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({
   variable: "--font-inter",
@@ -255,6 +256,7 @@ export default function RootLayout({
         <ChatProvider>
           {children}
         </ChatProvider>
+        <Analytics />
       </body>
     </html>
   );
