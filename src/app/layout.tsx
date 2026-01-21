@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ChatProvider } from './context/ChatContext';
+import Preloader from "@/components/LoadFix";
+import PreloaderComponent from "@/components/LoadFix";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -252,9 +254,12 @@ export default function RootLayout({
         className={`${inter.variable} antialiased`}
         suppressHydrationWarning
       >
+        <PreloaderComponent >
         <ChatProvider>
           {children}
         </ChatProvider>
+        </PreloaderComponent>
+        
       </body>
     </html>
   );
