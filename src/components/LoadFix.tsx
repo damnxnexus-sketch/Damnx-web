@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 
-const PreloaderComponent = ({ children }) => {
+const PreloaderComponent = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [showQuote, setShowQuote] = useState(false);
