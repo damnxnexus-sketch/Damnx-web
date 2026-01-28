@@ -86,18 +86,26 @@ const StageSection = ({ stage, index }: { stage: Stage; index: number }) => {
 
   const springConfig = { stiffness: 80, damping: 25, restDelta: 0.001 };
   
-  // Disable parallax on mobile for performance
-  const y = shouldReduceEffects 
-    ? useTransform(scrollYProgress, [0, 1], [0, 0])
-    : useSpring(useTransform(scrollYProgress, [0, 0.5, 1], [30, 0, -30]), springConfig);
+  // Create base transforms first
+  const yTransform = useTransform(
+    scrollYProgress, 
+    [0, 0.5, 1], 
+    shouldReduceEffects ? [0, 0, 0] : [30, 0, -30]
+  );
+  const opacityTransform = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
+  const scaleTransform = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.95, 1, 1, 0.95]);
   
-  const opacity = useSpring(useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]), springConfig);
-  const scale = useSpring(useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.95, 1, 1, 0.95]), springConfig);
+  // Apply spring to transforms
+  const y = useSpring(yTransform, springConfig);
+  const opacity = useSpring(opacityTransform, springConfig);
+  const scale = useSpring(scaleTransform, springConfig);
 
   const imageOpacity = useTransform(scrollYProgress, [0, 0.2, 0.5, 0.8, 1], [0, 0.3, 0.4, 0.3, 0]);
-  const imageScale = shouldReduceEffects
-    ? useTransform(scrollYProgress, [0, 1], [1, 1])
-    : useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1, 1.1]);
+  const imageScale = useTransform(
+    scrollYProgress, 
+    [0, 0.5, 1], 
+    shouldReduceEffects ? [1, 1, 1] : [1.1, 1, 1.1]
+  );
 
   return (
     <section ref={ref} className="relative min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 py-20 sm:py-24 md:py-28 overflow-hidden">

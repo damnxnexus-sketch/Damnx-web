@@ -1,97 +1,40 @@
 # Troubleshooting Guide
 
-## Runtime Error: scrollYProgress in DevelopmentJourney.tsx
+## ✅ FIXED: Runtime Error in DevelopmentJourney.tsx
 
-### Error Message
-```
-src/components/DevelopmentJourney.tsx (94:42) @ scrollYProgress
-const opacity = useSpring(useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]), springConfig);
-```
+### What Was Wrong
+The issue was with **conditional hook calls** in Framer Motion. React hooks must be called in the same order every render, but we were conditionally calling `useTransform` and `useSpring` based on `shouldReduceEffects`.
 
-### Root Cause
-This is a **hot-reload issue** in Next.js development mode. The code is actually correct - TypeScript shows no errors, and the `scrollYProgress` is properly defined before use.
-
-### Solutions
-
-#### Solution 1: Hard Refresh (Recommended)
-1. Stop the development server (Ctrl+C)
-2. Clear Next.js cache:
-   ```bash
-   rm -rf .next
-   ```
-3. Restart the development server:
-   ```bash
-   npm run dev
-   ```
-4. Hard refresh your browser (Ctrl+Shift+R or Cmd+Shift+R)
-
-#### Solution 2: Browser Cache Clear
-1. Open DevTools (F12)
-2. Right-click the refresh button
-3. Select "Empty Cache and Hard Reload"
-
-#### Solution 3: Restart Development Server
-```bash
-# Stop the server (Ctrl+C)
-# Then restart
-npm run dev
-```
-
-### Why This Happens
-
-Next.js Fast Refresh sometimes gets confused during hot-reload when:
-- Multiple hooks are used in sequence
-- Conditional logic is added to existing hooks
-- Components are heavily modified
-
-This is a **development-only issue** and will not affect production builds.
-
-### Verification
-
-To verify the code is correct:
-
-1. **TypeScript Check:**
-   ```bash
-   npx tsc --noEmit
-   ```
-   Should show no errors ✅
-
-2. **Build Check:**
-   ```bash
-   npm run build
-   ```
-   Should complete successfully ✅
-
-3. **Production Mode:**
-   ```bash
-   npm run build
-   npm run start
-   ```
-   Should work perfectly ✅
-
-### Code is Correct
-
-The code structure is valid:
+### The Fix
+Changed from:
 ```typescript
-const StageSection = ({ stage, index }) => {
-  const ref = useRef(null);
-  const shouldReduceEffects = useShouldReduceEffects();
-  
-  // scrollYProgress is defined here ✅
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start']
-  });
-
-  // Used here - this is correct ✅
-  const opacity = useSpring(
-    useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]), 
-    springConfig
-  );
-  
-  // All other uses are also correct ✅
-}
+// ❌ WRONG - Conditional hook calls
+const y = shouldReduceEffects 
+  ? useTransform(scrollYProgress, [0, 1], [0, 0])
+  : useSpring(useTransform(scrollYProgress, [0, 0.5, 1], [30, 0, -30]), springConfig);
 ```
+
+To:
+```typescript
+// ✅ CORRECT - Conditional values, not conditional hooks
+const yTransform = useTransform(
+  scrollYProgress, 
+  [0, 0.5, 1], 
+  shouldReduceEffects ? [0, 0, 0] : [30, 0, -30]
+);
+const y = useSpring(yTransform, springConfig);
+```
+
+### Files Fixed
+- ✅ `src/components/DevelopmentJourney.tsx`
+- ✅ `src/components/Services.tsx`
+- ✅ `src/components/WhyChooseUs.tsx`
+
+### What Changed
+Instead of conditionally calling hooks, we now:
+1. Always call the same hooks in the same order
+2. Pass conditional **values** to the hooks
+3. This maintains React's rules of hooks while still achieving the performance optimization
 
 ---
 

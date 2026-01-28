@@ -101,12 +101,16 @@ const ServiceCard = ({ service, index }: { service: typeof services[0], index: n
     offset: ["start end", "end start"]
   });
 
-  // Disable parallax on mobile for performance
-  const y = shouldReduceEffects
-    ? useTransform(scrollYProgress, [0, 1], [0, 0])
-    : useTransform(scrollYProgress, [0, 1], [100, -100]);
+  // Create base transforms first, then apply conditionally
+  const yTransform = useTransform(
+    scrollYProgress, 
+    [0, 1], 
+    shouldReduceEffects ? [0, 0] : [100, -100]
+  );
+  const opacityTransform = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const y = yTransform;
+  const opacity = opacityTransform;
 
   return (
     <motion.div
