@@ -43,18 +43,30 @@ export default function DamnXHero() {
   }, []);
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      if (!heroRef.current) return;
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (!heroRef.current) {
+            ticking = false;
+            return;
+          }
 
-      const rect = heroRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+          const rect = heroRef.current.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
 
-      const bottomDistance = Math.max(0, windowHeight - rect.bottom);
-      const bottomBoundaryBlur = Math.min(4, (150 - bottomDistance) / 150 * 4);
-      setBottomBlur(bottomDistance < 150 ? bottomBoundaryBlur : 0);
+          const bottomDistance = Math.max(0, windowHeight - rect.bottom);
+          const bottomBoundaryBlur = Math.min(4, (150 - bottomDistance) / 150 * 4);
+          setBottomBlur(bottomDistance < 150 ? bottomBoundaryBlur : 0);
+          
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 

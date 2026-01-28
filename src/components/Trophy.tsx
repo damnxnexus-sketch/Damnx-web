@@ -1,7 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Ballpit from './Ballpit';
+import dynamic from 'next/dynamic';
+import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
+
+// Lazy load Ballpit only when needed
+const Ballpit = dynamic(() => import('./Ballpit'), {
+  ssr: false,
+  loading: () => null
+});
 
 interface CountUpProps {
   end: number;
@@ -19,6 +26,7 @@ const TrophyCabinet = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const shouldReduceEffects = useShouldReduceEffects();
 
   useEffect(() => {
     const handleResize = () => {
@@ -190,21 +198,23 @@ const TrophyCabinet = () => {
           }}
         />
 
-        {/* Ballpit Background */}
-        <div className="absolute inset-0 z-0 opacity-40">
-          <Ballpit
-            count={100}
-            gravity={0.5}
-            friction={0.995}
-            wallBounce={0.9}
-            followCursor={true}
-            colors={[0xff0000, 0x000000, 0xffffff]}
-            ambientIntensity={0.5}
-            lightIntensity={400}
-            minSize={isMobile ? 0.3 : 0.5}
-            maxSize={isMobile ? 0.6 : 1.0}
-          />
-        </div>
+        {/* Ballpit Background - Disabled on mobile for performance */}
+        {!shouldReduceEffects && (
+          <div className="absolute inset-0 z-0 opacity-40">
+            <Ballpit
+              count={100}
+              gravity={0.5}
+              friction={0.995}
+              wallBounce={0.9}
+              followCursor={true}
+              colors={[0xff0000, 0x000000, 0xffffff]}
+              ambientIntensity={0.5}
+              lightIntensity={400}
+              minSize={isMobile ? 0.3 : 0.5}
+              maxSize={isMobile ? 0.6 : 1.0}
+            />
+          </div>
+        )}
 
         {/* Animated Particles */}
         {[...Array(20)].map((_, i) => (

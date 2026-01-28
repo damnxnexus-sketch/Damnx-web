@@ -2,7 +2,9 @@
 
 import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
 import { useRef } from 'react';
+import Image from 'next/image';
 import { useChat } from '@/app/context/ChatContext';
+import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
 
 interface Stage {
   id: number;
@@ -75,18 +77,27 @@ const stages: Stage[] = [
 const StageSection = ({ stage, index }: { stage: Stage; index: number }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.3 });
+  const shouldReduceEffects = useShouldReduceEffects();
+  
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start']
   });
 
   const springConfig = { stiffness: 80, damping: 25, restDelta: 0.001 };
-  const y = useSpring(useTransform(scrollYProgress, [0, 0.5, 1], [30, 0, -30]), springConfig);
+  
+  // Disable parallax on mobile for performance
+  const y = shouldReduceEffects 
+    ? useTransform(scrollYProgress, [0, 1], [0, 0])
+    : useSpring(useTransform(scrollYProgress, [0, 0.5, 1], [30, 0, -30]), springConfig);
+  
   const opacity = useSpring(useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]), springConfig);
   const scale = useSpring(useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.95, 1, 1, 0.95]), springConfig);
 
   const imageOpacity = useTransform(scrollYProgress, [0, 0.2, 0.5, 0.8, 1], [0, 0.3, 0.4, 0.3, 0]);
-  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1, 1.1]);
+  const imageScale = shouldReduceEffects
+    ? useTransform(scrollYProgress, [0, 1], [1, 1])
+    : useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1, 1.1]);
 
   return (
     <section ref={ref} className="relative min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 py-20 sm:py-24 md:py-28 overflow-hidden">
@@ -94,11 +105,14 @@ const StageSection = ({ stage, index }: { stage: Stage; index: number }) => {
         style={{ opacity: imageOpacity, scale: imageScale }}
         className="absolute inset-0 z-0 will-change-transform"
       >
-        <img
+        <Image
           src={stage.imageUrl}
           alt={stage.title}
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          sizes="100vw"
+          className="object-cover"
           loading="lazy"
+          quality={75}
         />
         <div className="absolute inset-0 bg-black/60" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/40" />
@@ -223,10 +237,14 @@ const DevelopmentJourney = () => {
 
       <section className="relative min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 py-20 sm:py-24 md:py-28 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&q=80&auto=format&fit=crop"
             alt="Hero Background"
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority
+            quality={75}
           />
           <div className="absolute inset-0 bg-black/70" />
           <div className="absolute inset-0 bg-gradient-to-b from-black via-black/40 to-black" />
@@ -325,11 +343,14 @@ const DevelopmentJourney = () => {
 
       <section className="relative min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 py-20 sm:py-24 md:py-28 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80&auto=format&fit=crop"
             alt="Closing Background"
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            sizes="100vw"
+            className="object-cover"
             loading="lazy"
+            quality={75}
           />
           <div className="absolute inset-0 bg-black/65" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black" />

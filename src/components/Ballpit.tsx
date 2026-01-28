@@ -852,9 +852,15 @@ const Ballpit: React.FC<BallpitProps> = ({ className = '', followCursor = true, 
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // Detect mobile and reduce sphere count
+    const isMobile = window.innerWidth < 768;
+    const defaultCount = props.count || 200;
+    const optimizedCount = isMobile ? Math.min(30, defaultCount) : defaultCount;
+
     spheresInstanceRef.current = createBallpit(canvas, {
       followCursor,
-      ...props
+      ...props,
+      count: optimizedCount
     });
 
     return () => {

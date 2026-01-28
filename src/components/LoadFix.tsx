@@ -18,8 +18,8 @@ export default function Preloader({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Handle the actual window load event
     const handleLoad = () => {
-      // Small delay to ensure smooth transition even on fast internet
-      setTimeout(() => setIsLoading(false), 2000); 
+      // Remove artificial delay - show content immediately when ready
+      setIsLoading(false);
     };
 
     if (document.readyState === "complete") {

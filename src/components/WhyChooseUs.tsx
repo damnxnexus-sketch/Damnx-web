@@ -4,9 +4,12 @@ import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useRef } from 'react';
 import { MessageCircle, Sparkles } from 'lucide-react';
 import { useChat } from '@/app/context/ChatContext';
+import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
 
 export default function WhyChooseUs() {
   const containerRef = useRef(null);
+  const shouldReduceEffects = useShouldReduceEffects();
+  
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start end', 'end start']
@@ -18,9 +21,19 @@ export default function WhyChooseUs() {
     restDelta: 0.001
   });
 
-  const y1 = useTransform(smoothProgress, [0, 1], [100, -100]);
-  const y2 = useTransform(smoothProgress, [0, 1], [150, -150]);
-  const y3 = useTransform(smoothProgress, [0, 1], [80, -80]);
+  // Disable parallax on mobile for performance
+  const y1 = shouldReduceEffects
+    ? useTransform(smoothProgress, [0, 1], [0, 0])
+    : useTransform(smoothProgress, [0, 1], [100, -100]);
+  
+  const y2 = shouldReduceEffects
+    ? useTransform(smoothProgress, [0, 1], [0, 0])
+    : useTransform(smoothProgress, [0, 1], [150, -150]);
+  
+  const y3 = shouldReduceEffects
+    ? useTransform(smoothProgress, [0, 1], [0, 0])
+    : useTransform(smoothProgress, [0, 1], [80, -80]);
+  
   const opacity = useTransform(smoothProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   const scale = useTransform(smoothProgress, [0, 0.3, 0.7, 1], [0.8, 1, 1, 0.95]);
 

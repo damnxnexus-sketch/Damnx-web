@@ -1,7 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import DotGrid from './DotGrid';
+import dynamic from 'next/dynamic';
+import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
+
+// Lazy load DotGrid only when needed
+const DotGrid = dynamic(() => import('./DotGrid'), {
+  ssr: false,
+  loading: () => null
+});
 
 const ALL_TECHS = [
   { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg', category: 'Frontend', invertLogo: false },
@@ -42,6 +49,7 @@ const categories = ['All', ...Array.from(new Set(ALL_TECHS.map(t => t.category))
 export default function PremiumTechStack() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [hoveredTech, setHoveredTech] = useState<string | null>(null);
+  const shouldReduceEffects = useShouldReduceEffects();
 
   const filteredTechs = selectedCategory === 'All'
     ? ALL_TECHS
@@ -83,16 +91,18 @@ export default function PremiumTechStack() {
       `}</style>
 
       <div className="tech-stack-container relative w-full min-h-[100dvh] bg-black overflow-x-hidden">
-        {/* DotGrid Background */}
-        <div className="absolute inset-0 z-0">
-          <DotGrid
-            baseColor="#222"
-            activeColor="#dc2626"
-            gap={24}
-            dotSize={4}
-            className="w-full h-full"
-          />
-        </div>
+        {/* DotGrid Background - Disabled on mobile for performance */}
+        {!shouldReduceEffects && (
+          <div className="absolute inset-0 z-0">
+            <DotGrid
+              baseColor="#222"
+              activeColor="#dc2626"
+              gap={24}
+              dotSize={4}
+              className="w-full h-full"
+            />
+          </div>
+        )}
 
         {/* Animated Gradient Background */}
         <div className="absolute inset-0 pointer-events-none">

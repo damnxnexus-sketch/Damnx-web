@@ -1,7 +1,14 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import ColorBends from './ColorBends';
+import dynamic from 'next/dynamic';
+import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
+
+// Lazy load ColorBends only when needed
+const ColorBends = dynamic(() => import('./ColorBends'), {
+  ssr: false,
+  loading: () => null
+});
 
 export default function VideoHeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -10,47 +17,57 @@ export default function VideoHeroSection() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [topBlur, setTopBlur] = useState(0);
   const [bottomBlur, setBottomBlur] = useState(0);
+  const shouldReduceEffects = useShouldReduceEffects();
 
   useEffect(() => {
     const section = sectionRef.current;
+    let ticking = false;
+
     const handleScroll = () => {
-      if (!section || !sectionRef.current) return;
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (!section || !sectionRef.current) {
+            ticking = false;
+            return;
+          }
 
-      const rect = section.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      const sectionHeight = rect.height;
+          const rect = section.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          const sectionHeight = rect.height;
 
-      // Check if section is in viewport
-      //      const isInViewport = rect.top < windowHeight && rect.bottom > 0;
+          // Calculate scroll progress through the section
+          const scrollTop = -rect.top;
+          const progress = Math.max(0, Math.min(1, scrollTop / sectionHeight));
+          setScrollProgress(progress);
 
-      // Calculate scroll progress through the section
-      const scrollTop = -rect.top;
-      const progress = Math.max(0, Math.min(1, scrollTop / sectionHeight));
-      setScrollProgress(progress);
+          // Calculate blur effect when scrolling down past the section
+          if (rect.top < 0) {
+            const blurAmount = Math.min(5, Math.abs(rect.top) / 60);
+            setBlur(blurAmount);
+          } else {
+            setBlur(0);
+          }
 
-      // Calculate blur effect when scrolling down past the section
-      if (rect.top < 0) {
-        const blurAmount = Math.min(5, Math.abs(rect.top) / 60);
-        setBlur(blurAmount);
-      } else {
-        setBlur(0);
+          // Calculate boundary blur effects - Only minimal blur at transition
+          // Top boundary blur - when section enters viewport
+          const topDistance = Math.max(0, rect.top);
+          const topBoundaryBlur = Math.min(4, (150 - topDistance) / 150 * 4);
+          setTopBlur(topDistance < 150 ? topBoundaryBlur : 0);
+
+          // Bottom boundary blur - when section exits viewport
+          const bottomDistance = Math.max(0, windowHeight - rect.bottom);
+          const bottomBoundaryBlur = Math.min(4, (150 - bottomDistance) / 150 * 4);
+          setBottomBlur(bottomDistance < 150 ? bottomBoundaryBlur : 0);
+          
+          ticking = false;
+        });
+        ticking = true;
       }
-
-      // Calculate boundary blur effects - Only minimal blur at transition
-      // Top boundary blur - when section enters viewport
-      const topDistance = Math.max(0, rect.top);
-      const topBoundaryBlur = Math.min(4, (150 - topDistance) / 150 * 4);
-      setTopBlur(topDistance < 150 ? topBoundaryBlur : 0);
-
-      // Bottom boundary blur - when section exits viewport
-      const bottomDistance = Math.max(0, windowHeight - rect.bottom);
-      const bottomBoundaryBlur = Math.min(4, (150 - bottomDistance) / 150 * 4);
-      setBottomBlur(bottomDistance < 150 ? bottomBoundaryBlur : 0);
     };
 
     handleScroll();
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -65,11 +82,13 @@ export default function VideoHeroSection() {
         ref={sectionRef}
         className="relative min-h-[100dvh] w-full overflow-x-hidden flex flex-col items-center justify-center"
       >
-        {/* ColorBends Background */}
+        {/* ColorBends Background - Disabled on mobile for performance */}
         <div className="absolute inset-0 w-full h-full z-0">
-          <ColorBends
-            colors={['#000000', '#1a0505', '#450a0a', '#7f1d1d', '#dc2626']}
-          />
+          {!shouldReduceEffects && (
+            <ColorBends
+              colors={['#000000', '#1a0505', '#450a0a', '#7f1d1d', '#dc2626']}
+            />
+          )}
           {/* Enhanced Overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60 pointer-events-none" />
           <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px] pointer-events-none" />

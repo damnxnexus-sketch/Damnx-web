@@ -3,7 +3,16 @@
 import React, { useState, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Sparkles } from 'lucide-react';
-import Waves from './Waves';
+import Image from 'next/image';
+import dynamic from 'next/dynamic';
+import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
+
+// Lazy load Waves only when needed
+const Waves = dynamic(() => import('./Waves'), {
+  ssr: false,
+  loading: () => null
+});
+
 const services = [
   {
     id: 1,
@@ -85,12 +94,18 @@ const benefitsData: Record<number, Array<{ title: string; desc: string }>> = {
 const ServiceCard = ({ service, index }: { service: typeof services[0], index: number }) => {
   const [isHovered, setIsHovered] = useState(false);
   const ref = useRef(null);
+  const shouldReduceEffects = useShouldReduceEffects();
+  
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  // Disable parallax on mobile for performance
+  const y = shouldReduceEffects
+    ? useTransform(scrollYProgress, [0, 1], [0, 0])
+    : useTransform(scrollYProgress, [0, 1], [100, -100]);
+  
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   return (
@@ -170,13 +185,21 @@ const ServiceCard = ({ service, index }: { service: typeof services[0], index: n
           className="w-full h-full rounded-2xl overflow-hidden relative border border-white/10 shadow-2xl group"
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10" />
-          <motion.img
-            src={service.image}
-            alt={service.title}
-            className="w-full h-[120%] object-cover"
+          <motion.div
+            className="relative w-full h-full"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.7 }}
-          />
+          >
+            <Image
+              src={service.image}
+              alt={service.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+              loading="lazy"
+              quality={75}
+            />
+          </motion.div>
           {/* Overlay Grid */}
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 z-20 pointer-events-none" />
         </motion.div>
@@ -186,26 +209,31 @@ const ServiceCard = ({ service, index }: { service: typeof services[0], index: n
 };
 
 export default function ServicesShowcase() {
+  const shouldReduceEffects = useShouldReduceEffects();
+
   return (
     <div className="bg-black min-h-[100dvh] relative overflow-x-hidden font-sans selection:bg-red-500/30 selection:text-white">
       {/* Global Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900/20 via-black to-black pointer-events-none" />
 
-      <div className="absolute inset-0 pointer-events-none z-0 opacity-40">
-        <Waves
-  lineColor="#ff0000"
-  backgroundColor="#0000"
-  waveSpeedX={0.02}
-  waveSpeedY={0.01}
-  waveAmpX={40}
-  waveAmpY={20}
-  friction={0.9}
-  tension={0.01}
-  maxCursorMove={120}
-  xGap={12}
-  yGap={36}
-/>
-      </div>
+      {/* Waves Background - Disabled on mobile for performance */}
+      {!shouldReduceEffects && (
+        <div className="absolute inset-0 pointer-events-none z-0 opacity-40">
+          <Waves
+            lineColor="#ff0000"
+            backgroundColor="#0000"
+            waveSpeedX={0.02}
+            waveSpeedY={0.01}
+            waveAmpX={40}
+            waveAmpY={20}
+            friction={0.9}
+            tension={0.01}
+            maxCursorMove={120}
+            xGap={12}
+            yGap={36}
+          />
+        </div>
+      )}
 
       <div className="relative pt-32 pb-20 px-6 text-center z-10">
         <motion.div
