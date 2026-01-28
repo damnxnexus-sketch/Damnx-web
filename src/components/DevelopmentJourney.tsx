@@ -107,6 +107,14 @@ const StageSection = ({ stage, index }: { stage: Stage; index: number }) => {
     shouldReduceEffects ? [1, 1, 1] : [1.1, 1, 1.1]
   );
 
+  // Background number transforms
+  const bgNumberY = useTransform(scrollYProgress, [0, 1], [0, 50]);
+  const bgNumberOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.04, 0.08, 0.04]);
+
+  // Next indicator transforms
+  const nextOpacity = useTransform(scrollYProgress, [0.7, 1], [0, 1]);
+  const nextScale = useTransform(scrollYProgress, [0.7, 1], [0.8, 1]);
+
   return (
     <section ref={ref} className="relative min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 py-20 sm:py-24 md:py-28 overflow-hidden">
       <motion.div
