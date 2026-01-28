@@ -1,8 +1,35 @@
 # Fix Applied: React Hooks Error
 
-## ✅ Issue Resolved
+## ✅ Issue Resolved (Updated)
 
-The runtime error in `DevelopmentJourney.tsx` has been **fixed**.
+The runtime error in `DevelopmentJourney.tsx` has been **completely fixed**.
+
+### Latest Fix (Line 94 Error)
+
+Found and fixed **additional inline hook calls** that were being called conditionally inside JSX:
+
+```typescript
+// ❌ WRONG - Hooks called inside style prop (conditionally rendered JSX)
+<motion.div
+  style={{
+    y: useTransform(scrollYProgress, [0, 1], [0, 50]),  // ❌ Hook in JSX
+    opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0.04, 0.08, 0.04])  // ❌ Hook in JSX
+  }}
+>
+```
+
+**Solution:** Moved all hook calls to the top level of the component:
+
+```typescript
+// ✅ CORRECT - All hooks called at top level
+const bgNumberY = useTransform(scrollYProgress, [0, 1], [0, 50]);
+const bgNumberOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.04, 0.08, 0.04]);
+const nextOpacity = useTransform(scrollYProgress, [0.7, 1], [0, 1]);
+const nextScale = useTransform(scrollYProgress, [0.7, 1], [0.8, 1]);
+
+// Then use them in JSX
+<motion.div style={{ y: bgNumberY, opacity: bgNumberOpacity }}>
+```
 
 ## What Was the Problem?
 
@@ -33,9 +60,11 @@ const y = useSpring(yTransform, springConfig);
 
 ## Files Updated
 
-1. ✅ **src/components/DevelopmentJourney.tsx**
+1. ✅ **src/components/DevelopmentJourney.tsx** (Updated Again)
    - Fixed `y`, `opacity`, `scale`, and `imageScale` transforms
-   - Now uses conditional values instead of conditional hooks
+   - Fixed inline `useTransform` calls in background number animation
+   - Fixed inline `useTransform` calls in "Next" indicator animation
+   - **All hooks now called at top level** - no conditional hook calls anywhere
 
 2. ✅ **src/components/Services.tsx**
    - Fixed `y` and `opacity` transforms
@@ -47,23 +76,43 @@ const y = useSpring(yTransform, springConfig);
 
 ## How It Works Now
 
-### Before (Broken):
+### Problem 1: Conditional Hook Calls (Initial Fix)
 ```typescript
-// Different number of hooks called based on condition
+// ❌ Different number of hooks called based on condition
 const y = shouldReduceEffects 
   ? useTransform(...)      // 1 hook
   : useSpring(useTransform(...))  // 2 hooks
 ```
 
-### After (Fixed):
+**Fixed:**
 ```typescript
-// Same hooks always called
+// ✅ Same hooks always called
 const yTransform = useTransform(
   scrollYProgress,
   [0, 0.5, 1],
   shouldReduceEffects ? [0, 0, 0] : [30, 0, -30]  // Only values change
 );
 const y = useSpring(yTransform, springConfig);  // Always called
+```
+
+### Problem 2: Hooks Inside JSX (Latest Fix)
+```typescript
+// ❌ Hooks called inside conditionally rendered JSX
+{index < stages.length - 1 && (
+  <motion.div style={{
+    opacity: useTransform(scrollYProgress, [0.7, 1], [0, 1])  // ❌ Conditional
+  }} />
+)}
+```
+
+**Fixed:**
+```typescript
+// ✅ Hooks called at top level, used in JSX
+const nextOpacity = useTransform(scrollYProgress, [0.7, 1], [0, 1]);
+
+{index < stages.length - 1 && (
+  <motion.div style={{ opacity: nextOpacity }} />  // ✅ Just using the value
+)}
 ```
 
 ## Performance Impact

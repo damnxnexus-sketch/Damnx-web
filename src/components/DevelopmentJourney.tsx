@@ -202,8 +202,8 @@ const StageSection = ({ stage, index }: { stage: Stage; index: number }) => {
 
       <motion.div
         style={{
-          y: useTransform(scrollYProgress, [0, 1], [0, 50]),
-          opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0.04, 0.08, 0.04])
+          y: bgNumberY,
+          opacity: bgNumberOpacity
         }}
         className="absolute inset-0 flex items-center justify-center pointer-events-none z-[5] will-change-transform"
       >
@@ -215,8 +215,8 @@ const StageSection = ({ stage, index }: { stage: Stage; index: number }) => {
       {index < stages.length - 1 && (
         <motion.div
           style={{
-            opacity: useTransform(scrollYProgress, [0.7, 1], [0, 1]),
-            scale: useTransform(scrollYProgress, [0.7, 1], [0.8, 1])
+            opacity: nextOpacity,
+            scale: nextScale
           }}
           className="absolute bottom-8 sm:bottom-10 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20 will-change-transform"
         >
