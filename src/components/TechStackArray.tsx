@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
+import MobileFriendlyBackground from './MobileFriendlyBackground';
 
 // Lazy load DotGrid only when needed
 const DotGrid = dynamic(() => import('./DotGrid'), {
@@ -92,7 +93,7 @@ export default function PremiumTechStack() {
 
       <div className="tech-stack-container relative w-full min-h-[100dvh] bg-black overflow-x-hidden">
         {/* DotGrid Background - Disabled on mobile for performance */}
-        {!shouldReduceEffects && (
+        {!shouldReduceEffects ? (
           <div className="absolute inset-0 z-0">
             <DotGrid
               baseColor="#222"
@@ -102,6 +103,8 @@ export default function PremiumTechStack() {
               className="w-full h-full"
             />
           </div>
+        ) : (
+          <MobileFriendlyBackground variant="mesh" className="z-0" />
         )}
 
         {/* Animated Gradient Background */}

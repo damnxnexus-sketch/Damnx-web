@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
+import MobileFriendlyBackground from './MobileFriendlyBackground';
 
 // Lazy load ColorBends only when needed
 const ColorBends = dynamic(() => import('./ColorBends'), {
@@ -84,10 +85,12 @@ export default function VideoHeroSection() {
       >
         {/* ColorBends Background - Disabled on mobile for performance */}
         <div className="absolute inset-0 w-full h-full z-0">
-          {!shouldReduceEffects && (
+          {!shouldReduceEffects ? (
             <ColorBends
               colors={['#000000', '#1a0505', '#450a0a', '#7f1d1d', '#dc2626']}
             />
+          ) : (
+            <MobileFriendlyBackground variant="aurora" />
           )}
           {/* Enhanced Overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60 pointer-events-none" />

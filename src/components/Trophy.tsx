@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
+import MobileFriendlyBackground from './MobileFriendlyBackground';
 
 // Lazy load Ballpit only when needed
 const Ballpit = dynamic(() => import('./Ballpit'), {
@@ -199,7 +200,7 @@ const TrophyCabinet = () => {
         />
 
         {/* Ballpit Background - Disabled on mobile for performance */}
-        {!shouldReduceEffects && (
+        {!shouldReduceEffects ? (
           <div className="absolute inset-0 z-0 opacity-40">
             <Ballpit
               count={100}
@@ -214,6 +215,8 @@ const TrophyCabinet = () => {
               maxSize={isMobile ? 0.6 : 1.0}
             />
           </div>
+        ) : (
+          <MobileFriendlyBackground variant="gradient" className="z-0" />
         )}
 
         {/* Animated Particles */}

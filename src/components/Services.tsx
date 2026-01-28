@@ -6,6 +6,7 @@ import { ArrowRight, Check, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
+import MobileFriendlyBackground from './MobileFriendlyBackground';
 
 // Lazy load Waves only when needed
 const Waves = dynamic(() => import('./Waves'), {
@@ -221,7 +222,7 @@ export default function ServicesShowcase() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900/20 via-black to-black pointer-events-none" />
 
       {/* Waves Background - Disabled on mobile for performance */}
-      {!shouldReduceEffects && (
+      {!shouldReduceEffects ? (
         <div className="absolute inset-0 pointer-events-none z-0 opacity-40">
           <Waves
             lineColor="#ff0000"
@@ -237,6 +238,8 @@ export default function ServicesShowcase() {
             yGap={36}
           />
         </div>
+      ) : (
+        <MobileFriendlyBackground variant="waves" className="z-0" />
       )}
 
       <div className="relative pt-32 pb-20 px-6 text-center z-10">
