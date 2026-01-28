@@ -15,11 +15,11 @@ export default function MobileFriendlyBackground({
   if (variant === 'gradient') {
     return (
       <div className={`absolute inset-0 overflow-hidden ${className}`}>
-        {/* Animated gradient orbs */}
+        {/* Animated gradient orbs - ENHANCED VISIBILITY */}
         <motion.div
-          className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full opacity-30 blur-[120px]"
+          className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full opacity-60 blur-[120px]"
           style={{
-            background: 'radial-gradient(circle, rgba(220,38,38,0.4) 0%, rgba(220,38,38,0) 70%)'
+            background: 'radial-gradient(circle, rgba(220,38,38,0.8) 0%, rgba(220,38,38,0) 70%)'
           }}
           animate={{
             x: [0, 100, 0],
@@ -33,9 +33,9 @@ export default function MobileFriendlyBackground({
           }}
         />
         <motion.div
-          className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full opacity-25 blur-[100px]"
+          className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full opacity-50 blur-[100px]"
           style={{
-            background: 'radial-gradient(circle, rgba(239,68,68,0.4) 0%, rgba(239,68,68,0) 70%)'
+            background: 'radial-gradient(circle, rgba(239,68,68,0.8) 0%, rgba(239,68,68,0) 70%)'
           }}
           animate={{
             x: [0, -80, 0],
@@ -50,9 +50,9 @@ export default function MobileFriendlyBackground({
           }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full opacity-20 blur-[90px]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full opacity-40 blur-[90px]"
           style={{
-            background: 'radial-gradient(circle, rgba(185,28,28,0.4) 0%, rgba(185,28,28,0) 70%)'
+            background: 'radial-gradient(circle, rgba(185,28,28,0.8) 0%, rgba(185,28,28,0) 70%)'
           }}
           animate={{
             scale: [1, 1.4, 1],
@@ -64,6 +64,29 @@ export default function MobileFriendlyBackground({
             ease: "linear"
           }}
         />
+        {/* Additional visual interest - moving particles */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-red-500 rounded-full opacity-60"
+            style={{
+              left: `${20 + i * 10}%`,
+              top: `${30 + (i % 3) * 20}%`,
+            }}
+            animate={{
+              y: [-20, 20, -20],
+              x: [-10, 10, -10],
+              opacity: [0.3, 0.8, 0.3],
+              scale: [1, 1.5, 1],
+            }}
+            transition={{
+              duration: 8 + i * 0.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.3,
+            }}
+          />
+        ))}
       </div>
     );
   }
