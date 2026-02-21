@@ -1,17 +1,9 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Sparkles } from 'lucide-react';
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
-import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
-
-// Lazy load Waves only when needed
-const Waves = dynamic(() => import('./Waves'), {
-  ssr: false,
-  loading: () => null
-});
 
 const services = [
   {
@@ -93,46 +85,29 @@ const benefitsData: Record<number, Array<{ title: string; desc: string }>> = {
 
 const ServiceCard = ({ service, index }: { service: typeof services[0], index: number }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const ref = useRef(null);
-  const shouldReduceEffects = useShouldReduceEffects();
-  
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  });
-
-  // Create base transforms first, then apply conditionally
-  const yTransform = useTransform(
-    scrollYProgress, 
-    [0, 1], 
-    shouldReduceEffects ? [0, 0] : [100, -100]
-  );
-  const opacityTransform = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  
-  const y = yTransform;
-  const opacity = opacityTransform;
 
   return (
-    <motion.div
-      ref={ref}
-      style={{ opacity }}
-      className={`min-h-screen flex flex-col ${service.reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center justify-center gap-12 lg:gap-24 px-6 lg:px-20 py-20 relative`}
-    >
-      {/* Background Decor */}
-      <div className={`absolute top-1/2 ${service.reverse ? 'left-0' : 'right-0'} w-1/2 h-1/2 bg-red-900/10 blur-[120px] rounded-full -translate-y-1/2 pointer-events-none`} />
+    <div className={`py-16 lg:py-32 flex flex-col ${service.reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center justify-center gap-12 lg:gap-24 px-6 lg:px-20 relative z-10 overflow-hidden`}>
+
+      {/* Optimized Background Glow (Replaces heavy blur) */}
+      <div className={`absolute top-1/2 ${service.reverse ? 'left-[-10%]' : 'right-[-10%]'} w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(220,38,38,0.08)_0%,rgba(0,0,0,0)_70%)] rounded-full -translate-y-1/2 pointer-events-none z-0`} />
 
       {/* Text Content */}
-      <div className="w-full lg:w-1/2 relative z-[15]">
+      <div className="w-full lg:w-1/2 relative z-10">
         <motion.div
-          initial={{ opacity: 0, x: service.reverse ? 50 : -50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
         >
-          <span className="inline-block text-red-500 font-bold tracking-[0.2em] mb-4 text-sm uppercase">
-            0{service.id} — Service
-          </span>
-          <h2 className="text-4xl lg:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
+          <div className="flex items-center gap-4 mb-4">
+            <span className="h-px w-8 bg-red-500 rounded-full"></span>
+            <span className="text-red-500 font-bold tracking-[0.2em] text-xs uppercase">
+              0{service.id} // Service
+            </span>
+          </div>
+
+          <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-[1.1] tracking-tight">
             {service.title}
           </h2>
           <p className="text-lg text-zinc-400 leading-relaxed mb-8 max-w-xl">
@@ -141,128 +116,132 @@ const ServiceCard = ({ service, index }: { service: typeof services[0], index: n
 
           {/* Interactive Benefits Area */}
           <div
-            className="relative group"
+            className="relative group cursor-pointer"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            onClick={() => setIsHovered(!isHovered)} // Better mobile support
           >
-            <div className={`p-6 rounded-2xl border transition-all duration-500 overflow-hidden ${isHovered ? 'bg-zinc-900/80 border-red-500/30 shadow-2xl shadow-red-900/20' : 'bg-white/5 border-white/10'}`}>
-              <div className="flex items-center justify-between mb-4">
+            <div className={`p-6 rounded-2xl border transition-all duration-500 overflow-hidden ${isHovered ? 'bg-zinc-900/60 border-red-500/30 shadow-[0_0_30px_rgba(220,38,38,0.1)]' : 'bg-white/[0.02] border-white/10'}`}>
+              <div className="flex items-center justify-between">
                 <span className="text-white font-semibold flex items-center gap-2">
                   <Sparkles className={`w-4 h-4 ${isHovered ? 'text-red-500' : 'text-zinc-500'} transition-colors`} />
-                  Key Benefits
+                  Explore Capabilities
                 </span>
-                <ArrowRight className={`w-5 h-5 text-zinc-500 transition-transform duration-300 ${isHovered ? 'rotate-90 text-red-500' : ''}`} />
+                <div className={`p-2 rounded-full transition-colors ${isHovered ? 'bg-red-500/10' : 'bg-transparent'}`}>
+                  <ArrowRight className={`w-5 h-5 transition-all duration-300 ${isHovered ? 'rotate-90 text-red-500' : 'text-zinc-500'}`} />
+                </div>
               </div>
 
-              <motion.div
-                initial={false}
-                animate={{ height: isHovered ? 'auto' : 0, opacity: isHovered ? 1 : 0 }}
-                className="overflow-hidden"
-              >
-                <ul className="space-y-4 pt-2">
-                  {benefitsData[service.id].map((benefit, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-sm">
-                      <span className="mt-1 w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center shrink-0">
-                        <Check className="w-3 h-3 text-red-500" />
-                      </span>
-                      <div>
-                        <strong className="text-white block mb-0.5">{benefit.title}</strong>
-                        <span className="text-zinc-400">{benefit.desc}</span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-
-              {!isHovered && (
-                <p className="text-zinc-500 text-sm">Hover to explore capabilities</p>
-              )}
+              <AnimatePresence>
+                {isHovered && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <ul className="space-y-4 pt-6">
+                      {benefitsData[service.id].map((benefit, idx) => (
+                        <motion.li
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.1 }}
+                          key={idx}
+                          className="flex items-start gap-3 text-sm"
+                        >
+                          <span className="mt-0.5 w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center shrink-0 border border-red-500/20">
+                            <Check className="w-3 h-3 text-red-500" />
+                          </span>
+                          <div>
+                            <strong className="text-zinc-200 block mb-0.5 text-base">{benefit.title}</strong>
+                            <span className="text-zinc-500 leading-relaxed">{benefit.desc}</span>
+                          </div>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </motion.div>
       </div>
 
-      {/* Image Parallax */}
-      <div className="w-full lg:w-1/2 h-[400px] lg:h-[600px] relative">
+      {/* Image Presentation */}
+      <div className="w-full lg:w-1/2 h-[400px] lg:h-[550px] relative z-10 mt-8 lg:mt-0">
         <motion.div
-          style={{ y }}
-          className="w-full h-full rounded-2xl overflow-hidden relative border border-white/10 shadow-2xl group"
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+          className="w-full h-full rounded-3xl overflow-hidden relative border border-white/5 shadow-2xl group bg-zinc-900"
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10" />
-          <motion.div
-            className="relative w-full h-full"
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.7 }}
-          >
+          {/* Inner Image Hover Zoom */}
+          <div className="relative w-full h-full transition-transform duration-700 ease-out group-hover:scale-105">
             <Image
               src={service.image}
               alt={service.title}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
+              className="object-cover opacity-80 mix-blend-lighten"
               loading="lazy"
-              quality={75}
+              quality={85}
             />
-          </motion.div>
-          {/* Overlay Grid */}
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 z-20 pointer-events-none" />
+          </div>
+
+          {/* Gradients to blend image perfectly into the dark theme */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent z-10" />
         </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
 export default function ServicesShowcase() {
-  const shouldReduceEffects = useShouldReduceEffects();
-
   return (
     <div className="bg-black min-h-[100dvh] relative overflow-x-hidden font-sans selection:bg-red-500/30 selection:text-white">
-      {/* Global Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900/20 via-black to-black pointer-events-none" />
 
-      {/* Waves Background - Disabled on mobile for performance */}
-      {!shouldReduceEffects && (
-        <div className="absolute inset-0 pointer-events-none z-0 opacity-40">
-          <Waves
-            lineColor="#ff0000"
-            backgroundColor="#0000"
-            waveSpeedX={0.02}
-            waveSpeedY={0.01}
-            waveAmpX={40}
-            waveAmpY={20}
-            friction={0.9}
-            tension={0.01}
-            maxCursorMove={120}
-            xGap={12}
-            yGap={36}
-          />
-        </div>
-      )}
+      {/* Optimized Global Background Elements */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        {/* Subtle dot matrix grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
 
-      <div className="relative pt-32 pb-20 px-6 text-center z-10">
+        {/* Top ambient glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.15)_0%,rgba(0,0,0,0)_70%)] opacity-50" />
+      </div>
+
+      {/* Header Section */}
+      <div className="relative pt-40 pb-12 px-6 text-center z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className="text-5xl lg:text-8xl font-bold text-white mb-6 tracking-tight">
-            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-800">Services</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-medium mb-8">
+            <Sparkles className="w-4 h-4" />
+            <span>Digital Excellence</span>
+          </div>
+          <h1 className="text-5xl lg:text-7xl font-bold text-white mb-6 tracking-tight">
+            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-800">Services</span>
           </h1>
           <p className="text-zinc-400 max-w-2xl mx-auto text-lg lg:text-xl font-light">
-            Comprehensive solutions tailored to transform your vision into reality. We build digital excellence.
+            Comprehensive solutions tailored to transform your vision into reality. We build modern digital architectures.
           </p>
         </motion.div>
       </div>
 
-      <div className="relative z-10">
+      {/* Services List */}
+      <div className="relative z-10 flex flex-col gap-8 lg:gap-0 pb-32">
         {services.map((service, index) => (
           <ServiceCard key={service.id} service={service} index={index} />
         ))}
       </div>
 
-      {/* Decorative Gradient Line */}
-      <div className="fixed left-6 lg:left-20 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-red-900/20 to-transparent pointer-events-none hidden lg:block" />
-      <div className="fixed right-6 lg:right-20 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-red-900/20 to-transparent pointer-events-none hidden lg:block" />
+      {/* Elegant Side Lines */}
+      <div className="fixed left-6 lg:left-12 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-white/5 to-transparent pointer-events-none hidden md:block" />
+      <div className="fixed right-6 lg:right-12 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-white/5 to-transparent pointer-events-none hidden md:block" />
     </div>
   );
 }
