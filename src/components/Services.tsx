@@ -1,23 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Check, Sparkles } from 'lucide-react';
+import React, { useRef, useState, MouseEvent, useEffect } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { ArrowRight, Check, Sparkles, Code2, Smartphone, Bot } from 'lucide-react';
 import Image from 'next/image';
 
 const services = [
   {
     id: 1,
     title: 'Website Development',
-    description: 'Crafting digital experiences that transcend expectations. Every pixel, every interaction, meticulously engineered for perfection.',
+    description: 'Crafting digital experiences that transcend expectations. Every pixel engineered for perfection.',
     image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=600&fit=crop',
+    icon: Code2,
     reverse: false
   },
   {
     id: 2,
     title: 'Mobile App Development',
-    description: 'Native experiences that feel like magic. iOS and Android applications built with obsessive attention to detail.',
+    description: 'Native experiences that feel like magic. iOS and Android apps built with obsessive attention to detail.',
     image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=600&fit=crop',
+    icon: Smartphone,
     reverse: true
   },
   {
@@ -25,111 +27,159 @@ const services = [
     title: 'Chatbot Development',
     description: 'Intelligent conversations that understand context. Seamless integration that feels naturally human.',
     image: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=800&h=600&fit=crop',
+    icon: Bot,
     reverse: false
-  },
-  {
-    id: 4,
-    title: 'UI / UX Design',
-    description: 'Design systems that speak volumes. Interfaces so intuitive, they disappear into pure experience.',
-    image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=600&fit=crop',
-    reverse: true
-  },
-  {
-    id: 5,
-    title: 'Logo & Branding',
-    description: 'Identity crafted to perfection. Visual languages that resonate across every touchpoint.',
-    image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&h=600&fit=crop',
-    reverse: false
-  },
-  {
-    id: 6,
-    title: 'AI Chatbots',
-    description: 'Next-generation intelligence. Conversational AI that learns, adapts, and delivers unprecedented value.',
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop',
-    reverse: true
   }
 ];
 
 const benefitsData: Record<number, Array<{ title: string; desc: string }>> = {
   1: [
-    { title: 'Increase Conversions', desc: 'Professional websites convert 200% more visitors into customers' },
-    { title: '24/7 Presence', desc: 'Your business never sleeps with a powerful online presence' },
-    { title: 'Build Credibility', desc: '75% of users judge business credibility by website design' }
+    { title: 'Increase Conversions', desc: 'Professional websites convert 200% more visitors' },
+    { title: 'Modern Stack', desc: 'Built with Next.js for blazing fast performance' }
   ],
   2: [
-    { title: 'Customer Engagement', desc: 'Mobile apps see 3x higher engagement than mobile websites' },
-    { title: 'Brand Loyalty', desc: 'Direct channel to your customers\' pockets builds retention' },
-    { title: 'Revenue Growth', desc: 'App users spend 2x more than mobile web users' }
+    { title: 'Customer Engagement', desc: 'Mobile apps see 3x higher engagement' },
+    { title: 'Native Feel', desc: 'Smooth, fluid animations and interactions' }
   ],
   3: [
     { title: 'Instant Support', desc: 'Reduce response time from hours to seconds' },
-    { title: 'Cost Efficiency', desc: 'Handle 80% of queries automatically, saving support costs' },
-    { title: 'Lead Generation', desc: 'Capture and qualify leads 24/7 without human intervention' }
-  ],
-  4: [
-    { title: 'User Satisfaction', desc: 'Good UX increases customer satisfaction by 200%' },
-    { title: 'ROI Boost', desc: 'Every $1 invested in UX returns $100 in ROI' },
-    { title: 'Competitive Edge', desc: 'Stand out with intuitive, beautiful interfaces' }
-  ],
-  5: [
-    { title: 'Brand Recognition', desc: 'Consistent branding increases revenue by 23%' },
-    { title: 'Trust Building', desc: 'Professional identity makes your brand memorable' },
-    { title: 'Market Position', desc: 'Stand out in crowded markets with unique visual identity' }
-  ],
-  6: [
-    { title: 'Smart Automation', desc: 'AI handles complex queries with human-like understanding' },
-    { title: 'Scale Effortlessly', desc: 'Handle thousands of conversations simultaneously' },
-    { title: 'Data Insights', desc: 'Learn customer preferences and behavior patterns automatically' }
+    { title: 'Scale Effortlessly', desc: 'Handle thousands of conversations at once' }
   ]
+};
+
+// 3D Tilt Card Component
+const TiltImage = ({ image, title, Icon }: { image: string, title: string, Icon: any }) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 15, mass: 0.5 });
+  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 15, mass: 0.5 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["12deg", "-12deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-12deg", "12deg"]);
+
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+      className="w-full h-[400px] lg:h-[550px] relative rounded-3xl cursor-pointer perspective-1000 group"
+    >
+      {/* Back Layer (Shadow/Glow) */}
+      <div
+        style={{ transform: "translateZ(-40px)" }}
+        className="absolute inset-4 bg-red-600/30 blur-2xl rounded-3xl transition-opacity duration-500 opacity-50 group-hover:opacity-100"
+      />
+
+      {/* Main Image Layer (Full Color) */}
+      <div
+        style={{ transform: "translateZ(0px)", transformStyle: "preserve-3d" }}
+        className="absolute inset-0 rounded-3xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl"
+      >
+        <Image
+          src={image}
+          alt={title}
+          fill
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
+          sizes="(max-width: 768px) 100vw, 50vw"
+        />
+        {/* Subtle gradient so the floating card stays readable */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+      </div>
+
+      {/* Floating 3D Elements */}
+      <motion.div
+        style={{ transform: "translateZ(80px)" }}
+        className="absolute bottom-8 left-8 right-8 flex items-center justify-between pointer-events-none"
+      >
+        <div className="flex items-center gap-4 bg-black/60 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl">
+          <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center border border-red-500/30">
+            <Icon className="w-6 h-6 text-red-500" />
+          </div>
+          <div>
+            <p className="text-white font-semibold text-sm drop-shadow-md">Premium Tech</p>
+            <p className="text-zinc-300 text-xs">High Performance</p>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
 };
 
 const ServiceCard = ({ service, index }: { service: typeof services[0], index: number }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className={`py-16 lg:py-32 flex flex-col ${service.reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center justify-center gap-12 lg:gap-24 px-6 lg:px-20 relative z-10 overflow-hidden`}>
+    <div className={`py-16 flex flex-col ${service.reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center justify-center gap-12 lg:gap-20 px-6 lg:px-20 relative z-10 perspective-1000`}>
 
-      {/* Optimized Background Glow (Replaces heavy blur) */}
-      <div className={`absolute top-1/2 ${service.reverse ? 'left-[-10%]' : 'right-[-10%]'} w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(220,38,38,0.08)_0%,rgba(0,0,0,0)_70%)] rounded-full -translate-y-1/2 pointer-events-none z-0`} />
+      {/* 3D Image Container */}
+      <div className="w-full lg:w-1/2 relative z-20 hidden lg:block">
+        <TiltImage image={service.image} title={service.title} Icon={service.icon} />
+      </div>
+
+      {/* Mobile Fallback Image */}
+      <div className="w-full h-[350px] relative rounded-3xl overflow-hidden lg:hidden border border-white/10 shadow-2xl">
+        <Image src={service.image} alt={service.title} fill className="object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+      </div>
 
       {/* Text Content */}
-      <div className="w-full lg:w-1/2 relative z-10">
+      <div className="w-full lg:w-1/2 relative z-30">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: service.reverse ? 30 : -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <div className="flex items-center gap-4 mb-4">
-            <span className="h-px w-8 bg-red-500 rounded-full"></span>
-            <span className="text-red-500 font-bold tracking-[0.2em] text-xs uppercase">
-              0{service.id} // Service
+          <div className="flex items-center gap-4 mb-6">
+            <span className="text-red-500 font-mono font-bold tracking-widest text-sm uppercase bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20">
+              Service_0{service.id}
             </span>
           </div>
 
-          <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-[1.1] tracking-tight">
+          <h2 className="text-4xl lg:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
             {service.title}
           </h2>
-          <p className="text-lg text-zinc-400 leading-relaxed mb-8 max-w-xl">
+          <p className="text-lg text-zinc-400 leading-relaxed mb-8 border-l-2 border-red-500/50 pl-5">
             {service.description}
           </p>
 
-          {/* Interactive Benefits Area */}
+          {/* Interactive Benefits Area - Now triggers on Hover */}
           <div
-            className="relative group cursor-pointer"
+            className="relative"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={() => setIsHovered(!isHovered)} // Better mobile support
           >
-            <div className={`p-6 rounded-2xl border transition-all duration-500 overflow-hidden ${isHovered ? 'bg-zinc-900/60 border-red-500/30 shadow-[0_0_30px_rgba(220,38,38,0.1)]' : 'bg-white/[0.02] border-white/10'}`}>
-              <div className="flex items-center justify-between">
-                <span className="text-white font-semibold flex items-center gap-2">
-                  <Sparkles className={`w-4 h-4 ${isHovered ? 'text-red-500' : 'text-zinc-500'} transition-colors`} />
-                  Explore Capabilities
+            <div className={`p-6 rounded-2xl transition-all duration-500 ${isHovered ? 'bg-zinc-900/90 border border-red-500/40 shadow-[0_0_30px_rgba(220,38,38,0.15)] transform scale-[1.02]' : 'bg-white/[0.02] border border-white/10'}`}>
+              <div className="flex items-center justify-between cursor-default">
+                <span className="text-white font-medium flex items-center gap-3">
+                  <div className={`p-2 rounded-lg transition-colors duration-300 ${isHovered ? 'bg-red-500/20 text-red-500' : 'bg-white/5 text-zinc-400'}`}>
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  System Capabilities
                 </span>
-                <div className={`p-2 rounded-full transition-colors ${isHovered ? 'bg-red-500/10' : 'bg-transparent'}`}>
-                  <ArrowRight className={`w-5 h-5 transition-all duration-300 ${isHovered ? 'rotate-90 text-red-500' : 'text-zinc-500'}`} />
-                </div>
+                <ArrowRight className={`w-5 h-5 transition-transform duration-500 ${isHovered ? 'rotate-90 text-red-500' : 'text-zinc-600'}`} />
               </div>
 
               <AnimatePresence>
@@ -138,28 +188,24 @@ const ServiceCard = ({ service, index }: { service: typeof services[0], index: n
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
                     className="overflow-hidden"
                   >
-                    <ul className="space-y-4 pt-6">
-                      {benefitsData[service.id].map((benefit, idx) => (
-                        <motion.li
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: idx * 0.1 }}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6">
+                      {benefitsData[service.id]?.map((benefit, idx) => (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: idx * 0.1, duration: 0.3 }}
                           key={idx}
-                          className="flex items-start gap-3 text-sm"
+                          className="bg-black/50 p-4 rounded-xl border border-white/5 hover:border-red-500/30 transition-colors"
                         >
-                          <span className="mt-0.5 w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center shrink-0 border border-red-500/20">
-                            <Check className="w-3 h-3 text-red-500" />
-                          </span>
-                          <div>
-                            <strong className="text-zinc-200 block mb-0.5 text-base">{benefit.title}</strong>
-                            <span className="text-zinc-500 leading-relaxed">{benefit.desc}</span>
-                          </div>
-                        </motion.li>
+                          <Check className="w-4 h-4 text-red-500 mb-2" />
+                          <strong className="text-zinc-200 block text-sm mb-1">{benefit.title}</strong>
+                          <span className="text-zinc-500 text-xs leading-relaxed block">{benefit.desc}</span>
+                        </motion.div>
                       ))}
-                    </ul>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -167,81 +213,59 @@ const ServiceCard = ({ service, index }: { service: typeof services[0], index: n
           </div>
         </motion.div>
       </div>
-
-      {/* Image Presentation */}
-      <div className="w-full lg:w-1/2 h-[400px] lg:h-[550px] relative z-10 mt-8 lg:mt-0">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
-          className="w-full h-full rounded-3xl overflow-hidden relative border border-white/5 shadow-2xl group bg-zinc-900"
-        >
-          {/* Inner Image Hover Zoom */}
-          <div className="relative w-full h-full transition-transform duration-700 ease-out group-hover:scale-105">
-            <Image
-              src={service.image}
-              alt={service.title}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover opacity-80 mix-blend-lighten"
-              loading="lazy"
-              quality={85}
-            />
-          </div>
-
-          {/* Gradients to blend image perfectly into the dark theme */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent z-10" />
-        </motion.div>
-      </div>
     </div>
   );
 };
 
-export default function ServicesShowcase() {
+export default function ServicesShowcaseAurora() {
   return (
-    <div className="bg-black min-h-[100dvh] relative overflow-x-hidden font-sans selection:bg-red-500/30 selection:text-white">
+    <div className="bg-[#030303] min-h-screen relative overflow-hidden font-sans">
 
-      {/* Optimized Global Background Elements */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        {/* Subtle dot matrix grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+      {/* Custom CSS for the Aurora Background Animation
+        Placed securely in a style block so it drops right into your Next.js project
+      */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @keyframes aurora {
+          0% { background-position: 50% 50%, 50% 50%; }
+          50% { background-position: 100% 50%, 0% 50%; }
+          100% { background-position: 50% 50%, 50% 50%; }
+        }
+        .aurora-bg {
+          background-image: 
+            radial-gradient(ellipse at 100% 0%, rgba(220, 38, 38, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 0% 100%, rgba(153, 27, 27, 0.1) 0%, transparent 50%);
+          background-size: 200% 200%;
+          animation: aurora 15s ease infinite;
+        }
+      `}} />
 
-        {/* Top ambient glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.15)_0%,rgba(0,0,0,0)_70%)] opacity-50" />
-      </div>
+      {/* Aurora Background Layer */}
+      <div className="absolute inset-0 z-0 aurora-bg pointer-events-none" />
 
-      {/* Header Section */}
-      <div className="relative pt-40 pb-12 px-6 text-center z-10">
+      {/* Subtle Noise Texture Overlay for that premium grainy agency feel */}
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
+      {/* Header */}
+      <div className="relative pt-32 pb-12 px-6 text-center z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.8 }}
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-medium mb-8">
-            <Sparkles className="w-4 h-4" />
-            <span>Digital Excellence</span>
-          </div>
-          <h1 className="text-5xl lg:text-7xl font-bold text-white mb-6 tracking-tight">
-            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-800">Services</span>
+          <h1 className="text-5xl lg:text-7xl font-black text-white mb-6 tracking-tighter">
+            DIGITAL <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-900">ARCHITECTS</span>
           </h1>
-          <p className="text-zinc-400 max-w-2xl mx-auto text-lg lg:text-xl font-light">
-            Comprehensive solutions tailored to transform your vision into reality. We build modern digital architectures.
-          </p>
         </motion.div>
       </div>
 
-      {/* Services List */}
-      <div className="relative z-10 flex flex-col gap-8 lg:gap-0 pb-32">
+      {/* Main Content */}
+      <div className="relative z-10 flex flex-col gap-20 pb-32 max-w-7xl mx-auto">
         {services.map((service, index) => (
           <ServiceCard key={service.id} service={service} index={index} />
         ))}
       </div>
-
-      {/* Elegant Side Lines */}
-      <div className="fixed left-6 lg:left-12 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-white/5 to-transparent pointer-events-none hidden md:block" />
-      <div className="fixed right-6 lg:right-12 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-white/5 to-transparent pointer-events-none hidden md:block" />
     </div>
   );
 }
