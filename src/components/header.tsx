@@ -2,12 +2,15 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { Home } from "lucide-react";
+// 1. Imported FileText for the Blogs icon
+import { Home, FileText } from "lucide-react";
 import Link from "next/link";
 import { useChat } from "@/app/context/ChatContext";
 
+// 2. Added Blogs to the navItems array
 const navItems = [
-  { name: "Home", icon: Home, href: "#" },
+  { name: "Home", icon: Home, href: "/" },
+  { name: "Blogs", icon: FileText, href: "/blogs" },
 ];
 
 export default function DynamicIslandHeader() {
