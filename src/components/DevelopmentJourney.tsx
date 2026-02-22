@@ -1,17 +1,17 @@
 'use client';
 
-import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import Image from 'next/image';
 import { useChat } from '@/app/context/ChatContext';
-import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
+import { Search, PenTool, Cpu, Code2, BugOff, Rocket, RefreshCw } from 'lucide-react';
 
 interface Stage {
   id: number;
   title: string;
   subtitle: string;
   description: string;
-  icon: string;
+  icon: React.ElementType;
   imageUrl: string;
 }
 
@@ -21,417 +21,232 @@ const stages: Stage[] = [
     title: 'DISCOVERY',
     subtitle: 'Requirement Analysis',
     description: 'Deep dive into your vision. We analyze market dynamics, user needs, and technical feasibility to architect solutions that transcend expectations.',
-    icon: '◈',
-    imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&q=80&auto=format&fit=crop'
+    icon: Search,
+    imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80'
   },
   {
     id: 2,
     title: 'DESIGN',
     subtitle: 'UI / UX Craftsmanship',
     description: 'Where aesthetics meet psychology. Every pixel, every interaction designed to captivate users and drive engagement through intuitive experiences.',
-    icon: '◆',
-    imageUrl: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1920&q=80&auto=format&fit=crop'
+    icon: PenTool,
+    imageUrl: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80'
   },
   {
     id: 3,
     title: 'ARCHITECTURE',
     subtitle: 'System Planning',
     description: 'Building the invisible foundation. Scalable infrastructure, optimized databases, and robust frameworks that power enterprise-grade performance.',
-    icon: '◊',
-    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80&auto=format&fit=crop'
+    icon: Cpu,
+    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80'
   },
   {
     id: 4,
     title: 'DEVELOPMENT',
     subtitle: 'Code Execution',
     description: 'Transforming blueprints into reality. Clean code, agile sprints, and continuous integration bring your product to life with precision engineering.',
-    icon: '◇',
-    imageUrl: 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1920&q=80&auto=format&fit=crop'
+    icon: Code2,
+    imageUrl: 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&q=80'
   },
   {
     id: 5,
     title: 'TESTING',
     subtitle: 'Quality Assurance',
     description: 'Zero tolerance for imperfection. Rigorous testing protocols, automated checks, and security audits ensure flawless functionality across all scenarios.',
-    icon: '◈',
-    imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&q=80&auto=format&fit=crop'
+    icon: BugOff,
+    imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80'
   },
   {
     id: 6,
     title: 'DEPLOYMENT',
     subtitle: 'Launch Execution',
     description: 'Go-live with confidence. Seamless deployment pipelines, performance optimization, and infrastructure monitoring for a smooth market entry.',
-    icon: '◆',
-    imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=80&auto=format&fit=crop'
+    icon: Rocket,
+    imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80'
   },
   {
     id: 7,
     title: 'EVOLUTION',
     subtitle: 'Post-Launch Support',
     description: 'Your success is our mission. Continuous optimization, feature enhancements, and 24/7 support to scale your solution as you grow.',
-    icon: '◊',
-    imageUrl: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=80&auto=format&fit=crop'
+    icon: RefreshCw,
+    imageUrl: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80'
   }
 ];
 
-const StageSection = ({ stage, index }: { stage: Stage; index: number }) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, amount: 0.3 });
-  const shouldReduceEffects = useShouldReduceEffects();
-  
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start']
-  });
-
-  const springConfig = { stiffness: 80, damping: 25, restDelta: 0.001 };
-  
-  // Create base transforms first
-  const yTransform = useTransform(
-    scrollYProgress, 
-    [0, 0.5, 1], 
-    shouldReduceEffects ? [0, 0, 0] : [30, 0, -30]
-  );
-  const opacityTransform = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
-  const scaleTransform = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.95, 1, 1, 0.95]);
-  
-  // Apply spring to transforms
-  const y = useSpring(yTransform, springConfig);
-  const opacity = useSpring(opacityTransform, springConfig);
-  const scale = useSpring(scaleTransform, springConfig);
-
-  const imageOpacity = useTransform(scrollYProgress, [0, 0.2, 0.5, 0.8, 1], [0, 0.3, 0.4, 0.3, 0]);
-  const imageScale = useTransform(
-    scrollYProgress, 
-    [0, 0.5, 1], 
-    shouldReduceEffects ? [1, 1, 1] : [1.1, 1, 1.1]
-  );
-
-  // Background number transforms
-  const bgNumberY = useTransform(scrollYProgress, [0, 1], [0, 50]);
-  const bgNumberOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.04, 0.08, 0.04]);
-
-  // Next indicator transforms
-  const nextOpacity = useTransform(scrollYProgress, [0.7, 1], [0, 1]);
-  const nextScale = useTransform(scrollYProgress, [0.7, 1], [0.8, 1]);
+const TimelineNode = ({ stage, index }: { stage: Stage; index: number }) => {
+  const isEven = index % 2 === 0;
 
   return (
-    <section ref={ref} className="relative min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 py-20 sm:py-24 md:py-28 overflow-hidden">
-      <motion.div
-        style={{ opacity: imageOpacity, scale: imageScale }}
-        className="absolute inset-0 z-0 will-change-transform"
-      >
-        <Image
-          src={stage.imageUrl}
-          alt={stage.title}
-          fill
-          sizes="100vw"
-          className="object-cover"
-          loading="lazy"
-          quality={75}
-        />
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/40" />
-      </motion.div>
+    <div className="relative flex flex-col md:flex-row items-center justify-between w-full mb-24 md:mb-32 group">
 
-      <motion.div
-        style={{ y, opacity, scale }}
-        className="relative z-10 max-w-6xl w-full will-change-transform"
-      >
+      {/* THE GLOWING NODE (Center on Desktop, Left on Mobile) 
+        Positioned absolutely to sit perfectly on the tracking line.
+      */}
+      <div className="absolute left-[28px] md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2 z-20 flex items-center justify-center">
         <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="flex items-center gap-3 sm:gap-4 md:gap-5 mb-6 sm:mb-8 md:mb-10"
+          initial={{ scale: 0, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          viewport={{ once: true, margin: "-20%" }}
+          transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+          className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-black border-2 border-zinc-800 group-hover:border-red-600 transition-colors duration-500 flex items-center justify-center relative shadow-[0_0_0_0_rgba(220,38,38,0)] group-hover:shadow-[0_0_30px_0_rgba(220,38,38,0.4)]"
         >
-          <motion.div
-            animate={isInView ? { rotate: 360 } : { rotate: 0 }}
-            transition={{ duration: 1.2, delay: 0.3 }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-red-600 flex-shrink-0 leading-none"
-          >
-            {stage.icon}
-          </motion.div>
-          <div className="h-0.5 flex-1 bg-gradient-to-r from-red-600 to-transparent" />
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="text-white/40 text-xl sm:text-2xl md:text-3xl font-light flex-shrink-0 leading-none"
-          >
-            0{stage.id}
-          </motion.span>
-        </motion.div>
+          <stage.icon className="w-5 h-5 md:w-6 md:h-6 text-zinc-500 group-hover:text-red-500 transition-colors duration-500" />
 
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-white mb-3 sm:mb-4 md:mb-5 tracking-tighter leading-[0.9]"
-        >
+          {/* Subtle pulse ring */}
+          <div className="absolute inset-0 rounded-full border border-red-500/0 group-hover:animate-ping opacity-20" />
+        </motion.div>
+      </div>
+
+      {/* CONTENT BLOCK (Alternates Left/Right on Desktop, always Right on Mobile) 
+      */}
+      <motion.div
+        initial={{ opacity: 0, x: isEven ? -50 : 50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, margin: "-10%" }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
+        className={`w-full md:w-[45%] pl-20 md:pl-0 flex flex-col ${isEven ? 'md:items-end md:text-right' : 'md:items-start md:text-left'} ${isEven ? 'md:order-1' : 'md:order-2'}`}
+      >
+        <div className="mb-2">
+          <span className="text-red-600 font-mono text-sm md:text-base font-bold tracking-widest">
+            PHASE 0{stage.id}
+          </span>
+        </div>
+        <h3 className="text-3xl md:text-5xl font-black text-white mb-3 tracking-tight">
           {stage.title}
-        </motion.h2>
-
-        <motion.h3
-          initial={{ opacity: 0, y: 15 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-red-600 font-bold mb-6 sm:mb-8 md:mb-10 tracking-wide"
-        >
+        </h3>
+        <h4 className="text-lg md:text-xl text-zinc-400 font-medium mb-4">
           {stage.subtitle}
-        </motion.h3>
-
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="relative"
-        >
-          <div className="absolute -left-3 sm:-left-4 md:-left-5 top-0 w-1 h-full bg-red-600" />
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 leading-relaxed max-w-3xl pl-5 sm:pl-6 md:pl-8">
-            {stage.description}
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-8 sm:mt-10 md:mt-12 h-1 bg-red-600 origin-left w-40 sm:w-56 md:w-72"
-        />
+        </h4>
+        <p className="text-base md:text-lg text-zinc-500 leading-relaxed bg-white/[0.02] border border-white/5 p-5 md:p-6 rounded-2xl backdrop-blur-sm">
+          {stage.description}
+        </p>
       </motion.div>
 
+      {/* IMAGE BLOCK (Alternates Right/Left on Desktop, hidden on very small screens, shown on tablet+) 
+      */}
       <motion.div
-        style={{
-          y: bgNumberY,
-          opacity: bgNumberOpacity
-        }}
-        className="absolute inset-0 flex items-center justify-center pointer-events-none z-[5] will-change-transform"
+        initial={{ opacity: 0, scale: 0.9, rotateY: isEven ? 10 : -10 }}
+        whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
+        viewport={{ once: true, margin: "-10%" }}
+        transition={{ duration: 0.8, type: "spring" }}
+        className={`hidden sm:block w-full md:w-[45%] pl-20 md:pl-0 mt-8 md:mt-0 ${isEven ? 'md:order-2' : 'md:order-1'}`}
       >
-        <div className="text-[10rem] sm:text-[14rem] md:text-[18rem] lg:text-[22rem] xl:text-[26rem] font-black text-white/5 select-none leading-none">
-          0{stage.id}
+        <div className="relative w-full aspect-video rounded-3xl overflow-hidden border border-white/10 group-hover:border-red-500/30 transition-colors duration-500 shadow-2xl">
+          <Image
+            src={stage.imageUrl}
+            alt={stage.title}
+            fill
+            className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         </div>
       </motion.div>
 
-      {index < stages.length - 1 && (
-        <motion.div
-          style={{
-            opacity: nextOpacity,
-            scale: nextScale
-          }}
-          className="absolute bottom-8 sm:bottom-10 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20 will-change-transform"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-            className="w-6 h-10 sm:w-7 sm:h-11 border-2 border-red-600 rounded-full flex items-start justify-center p-2"
-          >
-            <div className="w-1.5 h-1.5 bg-red-600 rounded-full" />
-          </motion.div>
-          <span className="text-white/60 text-xs uppercase tracking-widest">Next</span>
-        </motion.div>
-      )}
-    </section>
-  );
-};
-
-const DevelopmentJourney = () => {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end']
-  });
-  const { toggleChat } = useChat();
-
-  const progressSpring = useSpring(scrollYProgress, { stiffness: 80, damping: 25 });
-
-  return (
-    <div ref={containerRef} className="relative bg-black">
-      <motion.div
-        style={{ scaleY: progressSpring }}
-        className="fixed top-0 right-0 w-1 h-screen bg-red-600 origin-top z-50 will-change-transform"
-      />
-
-      <section className="relative min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 py-20 sm:py-24 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&q=80&auto=format&fit=crop"
-            alt="Hero Background"
-            fill
-            sizes="100vw"
-            className="object-cover"
-            priority
-            quality={75}
-          />
-          <div className="absolute inset-0 bg-black/70" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-black/40 to-black" />
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, ease: 'easeOut' }}
-          className="relative z-10 text-center max-w-5xl mx-auto"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-4 sm:mb-5 md:mb-6"
-          >
-            <span className="text-red-600 text-xs sm:text-sm uppercase tracking-[0.25em] font-bold">
-              The Process
-            </span>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white mb-4 sm:mb-5 md:mb-6 tracking-tighter leading-[0.9] px-4"
-          >
-            DEVELOPMENT
-            <br />
-            <span className="text-red-600">JOURNEY</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/70 max-w-3xl mx-auto mb-10 sm:mb-12 md:mb-14 leading-relaxed px-4"
-          >
-            Seven stages of excellence. From vision to reality.
-            <br className="hidden sm:block" />
-            <span className="block sm:inline mt-2 sm:mt-0">This is how DAMNX Solutions builds the future.</span>
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="flex items-center justify-center gap-3 sm:gap-4"
-          >
-            <div className="h-px w-10 sm:w-14 md:w-16 bg-red-600" />
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              className="w-2.5 h-2.5 sm:w-3 sm:h-3 border-2 border-red-600 rotate-45"
-            />
-            <div className="h-px w-10 sm:w-14 md:w-16 bg-red-600" />
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          animate={{ scale: [1, 1.15, 1], opacity: [0.08, 0.15, 0.08] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none z-[5]"
-        >
-          <div className="w-[280px] h-[280px] sm:w-[380px] sm:h-[380px] md:w-[480px] md:h-[480px] lg:w-[580px] lg:h-[580px] border border-red-600/20 rounded-full" />
-        </motion.div>
-
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.04, 0.1, 0.04] }}
-          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none z-[5]"
-        >
-          <div className="w-[380px] h-[380px] sm:w-[500px] sm:h-[500px] md:w-[620px] md:h-[620px] lg:w-[750px] lg:h-[750px] border border-red-600/10 rounded-full" />
-        </motion.div>
-
-        <motion.div
-          animate={{ y: [0, 12, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute bottom-10 sm:bottom-12 md:bottom-14 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2.5 z-20"
-        >
-          <span className="text-white/50 text-xs uppercase tracking-widest">Scroll to explore</span>
-          <div className="w-6 h-10 sm:w-7 sm:h-11 border-2 border-white/30 rounded-full flex items-start justify-center p-2">
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              className="w-1.5 h-1.5 bg-white/50 rounded-full"
-            />
-          </div>
-        </motion.div>
-      </section>
-
-      {stages.map((stage, index) => (
-        <StageSection key={stage.id} stage={stage} index={index} />
-      ))}
-
-      <section className="relative min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 py-20 sm:py-24 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80&auto=format&fit=crop"
-            alt="Closing Background"
-            fill
-            sizes="100vw"
-            className="object-cover"
-            loading="lazy"
-            quality={75}
-          />
-          <div className="absolute inset-0 bg-black/65" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black" />
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 1.2 }}
-          viewport={{ once: false, amount: 0.3 }}
-          className="text-center relative z-10 max-w-4xl mx-auto"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: false }}
-            className="mb-6 sm:mb-8 md:mb-10"
-          >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              className="inline-block text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-red-600 leading-none"
-            >
-              ◈
-            </motion.div>
-          </motion.div>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: false }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-4 sm:mb-5 md:mb-6 tracking-tighter leading-tight px-4"
-          >
-            READY TO BUILD
-            <br />
-            <span className="text-red-600">SOMETHING DAMN GREAT?</span>
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            viewport={{ once: false }}
-            className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/70 mb-10 sm:mb-12 md:mb-14 max-w-2xl mx-auto px-4 leading-relaxed"
-          >
-            Let's transform your vision into a world-class digital product.
-          </motion.p>
-
-          <motion.button onClick={toggleChat}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            viewport={{ once: false }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-3.5 sm:px-10 sm:py-4 md:px-12 md:py-4 bg-red-600 text-white text-sm sm:text-base md:text-lg font-bold uppercase tracking-wider hover:bg-red-700 transition-colors"
-          >
-            Start Your Journey
-          </motion.button>
-        </motion.div>
-      </section>
     </div>
   );
 };
 
-export default DevelopmentJourney;
+export default function DevelopmentJourney() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { toggleChat } = useChat();
+
+  // Tracks the scroll progress specifically within the timeline area
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end end"]
+  });
+
+  // Smooths out the line filling animation
+  const scaleY = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
+  // Intro Parallax
+  const headerY = useTransform(scrollYProgress, [0, 0.2], [0, -50]);
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+
+  return (
+    <div className="bg-[#030303] min-h-screen relative font-sans overflow-hidden">
+
+      {/* Grainy Noise Background */}
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
+      {/* HERO SECTION */}
+      <motion.section
+        style={{ y: headerY, opacity: headerOpacity }}
+        className="relative pt-40 pb-20 md:pt-52 md:pb-32 px-6 text-center z-10 max-w-5xl mx-auto"
+      >
+        <div className="inline-flex items-center gap-3 bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-full mb-8">
+          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+          <span className="text-red-500 text-xs md:text-sm font-bold tracking-widest uppercase">
+            The DamnX Framework
+          </span>
+        </div>
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-tighter mb-6">
+          DEVELOPMENT <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-900">
+            JOURNEY
+          </span>
+        </h1>
+        <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+          Seven stages of absolute engineering excellence. From raw vision to digital dominance. This is how we build the future.
+        </p>
+      </motion.section>
+
+      {/* TIMELINE SECTION */}
+      <section ref={containerRef} className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+
+        {/* The Track Line (Background) */}
+        <div className="absolute left-[44px] md:left-1/2 top-0 bottom-0 w-[2px] bg-zinc-900 -translate-x-1/2" />
+
+        {/* The Animated Red Progress Line */}
+        <motion.div
+          style={{ scaleY }}
+          className="absolute left-[44px] md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-red-500 via-red-600 to-red-900 origin-top -translate-x-1/2 z-10 shadow-[0_0_15px_rgba(220,38,38,0.5)]"
+        />
+
+        {/* The Stages */}
+        <div className="relative z-20 pt-10">
+          {stages.map((stage, index) => (
+            <TimelineNode key={stage.id} stage={stage} index={index} />
+          ))}
+        </div>
+      </section>
+
+      {/* OUTRO / CTA SECTION */}
+      <section className="relative py-32 px-6 text-center z-10">
+        <div className="absolute inset-0 bg-red-600/5 blur-[100px] rounded-full max-w-3xl mx-auto" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="relative z-20 max-w-3xl mx-auto"
+        >
+          <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter">
+            READY TO BUILD <br />
+            <span className="text-red-600">SOMETHING DAMN GREAT?</span>
+          </h2>
+          <p className="text-zinc-400 text-lg md:text-xl mb-10">
+            Let's bypass the templates and engineer a custom digital product that leaves your competition in the dust.
+          </p>
+
+          <button
+            onClick={toggleChat}
+            className="group relative px-8 py-4 bg-red-600 text-white font-bold uppercase tracking-widest overflow-hidden rounded-lg transition-transform hover:scale-105 active:scale-95"
+          >
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+            <span className="relative z-10 flex items-center gap-2">
+              Start Your Journey <Rocket className="w-4 h-4" />
+            </span>
+          </button>
+        </motion.div>
+      </section>
+
+    </div>
+  );
+}
