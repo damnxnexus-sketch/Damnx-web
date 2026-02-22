@@ -80,6 +80,53 @@ export default async function BlogsPage() {
           padding: clamp(48px, 10vw, 96px) clamp(20px, 5vw, 48px);
         }
 
+        /* ── BACK BUTTON ── */
+        .back-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 48px;
+          padding: 10px 20px 10px 14px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 999px;
+          text-decoration: none;
+          color: var(--text-muted);
+          font-size: 12px;
+          font-weight: 500;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease, transform 0.3s ease;
+          animation: fadeSlideUp 0.5s ease both;
+        }
+
+        .back-btn:hover {
+          color: var(--text);
+          border-color: var(--border-hover);
+          background: rgba(192, 57, 43, 0.07);
+          transform: translateX(-3px);
+        }
+
+        .back-btn-icon {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          border: 1px solid var(--border);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 13px;
+          color: var(--red-bright);
+          transition: background 0.3s, border-color 0.3s;
+          flex-shrink: 0;
+        }
+
+        .back-btn:hover .back-btn-icon {
+          background: var(--red);
+          border-color: var(--red);
+          color: #fff;
+        }
+
         /* ── HEADER ── */
         .blogs-eyebrow {
           display: flex;
@@ -411,6 +458,12 @@ export default async function BlogsPage() {
 
             <div className="blogs-root">
                 <div className="blogs-container">
+
+                    {/* ── Back Button ── */}
+                    <Link href="/" className="back-btn">
+                        <span className="back-btn-icon">←</span>
+                        Back
+                    </Link>
 
                     {/* ── Header ── */}
                     <div className="blogs-eyebrow">
