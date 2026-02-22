@@ -142,101 +142,91 @@ export default async function BlogsPage() {
           transform-origin: left;
         }
 
-        /* ── POST CARDS ── */
+        /* ── POST CARDS GRID ── */
         .blogs-grid {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 20px;
+          align-items: start;
         }
 
         .post-card {
           position: relative;
-          display: grid;
-          grid-template-columns: 80px 1fr;
-          gap: 0;
-          border: 1px solid var(--border);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          gap: 20px;
+          padding: clamp(22px, 4vw, 32px);
           background: var(--surface);
-          border-radius: 4px;
+          border: 1px solid var(--border);
+          border-radius: 20px;
           overflow: hidden;
-          transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+          transition: border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
           animation: fadeSlideUp 0.5s ease both;
           text-decoration: none;
           color: inherit;
+          min-height: 200px;
+        }
+
+        /* Blob glow in corner */
+        .post-card::before {
+          content: '';
+          position: absolute;
+          top: -60px;
+          right: -60px;
+          width: 160px;
+          height: 160px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(192, 57, 43, 0.18) 0%, transparent 70%);
+          pointer-events: none;
+          transition: opacity 0.35s ease, transform 0.35s ease;
+          opacity: 0;
+          transform: scale(0.8);
+        }
+
+        .post-card:hover::before {
+          opacity: 1;
+          transform: scale(1.2);
+        }
+
+        /* Bottom red line sweep */
+        .post-card::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 0%;
+          height: 2px;
+          background: linear-gradient(to right, var(--red), var(--red-bright));
+          border-radius: 0 0 20px 20px;
+          transition: width 0.4s ease;
+        }
+
+        .post-card:hover::after {
+          width: 100%;
         }
 
         .post-card:hover {
           border-color: var(--border-hover);
-          transform: translateX(6px);
-          box-shadow: -6px 0 24px rgba(192, 57, 43, 0.12), 0 8px 40px rgba(0,0,0,0.5);
-        }
-
-        /* Red left accent strip */
-        .post-index-col {
-          background: var(--surface-2);
-          border-right: 1px solid var(--border);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 28px 0;
-          gap: 8px;
-          transition: background 0.3s ease;
-        }
-
-        .post-card:hover .post-index-col {
-          background: rgba(192, 57, 43, 0.08);
-          border-right-color: var(--border-hover);
-        }
-
-        .post-number {
-          font-family: 'Playfair Display', serif;
-          font-size: 22px;
-          font-weight: 700;
-          color: var(--red);
-          line-height: 1;
-          opacity: 0.6;
-          transition: opacity 0.3s;
-        }
-
-        .post-card:hover .post-number {
-          opacity: 1;
-        }
-
-        .post-number-dot {
-          width: 4px;
-          height: 4px;
-          border-radius: 50%;
-          background: var(--red-muted);
-          transition: background 0.3s;
-        }
-
-        .post-card:hover .post-number-dot {
-          background: var(--red-bright);
-        }
-
-        .post-content {
-          padding: clamp(20px, 4vw, 32px) clamp(20px, 4vw, 36px);
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          gap: 16px;
-          min-height: 120px;
+          transform: translateY(-5px);
+          box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(192, 57, 43, 0.08);
         }
 
         .post-meta {
           display: flex;
           align-items: center;
-          gap: 16px;
+          justify-content: space-between;
           flex-wrap: wrap;
+          gap: 8px;
         }
 
         .post-date {
-          font-size: 11px;
-          letter-spacing: 0.12em;
+          font-size: 10px;
+          letter-spacing: 0.14em;
           text-transform: uppercase;
           color: var(--red-bright);
           font-weight: 500;
-          opacity: 0.8;
+          opacity: 0.85;
         }
 
         .post-tag {
@@ -244,19 +234,35 @@ export default async function BlogsPage() {
           letter-spacing: 0.1em;
           text-transform: uppercase;
           color: var(--text-muted);
-          border: 1px solid rgba(255,255,255,0.08);
-          padding: 2px 8px;
-          border-radius: 2px;
+          border: 1px solid rgba(255,255,255,0.07);
+          padding: 3px 9px;
+          border-radius: 999px;
+          background: rgba(255,255,255,0.03);
+        }
+
+        .post-number {
+          font-family: 'Playfair Display', serif;
+          font-size: 13px;
+          font-weight: 700;
+          color: var(--red-muted);
+          opacity: 0.5;
+          transition: opacity 0.3s;
+        }
+
+        .post-card:hover .post-number {
+          opacity: 1;
+          color: var(--red);
         }
 
         .post-title {
           font-family: 'Playfair Display', serif;
-          font-size: clamp(18px, 3vw, 24px);
+          font-size: clamp(16px, 2.2vw, 21px);
           font-weight: 700;
-          line-height: 1.3;
+          line-height: 1.35;
           color: var(--text);
           transition: color 0.3s ease;
           margin: 0;
+          flex: 1;
         }
 
         .post-card:hover .post-title {
@@ -266,24 +272,22 @@ export default async function BlogsPage() {
         .post-footer {
           display: flex;
           align-items: center;
-          gap: 8px;
+          justify-content: space-between;
+          padding-top: 16px;
+          border-top: 1px solid rgba(255,255,255,0.05);
         }
 
         .post-read-btn {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          font-size: 12px;
+          font-size: 11px;
           font-weight: 500;
-          letter-spacing: 0.08em;
+          letter-spacing: 0.1em;
           text-transform: uppercase;
           color: var(--text-muted);
           text-decoration: none;
           transition: color 0.3s ease;
-          padding: 0;
-          background: none;
-          border: none;
-          cursor: pointer;
         }
 
         .post-card:hover .post-read-btn {
@@ -297,6 +301,26 @@ export default async function BlogsPage() {
 
         .post-card:hover .post-read-arrow {
           transform: translateX(4px);
+        }
+
+        .post-read-icon {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          border: 1px solid rgba(192,57,43,0.25);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          color: var(--red-muted);
+          transition: background 0.3s, border-color 0.3s, color 0.3s;
+          flex-shrink: 0;
+        }
+
+        .post-card:hover .post-read-icon {
+          background: var(--red);
+          border-color: var(--red);
+          color: #fff;
         }
 
         /* ── EMPTY STATE ── */
@@ -373,13 +397,9 @@ export default async function BlogsPage() {
         .post-card:nth-child(8)  { animation-delay: 0.86s; }
 
         /* ── RESPONSIVE ── */
-        @media (max-width: 540px) {
-          .post-card {
-            grid-template-columns: 56px 1fr;
-          }
-
-          .post-number {
-            font-size: 16px;
+        @media (max-width: 640px) {
+          .blogs-grid {
+            grid-template-columns: 1fr;
           }
 
           .blogs-footer {
@@ -420,33 +440,28 @@ export default async function BlogsPage() {
                                     rel="noopener noreferrer"
                                     className="post-card"
                                 >
-                                    {/* Number column */}
-                                    <div className="post-index-col">
+                                    {/* Meta row */}
+                                    <div className="post-meta">
+                                        <span className="post-date">
+                                            {new Date(post.published).toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric',
+                                            })}
+                                        </span>
                                         <span className="post-number">{String(i + 1).padStart(2, '0')}</span>
-                                        <div className="post-number-dot" />
                                     </div>
 
-                                    {/* Content column */}
-                                    <div className="post-content">
-                                        <div className="post-meta">
-                                            <span className="post-date">
-                                                {new Date(post.published).toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                })}
-                                            </span>
-                                            <span className="post-tag">Article</span>
-                                        </div>
+                                    {/* Title */}
+                                    <h2 className="post-title">{post.title}</h2>
 
-                                        <h2 className="post-title">{post.title}</h2>
-
-                                        <div className="post-footer">
-                                            <span className="post-read-btn">
-                                                Read on Blogger
-                                                <span className="post-read-arrow">→</span>
-                                            </span>
-                                        </div>
+                                    {/* Footer */}
+                                    <div className="post-footer">
+                                        <span className="post-read-btn">
+                                            Read on Blogger
+                                            <span className="post-read-arrow">→</span>
+                                        </span>
+                                        <div className="post-read-icon">↗</div>
                                     </div>
                                 </Link>
                             ))
