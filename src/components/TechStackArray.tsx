@@ -1,301 +1,220 @@
 'use client';
 
-import React, { useState } from 'react';
-import dynamic from 'next/dynamic';
-import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
 
-// Lazy load DotGrid only when needed
-const DotGrid = dynamic(() => import('./DotGrid'), {
-  ssr: false,
-  loading: () => null
-});
-
+// Premium Tech Data (30 Items split perfectly 15/15 for two wheels)
 const ALL_TECHS = [
-  { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg', category: 'Frontend', invertLogo: false },
-  { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', category: 'Frontend', invertLogo: true },
-  { name: 'TypeScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg', category: 'Frontend', invertLogo: false },
-  { name: 'Tailwind', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg', category: 'Frontend', invertLogo: false },
-  { name: 'Vue.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg', category: 'Frontend', invertLogo: false },
-  { name: 'Vite', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg', category: 'Frontend', invertLogo: false },
-  { name: 'React Native', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg', category: 'Mobile', invertLogo: false },
-  { name: 'Flutter', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg', category: 'Mobile', invertLogo: false },
-  { name: 'Android', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg', category: 'Mobile', invertLogo: false },
-  { name: 'iOS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg', category: 'Mobile', invertLogo: true },
-  { name: 'Shopify', icon: 'https://cdn.worldvectorlogo.com/logos/shopify.svg', category: 'E-Commerce', invertLogo: false },
-  { name: 'WordPress', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/wordpress/wordpress-plain.svg', category: 'CMS', invertLogo: false },
-  { name: 'WooCommerce', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/woocommerce/woocommerce-original.svg', category: 'E-Commerce', invertLogo: false },
-  { name: 'Stripe', icon: 'https://cdn.worldvectorlogo.com/logos/stripe-4.svg', category: 'E-Commerce', invertLogo: false },
-  { name: 'Figma', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg', category: 'Design', invertLogo: false },
-  { name: 'Adobe XD', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/xd/xd-plain.svg', category: 'Design', invertLogo: false },
-  { name: 'Photoshop', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/photoshop/photoshop-plain.svg', category: 'Design', invertLogo: false },
-  { name: 'Illustrator', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/illustrator/illustrator-plain.svg', category: 'Design', invertLogo: false },
-  { name: 'Three.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/threejs/threejs-original.svg', category: '3D', invertLogo: true },
-  { name: 'Blender', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/blender/blender-original.svg', category: '3D', invertLogo: false },
-  { name: 'After Effects', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/aftereffects/aftereffects-original.svg', category: '3D', invertLogo: false },
-  { name: 'Node.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg', category: 'Backend', invertLogo: false },
-  { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg', category: 'Backend', invertLogo: false },
-  { name: 'MongoDB', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg', category: 'Backend', invertLogo: false },
-  { name: 'PostgreSQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg', category: 'Backend', invertLogo: false },
-  { name: 'Docker', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg', category: 'Backend', invertLogo: false },
-  { name: 'GraphQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/graphql/graphql-plain.svg', category: 'Backend', invertLogo: false },
-  { name: 'Firebase', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg', category: 'Backend', invertLogo: false },
-  { name: 'Google Ads', icon: 'https://cdn.worldvectorlogo.com/logos/google-ads-1.svg', category: 'Marketing', invertLogo: false },
-  { name: 'Meta', icon: 'https://cdn.worldvectorlogo.com/logos/meta-1.svg', category: 'Marketing', invertLogo: true },
-  { name: 'Google Analytics', icon: 'https://cdn.worldvectorlogo.com/logos/google-analytics-1.svg', category: 'Marketing', invertLogo: false },
+  { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg', invert: false },
+  { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg', invert: true },
+  { name: 'TypeScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg', invert: false },
+  { name: 'Tailwind', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg', invert: false },
+  { name: 'Vue.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg', invert: false },
+  { name: 'Vite', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg', invert: false },
+  { name: 'Node.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg', invert: false },
+  { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg', invert: false },
+  { name: 'MongoDB', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg', invert: false },
+  { name: 'PostgreSQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg', invert: false },
+  { name: 'Docker', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg', invert: false },
+  { name: 'GraphQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/graphql/graphql-plain.svg', invert: false },
+  { name: 'Firebase', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg', invert: false },
+  { name: 'AWS', icon: 'https://cdn.worldvectorlogo.com/logos/aws-2.svg', invert: true },
+  { name: 'Redis', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg', invert: false },
+  { name: 'React Native', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg', invert: false },
+  { name: 'Flutter', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg', invert: false },
+  { name: 'Android', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg', invert: false },
+  { name: 'iOS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg', invert: true },
+  { name: 'Shopify', icon: 'https://cdn.worldvectorlogo.com/logos/shopify.svg', invert: false },
+  { name: 'WordPress', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/wordpress/wordpress-plain.svg', invert: true },
+  { name: 'WooCommerce', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/woocommerce/woocommerce-original.svg', invert: false },
+  { name: 'Stripe', icon: 'https://cdn.worldvectorlogo.com/logos/stripe-4.svg', invert: false },
+  { name: 'Figma', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg', invert: false },
+  { name: 'Adobe XD', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/xd/xd-plain.svg', invert: false },
+  { name: 'Three.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/threejs/threejs-original.svg', invert: true },
+  { name: 'Blender', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/blender/blender-original.svg', invert: false },
+  { name: 'Google Ads', icon: 'https://cdn.worldvectorlogo.com/logos/google-ads-1.svg', invert: false },
+  { name: 'Meta', icon: 'https://cdn.worldvectorlogo.com/logos/meta-1.svg', invert: true },
+  { name: 'Analytics', icon: 'https://cdn.worldvectorlogo.com/logos/google-analytics-1.svg', invert: false }
 ];
 
-const categories = ['All', ...Array.from(new Set(ALL_TECHS.map(t => t.category)))];
+const LEFT_TECHS = ALL_TECHS.slice(0, 15);
+const RIGHT_TECHS = ALL_TECHS.slice(15);
 
-export default function PremiumTechStack() {
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [hoveredTech, setHoveredTech] = useState<string | null>(null);
-  const shouldReduceEffects = useShouldReduceEffects();
+// --- Individual Node Component to isolate the counter-rotation logic ---
+const TechNode = ({
+  tech,
+  index,
+  total,
+  wheelRotation
+}: {
+  tech: typeof ALL_TECHS[0];
+  index: number;
+  total: number;
+  wheelRotation: MotionValue<number>;
+}) => {
+  // Calculate fixed angle for this item around the circle
+  const angle = (index / total) * 360;
 
-  const filteredTechs = selectedCategory === 'All'
-    ? ALL_TECHS
-    : ALL_TECHS.filter(tech => tech.category === selectedCategory);
+  // The Magic Formula: To keep the icon perfectly upright, we must rotate it by 
+  // the exact negative of the wheel's rotation, minus its static position angle.
+  const counterRotation = useTransform(wheelRotation, (r) => -r - angle);
 
   return (
-    <>
-      <style>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translate(0, 0) scale(1);
-          }
-          33% {
-            transform: translate(30px, -30px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-        }
+    <div
+      className="absolute top-0 left-0 w-full h-full pointer-events-none"
+      style={{ transform: `rotate(${angle}deg)` }}
+    >
+      {/* Position at the very top center of the wheel container */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
 
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
+        {/* Counter-Rotating Container */}
+        <motion.div style={{ rotate: counterRotation }}>
 
-        .float-anim {
-          animation: float 20s ease-in-out infinite;
-        }
+          {/* Glassmorphic Icon Card */}
+          <div className="group relative w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 bg-zinc-950 border border-white/10 hover:border-red-500 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.8)] hover:shadow-[0_0_30px_rgba(220,38,38,0.4)] transition-all duration-300 hover:scale-110 hover:z-50 cursor-pointer">
 
-        .float-anim-reverse {
-          animation: float 25s ease-in-out infinite reverse;
-        }
-      `}</style>
-
-      <div className="tech-stack-container relative w-full min-h-[100dvh] bg-black overflow-x-hidden">
-        {/* DotGrid Background - Disabled on mobile for performance */}
-        {!shouldReduceEffects && (
-          <div className="absolute inset-0 z-0">
-            <DotGrid
-              baseColor="#222"
-              activeColor="#dc2626"
-              gap={24}
-              dotSize={4}
-              className="w-full h-full"
+            <img
+              src={tech.icon}
+              alt={tech.name}
+              className={`w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 object-contain transition-transform duration-300 group-hover:scale-110 ${tech.invert ? 'invert opacity-80 group-hover:opacity-100' : ''}`}
+              loading="lazy"
             />
-          </div>
-        )}
 
-        {/* Animated Gradient Background */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0 opacity-30">
-            <div
-              className="float-anim absolute w-[600px] h-[600px] rounded-full blur-3xl"
-              style={{
-                background: 'radial-gradient(circle, #dc2626 0%, transparent 70%)',
-                top: '10%',
-                left: '10%',
-              }}
-            />
-            <div
-              className="float-anim-reverse absolute w-[800px] h-[800px] rounded-full blur-3xl"
-              style={{
-                background: 'radial-gradient(circle, #991b1b 0%, transparent 70%)',
-                bottom: '10%',
-                right: '10%',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Noise Texture Overlay */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'3.5\' numOctaves=\'4\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' /%3E%3C/svg%3E")',
-        }} />
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-          {/* Header Section */}
-          <div className="text-center mb-12 sm:mb-20">
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 sm:mb-8 rounded-full border border-red-500/30 bg-red-500/5 backdrop-blur-sm">
-              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-red-400 text-xs sm:text-sm font-medium tracking-wider uppercase">Tech Excellence</span>
+            {/* Tooltip */}
+            <div className="absolute top-full mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50">
+              <span className="bg-red-600 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 rounded tracking-wider whitespace-nowrap shadow-xl">
+                {tech.name}
+              </span>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-red-600" />
             </div>
 
-            <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black mb-4 sm:mb-6 tracking-tight leading-tight">
-              <span className="block text-white mb-2">Our Technology</span>
-              <span className="block text-red-500 ">
-                Arsenal
-              </span>
-            </h1>
-
-            <p className="text-gray-400 text-base sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed px-4">
-              Crafting digital masterpieces with industry-leading tools and frameworks
-            </p>
           </div>
+        </motion.div>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12 sm:mb-16 px-4">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className="group relative px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-medium text-xs sm:text-sm transition-all duration-300 overflow-hidden"
-                style={{
-                  background: selectedCategory === category
-                    ? 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)'
-                    : 'transparent',
-                  border: selectedCategory === category
-                    ? 'none'
-                    : '1px solid rgba(239, 68, 68, 0.2)',
-                  color: selectedCategory === category ? 'white' : '#9ca3af',
-                }}
-              >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{
-                    background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
-                  }}
-                />
-                <span className="relative z-10">{category}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Tech Grid */}
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-12 sm:mb-20">
-            {filteredTechs.map((tech, idx) => (
-              <div
-                key={`${tech.name}-${idx}`}
-                className="group relative"
-                onMouseEnter={() => {
-                  setHoveredTech(tech.name);
-                }}
-                onMouseLeave={() => {
-                  setHoveredTech(null);
-                }}
-                style={{
-                  animation: `fadeInUp 0.6s ease-out ${idx * 0.03}s both`,
-                }}
-              >
-                {/* Card Background */}
-                <div className="relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-500 group-hover:scale-105">
-                  {/* Gradient Border Effect */}
-                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl p-[1px] bg-gradient-to-br from-red-500/50 via-transparent to-red-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  {/* Card Content */}
-                  <div className="absolute inset-[1px] rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl flex flex-col items-center justify-center p-2 sm:p-4 md:p-6">
-                    {/* Corner Decorations */}
-                    <div className="absolute top-1 left-1 sm:top-2 sm:left-2 w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 border-t-2 border-l-2 border-red-500/50 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:w-3 group-hover:h-3 sm:group-hover:w-4 sm:group-hover:h-4 md:group-hover:w-6 md:group-hover:h-6" />
-                    <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 border-b-2 border-r-2 border-red-500/50 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:w-3 group-hover:h-3 sm:group-hover:w-4 sm:group-hover:h-4 md:group-hover:w-6 md:group-hover:h-6" />
-
-                    {/* Radial Glow */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                      style={{
-                        background: 'radial-gradient(circle at 50% 50%, rgba(220, 38, 38, 0.15), transparent 70%)',
-                      }}
-                    />
-
-                    {/* Tech Icon */}
-                    <div className="relative z-10 mb-1 sm:mb-2 transition-transform duration-500 group-hover:scale-110">
-                      <img
-                        src={tech.icon}
-                        alt={tech.name}
-                        className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain transition-all duration-300"
-                        style={{
-                          filter: `${tech.invertLogo ? 'invert(1) ' : ''}${hoveredTech === tech.name
-                            ? 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.6)) brightness(1.2)'
-                            : 'brightness(0.9)'}`,
-                        }}
-                        loading="eager"
-                        crossOrigin="anonymous"
-                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                          const target = e.target as HTMLImageElement;
-                          target.onerror = null;
-                          target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ctext x='50' y='50' font-size='40' text-anchor='middle' dominant-baseline='middle' fill='%23dc2626'%3E${tech.name[0]}%3C/text%3E%3C/svg%3E`;
-                        }}
-                      />
-                    </div>
-
-                    {/* Tech Name */}
-                    <div className="text-white text-[10px] sm:text-xs md:text-sm font-semibold text-center opacity-60 group-hover:opacity-100 transition-opacity duration-300 px-1">
-                      {tech.name}
-                    </div>
-
-                    {/* Category Badge */}
-                    <div className="absolute -bottom-1 sm:-bottom-2 left-1/2 -translate-x-1/2 px-1.5 py-0.5 sm:px-2 sm:py-0.5 md:px-3 md:py-1 rounded-full text-[8px] sm:text-[10px] md:text-xs font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:-translate-y-1 sm:group-hover:-translate-y-2"
-                      style={{
-                        background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
-                        color: 'white',
-                      }}
-                    >
-                      {tech.category}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Stats Section */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
-            {[
-              { value: `80+`, label: 'Technologies Mastered' },
-              { value: '100+', label: 'Projects Delivered' },
-              { value: '98%', label: 'Client Satisfaction' },
-            ].map((stat, idx) => (
-              <div
-                key={idx}
-                className="group relative overflow-hidden rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-500 hover:scale-105"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%)',
-                  border: '1px solid rgba(239, 68, 68, 0.1)',
-                  backdropFilter: 'blur(20px)',
-                }}
-              >
-                {/* Hover Gradient */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, transparent 100%)',
-                  }}
-                />
-
-                <div className="relative z-10 text-center">
-                  <div className="text-3xl sm:text-5xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent mb-2 sm:mb-3">
-                    {stat.value}
-                  </div>
-                  <div className="text-gray-400 text-xs sm:text-sm font-medium tracking-wide">
-                    {stat.label}
-                  </div>
-                </div>
-
-                {/* Corner Accent */}
-                <div className="absolute top-0 right-0 w-16 sm:w-24 h-16 sm:h-24 opacity-20 group-hover:opacity-40 transition-opacity duration-500"
-                  style={{
-                    background: 'radial-gradient(circle at 100% 0%, #dc2626 0%, transparent 70%)',
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
-    </>
+    </div>
+  );
+};
+
+// --- The Wheel Component ---
+const ScrollWheel = ({ side, techs, progress }: { side: 'left' | 'right'; techs: typeof ALL_TECHS; progress: MotionValue<number> }) => {
+  const isLeft = side === 'left';
+
+  // Left spins clockwise (0 -> 360), Right spins counter-clockwise (0 -> -360)
+  const rawRotation = useTransform(progress, [0, 1], [0, isLeft ? 360 : -360]);
+
+  // Spring physics for buttery smooth scrolling
+  const smoothRotation = useSpring(rawRotation, { stiffness: 50, damping: 20, mass: 0.2 });
+
+  // Responsive Sizing & Positioning
+  // Mobile: 600px diameter, shifted 240px off screen (leaving 60px peeking)
+  // Desktop: 1100px diameter, shifted 400px off screen (leaving 150px peeking)
+  const sizeClasses = "w-[600px] h-[600px] md:w-[900px] md:h-[900px] lg:w-[1100px] lg:h-[1100px]";
+  const positionClasses = isLeft
+    ? "-left-[240px] md:-left-[350px] lg:-left-[400px]"
+    : "-right-[240px] md:-right-[350px] lg:-right-[400px]";
+
+  return (
+    <div className={`absolute top-1/2 -translate-y-1/2 ${sizeClasses} ${positionClasses} z-20`}>
+
+      {/* Decorative Outer Rings */}
+      <div className="absolute inset-0 rounded-full border border-white/5 bg-black/40 backdrop-blur-3xl shadow-[inset_0_0_100px_rgba(220,38,38,0.05)]" />
+      <div className="absolute inset-6 md:inset-10 rounded-full border border-dashed border-red-500/20" />
+      <div className="absolute inset-16 md:inset-24 rounded-full border border-white/5 bg-zinc-950/80 shadow-[0_0_50px_rgba(0,0,0,0.5)]" />
+
+      {/* The Rotating Anchor */}
+      <motion.div style={{ rotate: smoothRotation }} className="w-full h-full relative">
+        {techs.map((tech, i) => (
+          <TechNode
+            key={tech.name}
+            tech={tech}
+            index={i}
+            total={techs.length}
+            wheelRotation={smoothRotation}
+          />
+        ))}
+      </motion.div>
+
+    </div>
+  );
+};
+
+// --- Main Section ---
+export default function PremiumTechStack() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Tracks scroll progress across the 300vh container
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  // Center text parallax fade
+  const textY = useTransform(scrollYProgress, [0, 0.8], [0, 100]);
+  const textOpacity = useTransform(scrollYProgress, [0.8, 1], [1, 0]);
+
+  return (
+    // Height set to 300vh to give the user plenty of scroll time to spin the wheels
+    <div ref={containerRef} className="relative w-full h-[300vh] bg-[#030303]">
+
+      {/* The Sticky Viewport */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
+
+        {/* Gradient Mask to fade the wheels out at the top and bottom edges smoothly */}
+        <div
+          className="absolute inset-0 z-10 pointer-events-none"
+          style={{
+            maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)'
+          }}
+        >
+          {/* Glowing Background Core */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-red-600/20 blur-[120px] rounded-full" />
+
+          {/* The Left and Right Wheels */}
+          <ScrollWheel side="left" techs={LEFT_TECHS} progress={scrollYProgress} />
+          <ScrollWheel side="right" techs={RIGHT_TECHS} progress={scrollYProgress} />
+        </div>
+
+        {/* Center Typography (Highest Z-Index) */}
+        <motion.div
+          style={{ y: textY, opacity: textOpacity }}
+          className="relative z-30 text-center max-w-2xl px-4 pointer-events-none"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 md:mb-8 rounded-full border border-red-500/30 bg-zinc-950/80 backdrop-blur-md shadow-xl">
+            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            <span className="text-zinc-300 text-xs md:text-sm font-bold tracking-widest uppercase">
+              The Engine Room
+            </span>
+          </div>
+
+          <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white uppercase tracking-tighter leading-[0.9] mb-6 md:mb-8 drop-shadow-2xl">
+            Digital <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-900">
+              Arsenal
+            </span>
+          </h2>
+
+          <p className="text-zinc-400 text-base md:text-lg leading-relaxed max-w-md mx-auto">
+            Engineered with the world's most elite frameworks. Scroll down to explore the high-performance architecture powering DamnX solutions.
+          </p>
+
+          {/* Scroll Indicator */}
+          <div className="flex flex-col items-center mt-12 md:mt-16 opacity-50">
+            <span className="text-zinc-500 text-[10px] uppercase tracking-[0.3em] mb-4">Scroll to Spin</span>
+            <motion.div
+              animate={{ y: [0, 15, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="w-px h-16 bg-gradient-to-b from-red-600 to-transparent"
+            />
+          </div>
+        </motion.div>
+
+        {/* Subtle Edge Shadows to hide wheel clipping */}
+        <div className="absolute inset-y-0 left-0 w-8 md:w-20 bg-gradient-to-r from-[#030303] to-transparent z-40 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-8 md:w-20 bg-gradient-to-l from-[#030303] to-transparent z-40 pointer-events-none" />
+
+      </div>
+    </div>
   );
 }
