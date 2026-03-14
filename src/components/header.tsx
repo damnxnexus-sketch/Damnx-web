@@ -22,14 +22,6 @@ export default function DynamicIslandHeader() {
     const handleResize = () => {
       const mobileView = window.innerWidth < 768;
       setIsMobile(mobileView);
-
-      // If it's a mobile screen, automatically expand it
-      if (mobileView) {
-        setExpanded(true);
-      } else {
-        // If they resize back to desktop, collapse it
-        setExpanded(false);
-      }
     };
 
     // Run once on initial load
@@ -38,6 +30,15 @@ export default function DynamicIslandHeader() {
     // Listen for window resizing (e.g., rotating the phone)
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Auto-expand header after 2 seconds on initial load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setExpanded(true);
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   // 2. Only allow tap-outside to close if we are NOT on mobile
