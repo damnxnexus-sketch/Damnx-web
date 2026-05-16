@@ -196,7 +196,7 @@ export default function PremiumTechStack() {
           </h2>
 
           <p className="text-zinc-400 text-base md:text-lg leading-relaxed max-w-md mx-auto">
-            Engineered with the world's most elite frameworks. Scroll down to explore the high-performance architecture powering DamnX solutions.
+            Get a chance to explore the tech stack that powers the industry with BIAS Coding Club.
           </p>
 
           {/* Scroll Indicator */}
