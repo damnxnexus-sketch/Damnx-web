@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import { Home, FileText } from "lucide-react";
+import { Home, FileText, MapPin, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useChat } from "@/app/context/ChatContext";
 
@@ -11,9 +11,14 @@ const navItems = [
   { name: "Blogs", icon: FileText, href: "/blogs" },
 ];
 
+const locations = [
+  { name: "Haldwani", href: "/Haldwani" },
+];
+
 export default function DynamicIslandHeader() {
   const [expanded, setExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false); // New state to track if we are on a phone
+  const [locationsOpen, setLocationsOpen] = useState(false);
   const { openChat } = useChat();
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -130,6 +135,49 @@ export default function DynamicIslandHeader() {
                     </span>
                   </Link>
                 ))}
+
+                {/* Locations Dropdown */}
+                <div className="relative group">
+                  <button
+                    onClick={() => setLocationsOpen(!locationsOpen)}
+                    className="relative px-2 sm:px-3 py-2 flex flex-col items-center justify-center rounded-lg hover:bg-white/10 transition-colors"
+                  >
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" />
+                      <ChevronDown className={`w-4 h-4 text-white/70 transition-transform duration-200 ${locationsOpen ? "rotate-180" : ""}`} />
+                    </div>
+                    <span className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-white/50 whitespace-nowrap">
+                      Locations
+                    </span>
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  <AnimatePresence>
+                    {locationsOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-full mt-2 right-0 bg-black/80 backdrop-blur-lg border border-white/10 rounded-lg overflow-hidden z-50 min-w-max"
+                      >
+                        {locations.map((location) => (
+                          <Link
+                            key={location.name}
+                            href={location.href}
+                            onClick={() => {
+                              setLocationsOpen(false);
+                              if (!isMobile) setExpanded(false);
+                            }}
+                            className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/10 transition-colors border-b border-white/5 last:border-b-0"
+                          >
+                            {location.name}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
 
               <button
