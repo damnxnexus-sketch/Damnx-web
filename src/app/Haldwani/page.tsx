@@ -9,12 +9,14 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
   motion,
   useInView,
   useScroll,
   useTransform,
   AnimatePresence,
+  cubicBezier,
 } from "framer-motion";
 import {
   Code2,
@@ -253,7 +255,7 @@ const fadeInUp = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as number[] },
+    transition: { duration: 0.7, ease: cubicBezier(0.22, 1, 0.36, 1) },
   },
 };
 
@@ -269,7 +271,7 @@ const scaleIn = {
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as number[] },
+    transition: { duration: 0.6, ease: cubicBezier(0.22, 1, 0.36, 1) },
   },
 };
 
@@ -282,8 +284,8 @@ function TechMarquee(): React.ReactElement {
   return (
     <div className="relative overflow-hidden py-6 border-y border-white/5 bg-black/40">
       {/* Fade edges */}
-      <div className="absolute inset-y-0 left-0 w-24 z-10 bg-gradient-to-r from-black to-transparent pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-24 z-10 bg-gradient-to-l from-black to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 left-0 w-24 z-10 bg-linear-to-r from-black to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-24 z-10 bg-linear-to-l from-black to-transparent pointer-events-none" />
 
       <motion.div
         className="flex gap-10 w-max"
@@ -293,7 +295,7 @@ function TechMarquee(): React.ReactElement {
         {doubled.map((tech, idx) => (
           <div
             key={`${tech.name}-${idx}`}
-            className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.07] whitespace-nowrap"
+            className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/4 border border-white/7 whitespace-nowrap"
           >
             <span className="text-sm font-mono text-[#E50914]">{tech.icon}</span>
             <span className="text-sm font-medium text-white/60 tracking-wide">
@@ -331,17 +333,17 @@ function GlassmorphicServiceCard({
       transition={{ delay: index * 0.15 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative group rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl overflow-hidden cursor-default"
+      className="relative group rounded-2xl border border-white/10 bg-white/3 backdrop-blur-xl overflow-hidden cursor-default"
     >
       {/* Red glow on hover */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-[#E50914]/10 to-transparent"
+        className="absolute inset-0 bg-linear-to-br from-[#E50914]/10 to-transparent"
         animate={{ opacity: hovered ? 1 : 0 }}
         transition={{ duration: 0.3 }}
       />
       {/* Corner accent */}
       <div
-        className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${card.gradient} rounded-bl-full`}
+        className={`absolute top-0 right-0 w-32 h-32 bg-linear-to-bl ${card.gradient} rounded-bl-full`}
       />
 
       <div className="relative z-10 p-8">
@@ -445,7 +447,7 @@ function ContactForm(): React.ReactElement {
             onChange={handleChange}
             placeholder={field.placeholder}
             required
-            className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-white/20 text-sm outline-none focus:border-[#E50914] focus:ring-2 focus:ring-[#E50914]/20 transition-all duration-200"
+            className="w-full bg-white/4 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-white/20 text-sm outline-none focus:border-[#E50914] focus:ring-2 focus:ring-[#E50914]/20 transition-all duration-200"
           />
         </div>
       ))}
@@ -465,7 +467,7 @@ function ContactForm(): React.ReactElement {
           placeholder="Tell us about your project — what you're building, your timeline, and budget range..."
           required
           rows={5}
-          className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-white/20 text-sm outline-none focus:border-[#E50914] focus:ring-2 focus:ring-[#E50914]/20 transition-all duration-200 resize-none"
+          className="w-full bg-white/4 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-white/20 text-sm outline-none focus:border-[#E50914] focus:ring-2 focus:ring-[#E50914]/20 transition-all duration-200 resize-none"
         />
       </div>
 
@@ -533,7 +535,7 @@ export default function DamnxHaldwaniPage(): React.ReactElement {
         {/* ==============================================================
             HEADER / NAV
             ============================================================== */}
-        <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.04] backdrop-blur-xl">
+        <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/4 backdrop-blur-xl">
           <motion.div
             className="absolute inset-0 bg-black"
             style={{ opacity: navBg }}
@@ -543,7 +545,7 @@ export default function DamnxHaldwaniPage(): React.ReactElement {
             aria-label="Main navigation"
           >
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <motion.div
                 className="w-8 h-8 bg-[#E50914] rounded-lg flex items-center justify-center font-black text-sm text-white"
                 whileHover={{ rotate: 5, scale: 1.1 }}
@@ -553,7 +555,7 @@ export default function DamnxHaldwaniPage(): React.ReactElement {
               <span className="font-bold text-white tracking-tight text-lg">
                 Damnx<span className="text-[#E50914]">.</span>
               </span>
-            </a>
+            </Link>
 
             {/* Desktop links */}
             <ul className="hidden md:flex items-center gap-8" role="list">
@@ -648,11 +650,11 @@ export default function DamnxHaldwaniPage(): React.ReactElement {
             {/* Glows */}
             <div
               aria-hidden="true"
-              className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#E50914]/10 rounded-full blur-[120px] pointer-events-none"
+              className="absolute top-1/4 left-1/2 -translate-x-1/2 w-150 h-150 bg-[#E50914]/10 rounded-full blur-[120px] pointer-events-none"
             />
             <div
               aria-hidden="true"
-              className="absolute top-1/3 left-1/4 w-[300px] h-[300px] bg-[#E50914]/5 rounded-full blur-[80px] pointer-events-none"
+              className="absolute top-1/3 left-1/4 w-75 h-75 bg-[#E50914]/5 rounded-full blur-[80px] pointer-events-none"
             />
 
             <div
@@ -729,7 +731,7 @@ export default function DamnxHaldwaniPage(): React.ReactElement {
                   href="#services"
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-2.5 bg-white/[0.05] backdrop-blur-sm text-white font-bold px-8 py-4 rounded-full text-base border border-white/10 hover:border-white/25 transition-all duration-300"
+                  className="inline-flex items-center gap-2.5 bg-white/5 backdrop-blur-sm text-white font-bold px-8 py-4 rounded-full text-base border border-white/10 hover:border-white/25 transition-all duration-300"
                 >
                   Our Services
                 </motion.a>
@@ -764,7 +766,7 @@ export default function DamnxHaldwaniPage(): React.ReactElement {
               <motion.div
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 1.8, repeat: Infinity }}
-                className="w-px h-12 bg-gradient-to-b from-transparent via-white/30 to-transparent"
+                className="w-px h-12 bg-linear-to-b from-transparent via-white/30 to-transparent"
               />
             </motion.div>
           </section>
@@ -827,14 +829,14 @@ export default function DamnxHaldwaniPage(): React.ReactElement {
             id="why-us"
             ref={whyUsRef}
             aria-labelledby="why-us-heading"
-            className="relative py-24 md:py-36 bg-white/[0.01]"
+            className="relative py-24 md:py-36 bg-white/1"
           >
             {/* Bg glow */}
             <div
               aria-hidden="true"
               className="absolute inset-0 overflow-hidden pointer-events-none"
             >
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#E50914]/5 rounded-full blur-[100px]" />
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-125 h-125 bg-[#E50914]/5 rounded-full blur-[100px]" />
             </div>
 
             <div className="relative max-w-7xl mx-auto px-5 md:px-8">
@@ -892,7 +894,7 @@ export default function DamnxHaldwaniPage(): React.ReactElement {
                       key={item.id}
                       variants={fadeInUp}
                       whileHover={{ y: -4 }}
-                      className="p-6 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-[#E50914]/30 transition-all duration-300"
+                      className="p-6 rounded-2xl bg-white/3 border border-white/8 hover:border-[#E50914]/30 transition-all duration-300"
                     >
                       <div className="w-10 h-10 rounded-xl bg-[#E50914]/10 border border-[#E50914]/20 flex items-center justify-center text-[#E50914] mb-4">
                         {item.icon}
@@ -921,7 +923,7 @@ export default function DamnxHaldwaniPage(): React.ReactElement {
             {/* Top accent */}
             <div
               aria-hidden="true"
-              className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-24 bg-gradient-to-b from-[#E50914]/50 to-transparent"
+              className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-24 bg-linear-to-b from-[#E50914]/50 to-transparent"
             />
 
             <div className="max-w-7xl mx-auto px-5 md:px-8">
@@ -973,7 +975,7 @@ export default function DamnxHaldwaniPage(): React.ReactElement {
                       },
                     ].map((item) => (
                       <div key={item.label} className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-[#E50914]/10 flex items-center justify-center text-[#E50914] flex-shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-[#E50914]/10 flex items-center justify-center text-[#E50914] shrink-0">
                           {item.icon}
                         </div>
                         {item.href ? (
@@ -999,7 +1001,7 @@ export default function DamnxHaldwaniPage(): React.ReactElement {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-80px" }}
                   transition={{ duration: 0.7, delay: 0.1 }}
-                  className="bg-white/[0.03] border border-white/[0.08] rounded-3xl p-8 backdrop-blur-xl"
+                  className="bg-white/3 border border-white/8 rounded-3xl p-8 backdrop-blur-xl"
                 >
                   <ContactForm />
                 </motion.div>
