@@ -159,7 +159,7 @@ export default function DynamicIslandHeader() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute top-full mt-2 right-0 bg-black/80 backdrop-blur-lg border border-white/10 rounded-lg overflow-hidden z-50 min-w-max"
+                        className="absolute top-full mt-3 -right-2 sm:right-0 bg-black/90 backdrop-blur-lg border border-white/10 rounded-lg overflow-hidden z-50 min-w-35 sm:min-w-max shadow-lg"
                       >
                         {locations.map((location) => (
                           <Link
@@ -169,7 +169,7 @@ export default function DynamicIslandHeader() {
                               setLocationsOpen(false);
                               if (!isMobile) setExpanded(false);
                             }}
-                            className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/10 transition-colors border-b border-white/5 last:border-b-0"
+                            className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/10 transition-colors border-b border-white/5 last:border-b-0 whitespace-nowrap"
                           >
                             {location.name}
                           </Link>
