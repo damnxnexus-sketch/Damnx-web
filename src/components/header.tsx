@@ -1,198 +1,208 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
-import { Home, FileText, MapPin, ChevronDown } from "lucide-react";
-import Link from "next/link";
-import { useChat } from "@/app/context/ChatContext";
+import { Home, FileText, MapPin, Menu, X as CloseIcon } from "lucide-react";
 
-const navItems = [
-  { name: "Home", icon: Home, href: "/" },
-  { name: "Blogs", icon: FileText, href: "/blogs" },
+/**
+ * DamnX Solutions — Floating "Dynamic Island" Header
+ * ----------------------------------------------------
+ * Drop into: app/components/Header.tsx (or components/Header.tsx)
+ * Deps:      npm i framer-motion lucide-react
+ *
+ * Put your logo at:  /public/damnx-logo.svg  (or .png)
+ * If you don't have a logo asset yet, this component renders a
+ * code-built logo (DAMNX + slashed X + SOLUTIONS) that matches the
+ * screenshot pixel-for-pixel — swap the <Logo /> body for an
+ * <img src="/damnx-logo.svg" .../> whenever your asset is ready.
+ */
+
+const navIcons = [
+  { icon: Home, label: "Home", href: "/" },
+  { icon: FileText, label: "Resources", href: "/resources" },
+  { icon: MapPin, label: "Locations", href: "/locations" },
 ];
 
-const locations = [
-  { name: "Haldwani", href: "/Haldwani" },
-];
+// Spring config tuned for that squishy "dynamic island" jelly feel
+const jellySpring = {
+  type: "spring" as const,
+  stiffness: 420,
+  damping: 22,
+  mass: 0.7,
+};
 
-export default function DynamicIslandHeader() {
-  const [expanded, setExpanded] = useState(false);
-  const [isMobile, setIsMobile] = useState(false); // New state to track if we are on a phone
-  const [locationsOpen, setLocationsOpen] = useState(false);
-  const { openChat } = useChat();
-  const headerRef = useRef<HTMLDivElement>(null);
+function Logo() {
+  return (
+    <div className="relative flex flex-col items-center select-none leading-none">
+      <div className="relative flex items-center">
+        <span
+          className="font-extrabold tracking-tight text-white"
+          style={{ fontSize: "clamp(1.1rem, 2.4vw, 1.6rem)", letterSpacing: "-0.02em" }}
+        >
+          DAMN
+        </span>
+        <span className="relative inline-block" style={{ width: "0.65em", height: "1em" }}>
+          <span
+            className="absolute inset-0 flex items-center justify-center font-extrabold text-white"
+            style={{ fontSize: "clamp(1.1rem, 2.4vw, 1.6rem)" }}
+          >
+            X
+          </span>
+          {/* diagonal slash accent through the X, matching the mark in the source design */}
+          <svg
+            viewBox="0 0 40 60"
+            className="absolute -top-2 left-1/2 h-[160%] w-[220%] -translate-x-1/2 overflow-visible"
+            fill="none"
+          >
+            <line
+              x1="4"
+              y1="56"
+              x2="36"
+              y2="4"
+              stroke="white"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+          </svg>
+        </span>
+      </div>
+      <span
+        className="-mt-1 font-medium text-white/85"
+        style={{ fontSize: "clamp(0.5rem, 1vw, 0.65rem)", letterSpacing: "0.3em" }}
+      >
+        SOLUTIONS
+      </span>
+    </div>
+  );
+}
 
-  // 1. Detect screen size on load and on resize
+export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   useEffect(() => {
-    const handleResize = () => {
-      const mobileView = window.innerWidth < 768;
-      setIsMobile(mobileView);
-    };
-
-    // Run once on initial load
-    handleResize();
-
-    // Listen for window resizing (e.g., rotating the phone)
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  // Auto-expand header after 2 seconds on initial load
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setExpanded(true);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // 2. Only allow tap-outside to close if we are NOT on mobile
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent | TouchEvent) {
-      if (headerRef.current && !headerRef.current.contains(event.target as Node)) {
-        if (!isMobile) {
-          setExpanded(false);
-        }
-      }
-    }
-
-    if (expanded) {
-      document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("touchstart", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
-    };
-  }, [expanded, isMobile]);
 
   return (
-    <div className="fixed top-6 left-1/2 z-50 -translate-x-1/2 font-sans w-full flex justify-center pointer-events-none">
-      <motion.div
-        layout
-        ref={headerRef}
-        // 3. Prevent hover interactions from closing it on mobile
-        onMouseEnter={() => !isMobile && setExpanded(true)}
-        onMouseLeave={() => !isMobile && setExpanded(false)}
-        onClick={() => !expanded && !isMobile && setExpanded(true)}
-        initial={{ width: 160, height: 48, borderRadius: 24 }}
+    <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:px-6 sm:pt-5">
+      <motion.nav
+        initial={{ y: -80, opacity: 0, scale: 0.9 }}
         animate={{
-          width: expanded ? "min(340px, 90vw)" : 160,
-          height: expanded ? 72 : 48,
-          borderRadius: 36,
+          y: 0,
+          opacity: 1,
+          scale: scrolled ? 0.97 : 1,
+          width: scrolled ? "min(100%, 880px)" : "min(100%, 960px)",
         }}
-        transition={{
-          type: "spring",
-          stiffness: 180,
-          damping: 20,
+        transition={jellySpring}
+        className="flex w-full max-w-[960px] items-center justify-between rounded-full bg-[#E5231B] px-3 py-2 shadow-[0_8px_30px_rgba(229,35,27,0.35)] ring-1 ring-white/10 sm:px-4 sm:py-2.5"
+        style={{
+          backgroundImage:
+            "linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0.08) 100%)",
         }}
-        className={`relative overflow-hidden bg-black/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] flex items-center justify-center p-2 pointer-events-auto ${!expanded && !isMobile ? "cursor-pointer" : ""}`}
       >
-        <AnimatePresence mode="popLayout">
-          {!expanded ? (
-            <motion.div
-              key="logo"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="flex items-center gap-2"
+        {/* Left: icon nav (desktop) */}
+        <div className="hidden items-center gap-1 sm:flex">
+          {navIcons.map(({ icon: Icon, label, href }) => (
+            <motion.a
+              key={label}
+              href={href}
+              aria-label={label}
+              whileHover={{ scale: 1.15, y: -2 }}
+              whileTap={{ scale: 0.9 }}
+              transition={jellySpring}
+              className="flex h-9 w-9 items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/15 hover:text-white"
             >
-              <img
-                src="logobg.png"
-                alt="DAMNX"
-                className="h-8 w-8 object-contain opacity-90"
-              />
-              <span className="text-white/90 font-medium text-sm tracking-widest">DAMNX</span>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="nav"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ delay: 0.1 }}
-              className="flex items-center justify-between w-full px-2 sm:px-4"
-            >
-              <div className="hidden sm:flex items-center gap-2 mr-2 sm:mr-4 border-r border-white/10 pr-2 sm:pr-4">
-                <img src="logobg.png" alt="Logo" className="w-6 h-6 object-contain" />
-              </div>
+              <Icon size={17} strokeWidth={1.8} />
+            </motion.a>
+          ))}
+        </div>
 
-              <div className="flex items-center gap-1 sm:gap-2">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    // 4. Do not collapse the header on link click if on mobile
-                    onClick={() => {
-                      if (!isMobile) setExpanded(false);
-                    }}
-                    className="relative px-2 sm:px-3 py-2 group flex flex-col items-center justify-center rounded-lg hover:bg-white/10 transition-colors"
+        {/* Left: hamburger (mobile) */}
+        <motion.button
+          aria-label="Open menu"
+          onClick={() => setMobileOpen(true)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          transition={jellySpring}
+          className="flex h-9 w-9 items-center justify-center rounded-full text-white sm:hidden"
+        >
+          <Menu size={20} strokeWidth={2} />
+        </motion.button>
+
+        {/* Center: logo */}
+        <motion.a
+          href="/"
+          aria-label="DamnX Solutions — home"
+          whileHover={{ scale: 1.04 }}
+          transition={jellySpring}
+          className="flex items-center justify-center"
+        >
+          <Logo />
+        </motion.a>
+
+        {/* Right: CTA */}
+        <motion.a
+          href="/contact"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.94 }}
+          transition={jellySpring}
+          className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-[#111] shadow-sm sm:px-6 sm:py-2.5 sm:text-sm"
+        >
+          Let&apos;s Talk
+        </motion.a>
+      </motion.nav>
+
+      {/* Mobile drawer */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm sm:hidden"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.9 }}
+              transition={jellySpring}
+              className="fixed left-3 right-3 top-20 z-50 rounded-3xl bg-[#E5231B] p-5 shadow-2xl ring-1 ring-white/10 sm:hidden"
+            >
+              <div className="mb-4 flex items-center justify-between">
+                <Logo />
+                <motion.button
+                  aria-label="Close menu"
+                  onClick={() => setMobileOpen(false)}
+                  whileTap={{ scale: 0.9, rotate: 90 }}
+                  transition={jellySpring}
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-white"
+                >
+                  <CloseIcon size={18} />
+                </motion.button>
+              </div>
+              <div className="flex flex-col gap-1">
+                {navIcons.map(({ icon: Icon, label, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                   >
-                    <item.icon className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" />
-                    <span className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-white/50 whitespace-nowrap">
-                      {item.name}
-                    </span>
-                  </Link>
+                    <Icon size={18} strokeWidth={1.8} />
+                    <span className="text-sm font-medium">{label}</span>
+                  </a>
                 ))}
-
-                {/* Locations Dropdown */}
-                <div className="relative group">
-                  <button
-                    onClick={() => setLocationsOpen(!locationsOpen)}
-                    className="relative px-2 sm:px-3 py-2 flex flex-col items-center justify-center rounded-lg hover:bg-white/10 transition-colors"
-                  >
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" />
-                      <ChevronDown className={`w-4 h-4 text-white/70 transition-transform duration-200 ${locationsOpen ? "rotate-180" : ""}`} />
-                    </div>
-                    <span className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-white/50 whitespace-nowrap">
-                      Locations
-                    </span>
-                  </button>
-
-                  {/* Dropdown Menu */}
-                  <AnimatePresence>
-                    {locationsOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute top-full mt-3 -right-2 sm:right-0 bg-black/90 backdrop-blur-lg border border-white/10 rounded-lg overflow-hidden z-50 min-w-35 sm:min-w-max shadow-lg"
-                      >
-                        {locations.map((location) => (
-                          <Link
-                            key={location.name}
-                            href={location.href}
-                            onClick={() => {
-                              setLocationsOpen(false);
-                              if (!isMobile) setExpanded(false);
-                            }}
-                            className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/10 transition-colors border-b border-white/5 last:border-b-0 whitespace-nowrap"
-                          >
-                            {location.name}
-                          </Link>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
               </div>
-
-              <button
-                onClick={() => {
-                  openChat();
-                  if (!isMobile) setExpanded(false);
-                }}
-                className="ml-2 sm:ml-4 px-3 sm:px-4 py-1.5 bg-white text-black text-[10px] sm:text-xs font-bold rounded-full hover:scale-105 transition-transform whitespace-nowrap"
-              >
-                Let's Talk
-              </button>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    </div>
+          </>
+        )}
+      </AnimatePresence>
+    </header>
   );
 }
