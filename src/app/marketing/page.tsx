@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import WhyDifferent from "./Whyus";
 import WebDevGrowth from "./WebMarketing";
+import PricingTable from "./Pricing";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
@@ -82,12 +83,13 @@ function HeroSection() {
 
 export default function MarketingPage() {
   return (
-    <div className="bg-black min-h-screen">
+    <div className="bg-black min-h-screen overflow-x-hidden">
       <HeroSection />
       <div id="why-different">
         <WhyDifferent />
       </div>
       <WebDevGrowth />
+      <PricingTable />
     </div>
   );
 }
