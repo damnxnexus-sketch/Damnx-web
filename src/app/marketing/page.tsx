@@ -6,6 +6,7 @@ import WebDevGrowth from "./WebMarketing";
 import PricingTable from "./Pricing";
 import ClientReel from "./OurWork";
 import ClientTicker from "./Carousal";
+import FAQSection from "./Conversion";
 import GrowthCTABanner from "./FAQ";
 
 const fadeUp = {
@@ -95,6 +96,7 @@ export default function MarketingPage() {
       <PricingTable />
       <ClientReel />
       <ClientTicker />
+      <FAQSection />
       <GrowthCTABanner />
     </div>
   );
