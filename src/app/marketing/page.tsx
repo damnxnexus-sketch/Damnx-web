@@ -5,6 +5,7 @@ import WhyDifferent from "./Whyus";
 import WebDevGrowth from "./WebMarketing";
 import PricingTable from "./Pricing";
 import ClientReel from "./OurWork";
+import ClientTicker from "./Carousal";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
@@ -92,6 +93,7 @@ export default function MarketingPage() {
       <WebDevGrowth />
       <PricingTable />
       <ClientReel />
+      <ClientTicker />
     </div>
   );
 }
