@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import WhyDifferent from "./Whyus";
 import WebDevGrowth from "./WebMarketing";
 import PricingTable from "./Pricing";
+import ClientReel from "./OurWork";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
@@ -90,6 +91,7 @@ export default function MarketingPage() {
       </div>
       <WebDevGrowth />
       <PricingTable />
+      <ClientReel />
     </div>
   );
 }
