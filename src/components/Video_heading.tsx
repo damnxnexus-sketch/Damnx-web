@@ -1,196 +1,234 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import dynamic from 'next/dynamic';
-import { useShouldReduceEffects } from '@/hooks/useDeviceDetection';
 
-// Lazy load ColorBends only when needed
-const ColorBends = dynamic(() => import('./ColorBends'), {
-  ssr: false,
-  loading: () => null
-});
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Globe, Smartphone, Palette, Layout, Code2 } from 'lucide-react';
+
+const WORDS = ['UI/UX', 'WEBSITES', 'MOBILE APPS', 'SOFTWARE', 'BRANDING'];
+
+const SERVICES = [
+  { icon: Globe,       label: 'Websites'    },
+  { icon: Smartphone,  label: 'Mobile Apps' },
+  { icon: Palette,     label: 'UI/UX Design'},
+  { icon: Layout,      label: 'Branding'    },
+  { icon: Code2,       label: 'Software'    },
+];
+
+// Fixed positions relative to the robot image container
+const ORBIT_POSITIONS = [
+  { top: '-8%',  right: '-22%'  },   // top-right
+  { top: '28%',  left:  '-24%'  },   // mid-left
+  { bottom: '2%', right: '-18%' },   // bottom-right
+  { top: '5%',   left:  '-16%'  },   // top-left
+  { bottom: '20%', left: '-8%'  },   // bottom-left
+];
 
 export default function VideoHeroSection() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const [currentWord, setCurrentWord]     = useState(0);
+  const [mouse, setMouse]                 = useState({ x: 0, y: 0 });
 
-  const [blur, setBlur] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [topBlur, setTopBlur] = useState(0);
-  const [bottomBlur, setBottomBlur] = useState(0);
-  const shouldReduceEffects = useShouldReduceEffects();
-
+  // Rotate heading word every 3.5 s
   useEffect(() => {
-    const section = sectionRef.current;
-    let ticking = false;
+    const id = setInterval(() => setCurrentWord(p => (p + 1) % WORDS.length), 3500);
+    return () => clearInterval(id);
+  }, []);
 
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          if (!section || !sectionRef.current) {
-            ticking = false;
-            return;
-          }
-
-          const rect = section.getBoundingClientRect();
-          const windowHeight = window.innerHeight;
-          const sectionHeight = rect.height;
-
-          // Calculate scroll progress through the section
-          const scrollTop = -rect.top;
-          const progress = Math.max(0, Math.min(1, scrollTop / sectionHeight));
-          setScrollProgress(progress);
-
-          // Calculate blur effect when scrolling down past the section
-          if (rect.top < 0) {
-            const blurAmount = Math.min(5, Math.abs(rect.top) / 60);
-            setBlur(blurAmount);
-          } else {
-            setBlur(0);
-          }
-
-          // Calculate boundary blur effects - Only minimal blur at transition
-          // Top boundary blur - when section enters viewport
-          const topDistance = Math.max(0, rect.top);
-          const topBoundaryBlur = Math.min(4, (150 - topDistance) / 150 * 4);
-          setTopBlur(topDistance < 150 ? topBoundaryBlur : 0);
-
-          // Bottom boundary blur - when section exits viewport
-          const bottomDistance = Math.max(0, windowHeight - rect.bottom);
-          const bottomBoundaryBlur = Math.min(4, (150 - bottomDistance) / 150 * 4);
-          setBottomBlur(bottomDistance < 150 ? bottomBoundaryBlur : 0);
-          
-          ticking = false;
-        });
-        ticking = true;
-      }
+  // Subtle mouse parallax on the robot
+  useEffect(() => {
+    const handle = (e: MouseEvent) => {
+      setMouse({
+        x: (e.clientX / window.innerWidth  - 0.5) * 12,
+        y: (e.clientY / window.innerHeight - 0.5) * 12,
+      });
     };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
-    };
+    window.addEventListener('mousemove', handle);
+    return () => window.removeEventListener('mousemove', handle);
   }, []);
 
   return (
-    <div className="min-h-screen bg-black relative">
-      {/* Video Hero Section */}
-      <section
-        ref={sectionRef}
-        className="relative min-h-[100dvh] w-full overflow-x-hidden flex flex-col items-center justify-center"
-      >
-        {/* ColorBends Background - Disabled on mobile for performance */}
-        <div className="absolute inset-0 w-full h-full z-0">
-          {!shouldReduceEffects && (
-            <ColorBends
-              colors={['#000000', '#1a0505', '#450a0a', '#7f1d1d', '#dc2626']}
-            />
-          )}
-          {/* Enhanced Overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60 pointer-events-none" />
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px] pointer-events-none" />
-        </div>
+    <section className="relative w-full min-h-screen bg-[#050505] overflow-hidden font-sans">
 
-        {/* Content Container */}
-        <div className="relative z-10 w-full max-w-[1200px] px-4 md:px-8 flex flex-col items-center justify-center">
+      {/* ─── RING 1 — left edge, top half ─── */}
+      <motion.img
+        src="/ring1.png"
+        alt=""
+        aria-hidden
+        className="absolute top-[5%] -left-[18%] sm:-left-[12%] lg:-left-[8%] w-[55vw] sm:w-[40vw] lg:w-[30vw] max-w-[480px] pointer-events-none select-none"
+        style={{ opacity: 0.55, mixBlendMode: 'screen' }}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 55, repeat: Infinity, ease: 'linear' }}
+      />
 
-          {/* Main Heading Group */}
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="flex flex-col items-center"
-          >
-            {/* DAMN X Row */}
-            <div className="flex items-baseline justify-center gap-2 md:gap-4 mb-2 relative">
+      {/* ─── RING 2 — right edge, bottom half ─── */}
+      <motion.img
+        src="/ring2.png"
+        alt=""
+        aria-hidden
+        className="absolute bottom-[-8%] -right-[18%] sm:-right-[12%] lg:-right-[8%] w-[65vw] sm:w-[48vw] lg:w-[36vw] max-w-[580px] pointer-events-none select-none"
+        style={{ opacity: 0.55, mixBlendMode: 'screen' }}
+        animate={{ rotate: -360 }}
+        transition={{ duration: 65, repeat: Infinity, ease: 'linear' }}
+      />
 
-              {/* DAMN - Metallic Effect */}
-              <motion.h1
-                className="text-[18vw] md:text-[150px] leading-[0.8] tracking-tighter mix-blend-overlay font-black"
-                style={{
-                  color: 'transparent',
-                  WebkitTextStroke: '2px rgba(255,255,255,0.8)',
-                  backgroundImage: 'linear-gradient(135deg, #e0e0e0 0%, #ffffff 50%, #a0a0a0 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  filter: 'drop-shadow(0 0 30px rgba(255,255,255,0.1))'
-                }}
-                whileHover={{ scale: 1.05, filter: 'drop-shadow(0 0 50px rgba(255,255,255,0.2))' }}
-                transition={{ type: "spring", stiffness: 200, damping: 10 }}
-              >
-                DAMN
-              </motion.h1>
+      {/* ─── Ambient red glow ─── */}
+      <div
+        aria-hidden
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] max-w-[700px] h-[420px] rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse, rgba(229,35,27,0.12) 0%, transparent 70%)', filter: 'blur(40px)' }}
+      />
 
-              {/* X - Neon Red Glow */}
-              <motion.span
-                className="text-[20vw] md:text-[180px] leading-[0.8] font-black font-sans"
-                style={{
-                  color: '#dc2626',
-                  WebkitTextStroke: '2px rgba(255, 255, 255, 0.95)',
-                  textShadow: '0 5px 15px rgba(0,0,0,0.8), 0 0 20px rgba(220, 38, 38, 0.6), 0 0 60px rgba(220, 38, 38, 0.4)'
-                }}
-                animate={{
-                  textShadow: [
-                    '0 5px 15px rgba(0,0,0,0.8), 0 0 20px rgba(220, 38, 38, 0.6), 0 0 60px rgba(220, 38, 38, 0.4)',
-                    '0 5px 15px rgba(0,0,0,0.8), 0 0 40px rgba(220, 38, 38, 0.8), 0 0 100px rgba(220, 38, 38, 0.6)',
-                    '0 5px 15px rgba(0,0,0,0.8), 0 0 20px rgba(220, 38, 38, 0.6), 0 0 60px rgba(220, 38, 38, 0.4)'
-                  ]
-                }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                whileHover={{
-                  scale: 1.1,
-                  rotate: [0, -5, 5, 0],
-                  textShadow: '0 10px 30px rgba(0,0,0,0.9), 0 0 40px rgba(220, 38, 38, 1), 0 0 100px rgba(220, 38, 38, 0.8)'
-                }}
-              >
-                X
-              </motion.span>
-            </div>
+      {/* ─── Main two-column grid ─── */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 min-h-screen grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-8 items-center py-28 lg:py-0">
 
-            {/* SOLUTION - Wide Spaced */}
-            <motion.div
-              initial={{ opacity: 0, letterSpacing: '0.2em' }}
-              animate={{ opacity: 1, letterSpacing: '0.8em' }}
-              transition={{ delay: 0.5, duration: 1.5, ease: "easeOut" }}
-              className="text-white/90 text-sm md:text-2xl font-light uppercase tracking-[0.8em] md:tracking-[1.2em] ml-2 mb-12"
-            >
-              Solution
-            </motion.div>
-          </motion.div>
-
-          {/* Quote Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.8 }}
-            className="max-w-3xl text-center relative"
-          >
-            {/* Decorative lines */}
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-24 h-[1px] bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
-
-            <p className="text-lg md:text-2xl text-gray-300 font-extralight leading-relaxed tracking-wide">
-              &quot;Where innovation meets excellence. Transforming visions into digital reality with <span className="text-white font-normal drop-shadow-md">cutting-edge</span> software solutions.&quot;
-            </p>
-
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-[1px] bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
-          </motion.div>
-
-        </div>
-
-        {/* Scroll Indicator */}
+        {/* ══════════ LEFT — TYPOGRAPHY ══════════ */}
         <motion.div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-start text-left"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
         >
-          <div className="w-[1px] h-12 bg-gradient-to-b from-transparent via-white to-transparent" />
-          <span className="text-[10px] uppercase tracking-widest text-white/50">Scroll</span>
+          {/* Eyebrow */}
+          <p className="text-zinc-400 text-sm md:text-base tracking-[0.22em] uppercase font-semibold mb-3">
+            We Build
+          </p>
+
+          {/* ── Rotating keyword ── 
+              Uses a fixed min-height so the text block below never jumps.
+              `overflow: visible` lets the very large text breathe upward. */}
+          <div className="relative w-full mb-3" style={{ minHeight: 'clamp(72px, 14vw, 150px)' }}>
+            <AnimatePresence mode="wait">
+              <motion.h1
+                key={currentWord}
+                initial={{ opacity: 0, y: 24, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, y: 0,  filter: 'blur(0px)'  }}
+                exit  ={{ opacity: 0, y: -18, filter: 'blur(10px)' }}
+                transition={{ duration: 0.45, ease: 'easeOut' }}
+                className="absolute inset-x-0 top-0 text-[clamp(52px,10vw,120px)] font-black text-[#E5231B] leading-none tracking-tighter whitespace-nowrap"
+                style={{ lineHeight: 1 }}
+              >
+                {WORDS[currentWord]}
+              </motion.h1>
+            </AnimatePresence>
+          </div>
+
+          {/* Sub-headline */}
+          <p className="text-zinc-200 text-lg sm:text-xl md:text-2xl font-light tracking-[0.12em] uppercase mb-7">
+            That Dominate the Digital World
+          </p>
+
+          {/* Divider */}
+          <div className="w-14 h-[3px] bg-white rounded-full mb-7" />
+
+          {/* Body */}
+          <p className="text-zinc-400 text-sm md:text-base leading-relaxed max-w-[420px]">
+            We transform bold ideas into exceptional digital experiences. From concept to deployment, we build solutions that set new standards.
+          </p>
         </motion.div>
 
-      </section>
-    </div>
+        {/* ══════════ RIGHT — ROBOT + FLOATING ICONS ══════════ */}
+        <motion.div
+          className="relative flex justify-center items-center h-[380px] sm:h-[460px] lg:h-[580px]"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.9, delay: 0.15, type: 'spring', stiffness: 80 }}
+        >
+          {/* Red spotlight behind robot */}
+          <div
+            aria-hidden
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] rounded-full pointer-events-none"
+            style={{
+              background: 'radial-gradient(circle, rgba(229,35,27,0.25) 0%, transparent 70%)',
+              filter: 'blur(32px)',
+              animation: 'pulseGlow 4s ease-in-out infinite',
+            }}
+          />
+
+          {/* Robot — mouse-parallax wrapper */}
+          <div
+            className="relative z-10"
+            style={{
+              transform: `perspective(900px) rotateX(${mouse.y * 0.25}deg) rotateY(${mouse.x * 0.25}deg)`,
+              transition: 'transform 0.15s ease-out',
+            }}
+          >
+            <img
+              src="/robo.png"
+              alt="DamnX AI Mascot"
+              className="w-full max-w-[260px] sm:max-w-[310px] lg:max-w-[400px] h-auto object-contain"
+              style={{
+                filter: 'drop-shadow(0 24px 48px rgba(229,35,27,0.2))',
+                animation: 'robotFloat 6s ease-in-out infinite',
+              }}
+            />
+
+            {/* ── Floating service icon badges ── */}
+            {SERVICES.map((svc, i) => {
+              const pos = ORBIT_POSITIONS[i];
+              const Icon = svc.icon;
+              return (
+                <div
+                  key={svc.label}
+                  className="absolute w-14 h-14 sm:w-16 sm:h-16 lg:w-[72px] lg:h-[72px]"
+                  style={{
+                    ...pos,
+                    animation: `badge${i} ${7 + i * 0.6}s ease-in-out infinite`,
+                    animationDelay: `${i * 0.45}s`,
+                  }}
+                >
+                  <div className="w-full h-full rounded-2xl border border-white/10 bg-zinc-950/70 backdrop-blur-xl flex flex-col items-center justify-center gap-1 shadow-[0_8px_24px_rgba(0,0,0,0.5)]">
+                    <Icon size={18} className="text-[#E5231B]" strokeWidth={1.6} />
+                    <span className="text-zinc-400 text-[8px] sm:text-[9px] font-semibold uppercase tracking-wider text-center leading-tight px-0.5">
+                      {svc.label}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+      </div>
+
+      {/* ─── Bottom gradient fade into next section ─── */}
+      <div
+        aria-hidden
+        className="absolute bottom-0 inset-x-0 h-36 pointer-events-none z-20"
+        style={{ background: 'linear-gradient(to top, #050505 0%, transparent 100%)' }}
+      />
+
+      {/* ─── Keyframe animations (scoped via global-style injection) ─── */}
+      <style>{`
+        @keyframes robotFloat {
+          0%, 100% { transform: translateY(0px);  }
+          50%       { transform: translateY(-18px); }
+        }
+
+        @keyframes pulseGlow {
+          0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1);   }
+          50%       { opacity: 1;   transform: translate(-50%, -50%) scale(1.15); }
+        }
+
+        /* Per-badge float paths — each slightly different for organic feel */
+        @keyframes badge0 {
+          0%,100% { transform: translate(0,   0px);  }
+          50%     { transform: translate(4px, -14px); }
+        }
+        @keyframes badge1 {
+          0%,100% { transform: translate(0,   0px); }
+          50%     { transform: translate(-6px,-10px); }
+        }
+        @keyframes badge2 {
+          0%,100% { transform: translate(0,  0px); }
+          50%     { transform: translate(5px,-12px); }
+        }
+        @keyframes badge3 {
+          0%,100% { transform: translate(0,  0px); }
+          50%     { transform: translate(-4px,-8px); }
+        }
+        @keyframes badge4 {
+          0%,100% { transform: translate(0,  0px); }
+          50%     { transform: translate(3px,-11px); }
+        }
+      `}</style>
+    </section>
   );
 }

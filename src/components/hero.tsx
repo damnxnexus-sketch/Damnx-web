@@ -138,8 +138,8 @@ export default function DamnXHero() {
                   <div
                     key={idx}
                     className={`absolute inset-0 flex items-center justify-center lg:justify-start transition-all duration-700 ${idx === currentWord && !isChanging
-                        ? 'opacity-100 scale-100 blur-0'
-                        : 'opacity-0 scale-90 blur-md pointer-events-none'
+                      ? 'opacity-100 scale-100 blur-0'
+                      : 'opacity-0 scale-90 blur-md pointer-events-none'
                       }`}
                   >
                     <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-7xl font-black group">
