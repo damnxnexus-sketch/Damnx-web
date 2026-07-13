@@ -2,15 +2,17 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight, TrendingUp, Users, Star, Phone } from "lucide-react";
+import { useChat } from "@/app/context/ChatContext";
 
 const highlights = [
-  { icon: TrendingUp, value: "200+", label: "Brands Scaled" },
+  { icon: TrendingUp, value: "125+", label: "Projects Done" },
   { icon: Users, value: "50K+", label: "Leads Generated" },
   { icon: Star, value: "4.9★", label: "Client Rating" },
   { icon: Phone, value: "Free", label: "Strategy Call" },
 ];
 
 export default function GrowthCTABanner() {
+  const { openChat } = useChat();
   return (
     <section className="relative overflow-hidden bg-black px-4 py-16 sm:px-8 sm:py-24">
       <motion.div
@@ -119,15 +121,15 @@ export default function GrowthCTABanner() {
                 transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                 className="pointer-events-none absolute inset-0 rounded-full bg-[#E5231B]/50"
               />
-              <motion.a
-                href="#book-call"
+              <motion.button
+                onClick={openChat}
                 whileHover={{ scale: 1.04, y: -2 }}
                 whileTap={{ scale: 0.96 }}
                 transition={{ type: "spring", stiffness: 380, damping: 20 }}
-                className="relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#FF3B30] to-[#B3140C] px-8 py-4 text-sm font-bold text-white shadow-[0_12px_36px_rgba(229,35,27,0.5)] hover:shadow-[0_16px_44px_rgba(229,35,27,0.7)] transition-shadow sm:text-base"
+                className="relative inline-flex cursor-pointer items-center gap-2 rounded-full bg-gradient-to-r from-[#FF3B30] to-[#B3140C] px-8 py-4 text-sm font-bold text-white shadow-[0_12px_36px_rgba(229,35,27,0.5)] hover:shadow-[0_16px_44px_rgba(229,35,27,0.7)] transition-shadow sm:text-base"
               >
                 Book a Free Strategy Call <ArrowRight size={17} />
-              </motion.a>
+              </motion.button>
             </div>
 
             <motion.a

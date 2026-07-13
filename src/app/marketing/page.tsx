@@ -8,6 +8,7 @@ import ClientReel from "./OurWork";
 import ClientTicker from "./Carousal";
 import FAQSection from "./Conversion";
 import GrowthCTABanner from "./FAQ";
+import CalendlyChatbot from "@/components/Chatbot";
 
 function SectionDivider() {
   return (
@@ -35,12 +36,19 @@ export default function MarketingPage() {
       <SectionDivider />
       <PricingTable />
       <SectionDivider />
-      <ClientReel />
+      <div id="our-work">
+        <ClientReel />
+      </div>
       <SectionDivider />
       <ClientTicker />
       <SectionDivider />
       <FAQSection />
-      <GrowthCTABanner />
+      <div id="book-call">
+        <GrowthCTABanner />
+      </div>
+
+      {/* Marketing-page chatbot */}
+      <CalendlyChatbot />
     </div>
   );
 }

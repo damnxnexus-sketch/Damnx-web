@@ -17,7 +17,7 @@ const fadeUp = {
 };
 
 const stats = [
-  { icon: TrendingUp, value: "200+", label: "Brands Grown" },
+  { icon: TrendingUp, value: "125+", label: "Projects Done" },
   { icon: Users, value: "3×", label: "Avg ROI" },
   { icon: Star, value: "98%", label: "Client Retention" },
 ];

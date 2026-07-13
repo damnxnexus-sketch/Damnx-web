@@ -3,6 +3,7 @@
 import { Fragment, useState } from "react";
 import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
+import { useChat } from "@/app/context/ChatContext";
 
 /**
  * DamnX Solutions — Pricing Comparison Table (v3, 100% responsive, no-scroll)
@@ -75,6 +76,7 @@ function CellIcon({ cell }: { cell: Cell }) {
 
 export default function PricingTable() {
     const [hovered, setHovered] = useState<number | null>(null);
+    const { openChat } = useChat();
 
     return (
         <section className="relative overflow-hidden bg-black px-3 py-16 sm:px-6 sm:py-28">
@@ -197,18 +199,20 @@ export default function PricingTable() {
                                     style={{ gridColumn: pi + 2, gridRow: BUTTON_ROW }}
                                     className="relative z-10 flex items-center justify-center px-1 pb-4 pt-3 sm:px-5 sm:pb-7 sm:pt-6"
                                 >
-                                    <motion.a
-                                        href={`#buy-${plan.name.toLowerCase()}`}
+                                    <motion.button
+                                        onClick={() => {
+                                            openChat();
+                                        }}
                                         whileHover={{ scale: 1.045, y: -2 }}
                                         whileTap={{ scale: 0.96 }}
                                         transition={{ type: "spring", stiffness: 380, damping: 20 }}
-                                        className={`w-full rounded-lg py-2 text-center text-[10px] font-bold text-white transition-shadow sm:py-3 sm:text-sm ${plan.featured
+                                        className={`w-full rounded-lg py-2 text-center text-[10px] font-bold text-white transition-shadow sm:py-3 sm:text-sm cursor-pointer ${plan.featured
                                             ? "bg-gradient-to-b from-[#FF3B30] to-[#B3140C] shadow-[0_10px_30px_rgba(229,35,27,0.45)] hover:shadow-[0_14px_36px_rgba(229,35,27,0.6)]"
                                             : "bg-white/10 hover:bg-white/15"
                                             }`}
                                     >
-                                        Buy Now
-                                    </motion.a>
+                                        Get Started
+                                    </motion.button>
                                 </div>
                             ))}
                         </div>

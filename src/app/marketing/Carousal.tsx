@@ -1,29 +1,41 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Coffee, Hexagon, Sparkles, UtensilsCrossed, ShoppingBag, Dumbbell } from "lucide-react";
+import {
+  Coffee,
+  Cpu,
+  Leaf,
+  UtensilsCrossed,
+  TreePine,
+  Flame,
+  Sun,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 type Client =
   | { name: string; category: string; kind: "icon"; icon: LucideIcon }
   | { name: string; category: string; kind: "mono"; mono: string };
 
+// Row 1 — real DamnX clients
 const clientsRow1: Client[] = [
-  { name: "The Burger Co.", category: "Restaurant", kind: "icon", icon: UtensilsCrossed },
-  { name: "FitZone India", category: "Fitness", kind: "icon", icon: Dumbbell },
-  { name: "Glow Skin Clinic", category: "Skincare", kind: "icon", icon: Sparkles },
-  { name: "Urban Threads", category: "Fashion", kind: "icon", icon: ShoppingBag },
-  { name: "Café & Co.", category: "Cafe", kind: "icon", icon: Coffee },
-  { name: "TechNova", category: "Technology", kind: "icon", icon: Hexagon },
+  { name: "Arahnyam Resort", category: "Hospitality", kind: "icon", icon: TreePine },
+  { name: "Mudhouse Cafe", category: "Cafe", kind: "icon", icon: Coffee },
+  { name: "Frontyard Cafe", category: "Cafe", kind: "icon", icon: Sun },
+  { name: "Swadha Organics", category: "Organic / Wellness", kind: "icon", icon: Leaf },
+  { name: "Daal Bhaat", category: "Restaurant", kind: "icon", icon: UtensilsCrossed },
+  { name: "Kapilaz", category: "Lifestyle", kind: "icon", icon: Flame },
+  { name: "XQL Systems", category: "Technology", kind: "icon", icon: Cpu },
 ];
 
+// Row 2 — same clients scrolling in reverse for depth effect
 const clientsRow2: Client[] = [
-  { name: "Pixel Studio", category: "Creative", kind: "mono", mono: "PS" },
-  { name: "GreenLeaf Org", category: "Wellness", kind: "mono", mono: "GL" },
-  { name: "SwiftCart", category: "E-Commerce", kind: "mono", mono: "SC" },
-  { name: "NovaMed", category: "Healthcare", kind: "mono", mono: "NM" },
-  { name: "LuxeStays", category: "Hospitality", kind: "mono", mono: "LS" },
-  { name: "ProBuild Co.", category: "Construction", kind: "mono", mono: "PB" },
+  { name: "XQL Systems", category: "Technology", kind: "icon", icon: Cpu },
+  { name: "Kapilaz", category: "Lifestyle", kind: "icon", icon: Flame },
+  { name: "Daal Bhaat", category: "Restaurant", kind: "icon", icon: UtensilsCrossed },
+  { name: "Swadha Organics", category: "Organic / Wellness", kind: "icon", icon: Leaf },
+  { name: "Frontyard Cafe", category: "Cafe", kind: "icon", icon: Sun },
+  { name: "Mudhouse Cafe", category: "Cafe", kind: "icon", icon: Coffee },
+  { name: "Arahnyam Resort", category: "Hospitality", kind: "icon", icon: TreePine },
 ];
 
 function ClientBadge({ client }: { client: Client }) {
@@ -70,6 +82,15 @@ export default function ClientTicker() {
           Brands We&apos;ve{" "}
           <span className="text-[#E5231B]">Helped Grow</span>
         </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="mx-auto mt-3 max-w-sm text-sm text-white/50"
+        >
+          From cozy cafes to tech companies — 125+ projects and counting.
+        </motion.p>
         <motion.div
           initial={{ opacity: 0, scaleX: 0 }}
           whileInView={{ opacity: 1, scaleX: 1 }}
@@ -85,7 +106,7 @@ export default function ClientTicker() {
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#0a0a0a] to-transparent sm:w-24" />
         <div
           className="flex w-max hover:[animation-play-state:paused]"
-          style={{ animation: "client-marquee 28s linear infinite" }}
+          style={{ animation: "client-marquee 30s linear infinite" }}
         >
           {[...clientsRow1, ...clientsRow1].map((client, i) => (
             <ClientBadge key={`r1-${client.name}-${i}`} client={client} />
@@ -99,13 +120,29 @@ export default function ClientTicker() {
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#0a0a0a] to-transparent sm:w-24" />
         <div
           className="flex w-max hover:[animation-play-state:paused]"
-          style={{ animation: "client-marquee-reverse 32s linear infinite" }}
+          style={{ animation: "client-marquee-reverse 35s linear infinite" }}
         >
           {[...clientsRow2, ...clientsRow2].map((client, i) => (
             <ClientBadge key={`r2-${client.name}-${i}`} client={client} />
           ))}
         </div>
       </div>
+
+      {/* Client count badge */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="mt-8 flex justify-center"
+      >
+        <div className="inline-flex items-center gap-2 rounded-full border border-[#E5231B]/30 bg-[#E5231B]/8 px-5 py-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#E5231B] animate-pulse" />
+          <span className="text-xs font-semibold text-white/70">
+            125+ projects delivered across India
+          </span>
+        </div>
+      </motion.div>
     </section>
   );
 }

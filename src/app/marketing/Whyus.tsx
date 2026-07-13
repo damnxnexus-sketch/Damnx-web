@@ -132,7 +132,8 @@ export default function WhyDifferent() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-white/60 sm:text-base"
         >
-          Most agencies stop at marketing. We go all the way to growth.
+          Most agencies stop at marketing. We go all the way to growth —{" "}
+          <span className="text-white/80 font-medium">125+ brands</span> across hospitality, F&B, wellness & tech have seen the difference.
         </motion.p>
 
         <motion.div

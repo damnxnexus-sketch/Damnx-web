@@ -27,7 +27,7 @@ const features: Feature[] = [
 ];
 
 const statsRow = [
-  { value: "120+", label: "Projects Delivered" },
+  { value: "125+", label: "Projects Delivered" },
   { value: "98%", label: "Client Retention" },
   { value: "3×", label: "Average ROI" },
   { value: "48h", label: "Response Time" },

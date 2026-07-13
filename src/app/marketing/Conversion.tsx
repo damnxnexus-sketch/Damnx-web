@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowRight } from "lucide-react";
+import { useChat } from "@/app/context/ChatContext";
 
 interface FAQItem {
   id: number;
@@ -13,27 +14,27 @@ interface FAQItem {
 const faqData: FAQItem[] = [
   {
     id: 1,
-    question: "What does a growth marketing agency actually do?",
+    question: "What types of businesses does DamnX work with?",
     answer:
-      "Unlike traditional marketing agencies that focus only on ads or social posts, a growth marketing agency takes a holistic approach — finding real growth opportunities, building complete marketing systems (content, ads, outreach, sales enablement), and measuring results by revenue, not just clicks. We work as a full growth partner, not just a vendor.",
+      "We work across a wide range of industries — hospitality (resorts, hotels), F&B (cafes, restaurants), FMCG and organic brands, fashion, lifestyle, and B2B technology companies. Our clients include Arahnyam Resort, Mudhouse Cafe, Frontyard Cafe, Swadha Organics, Daal Bhaat, Kapilaz, and XQL Systems, among 125+ projects delivered.",
   },
   {
     id: 2,
     question: "How quickly can we expect results from your campaigns?",
     answer:
-      "Most clients start seeing measurable traction within 30–45 days of launch. Significant revenue-level results typically appear within 60–90 days as campaigns are optimized. We share weekly performance reports so you always know exactly where things stand.",
+      "Most clients start seeing measurable traction within 30–45 days of launch. Significant revenue-level results typically appear within 60–90 days as campaigns are optimised. We share weekly performance reports so you always know exactly where things stand.",
   },
   {
     id: 3,
-    question: "What industries do you specialize in?",
+    question: "Do you work with cafes, restaurants, and local businesses?",
     answer:
-      "We have deep experience with restaurants & food businesses, fitness & wellness brands, skincare & beauty clinics, fashion & lifestyle, real estate, and B2B services. Our approach is always custom — we build a growth blueprint specific to your industry, competitors, and audience.",
+      "Absolutely — local F&B and hospitality businesses are a major strength of ours. We've built marketing systems for cafes like Mudhouse Cafe and Frontyard Cafe, restaurants like Daal Bhaat, and resorts like Arahnyam. We understand the nuances of foot-traffic, seasonal demand, and community-driven growth.",
   },
   {
     id: 4,
     question: "What's included in your growth marketing packages?",
     answer:
-      "Depending on the plan, our packages can include social media marketing, short & long-form video content (Reels, YouTube), influencer collaborations, professional photo/video shoots, Meta & Google ad campaigns, business growth strategy, dedicated account management, website development, SEO, and data analytics reporting.",
+      "Depending on the plan, packages include social media marketing, short & long-form video content (Reels, YouTube), influencer collaborations, professional photo/video shoots, Meta & Google ad campaigns, business growth strategy, dedicated account management, website development, SEO, and data analytics reporting.",
   },
   {
     id: 5,
@@ -45,7 +46,7 @@ const faqData: FAQItem[] = [
     id: 6,
     question: "How do I get started with DamnX Solutions?",
     answer:
-      "Simply book a free 30-minute growth strategy call with our team. We'll audit your current marketing, identify the biggest growth levers, and present a custom plan tailored to your business goals — with zero obligation.",
+      "Book a free 30-minute growth strategy call with our team. We'll audit your current marketing, identify the biggest growth levers for your specific industry, and present a custom plan tailored to your goals — with zero obligation.",
   },
 ];
 
@@ -127,6 +128,7 @@ function FAQAccordionItem({ faq, isOpen, onToggle }: { faq: FAQItem; isOpen: boo
 
 export default function FAQSection() {
   const [openId, setOpenId] = useState<number | null>(1);
+  const { openChat } = useChat();
 
   const toggle = (id: number) => setOpenId(openId === id ? null : id);
 
@@ -195,15 +197,15 @@ export default function FAQSection() {
           className="mt-12 flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-center"
         >
           <p className="text-sm text-white/50">Still have questions?</p>
-          <motion.a
-            href="#book-call"
+          <motion.button
+            onClick={openChat}
             whileHover={{ scale: 1.04, y: -2 }}
             whileTap={{ scale: 0.96 }}
             transition={{ type: "spring", stiffness: 380, damping: 20 }}
-            className="inline-flex items-center gap-2 rounded-full bg-[#E5231B] px-6 py-2.5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(229,35,27,0.4)] hover:shadow-[0_12px_32px_rgba(229,35,27,0.6)] transition-shadow"
+            className="inline-flex items-center gap-2 rounded-full bg-[#E5231B] px-6 py-2.5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(229,35,27,0.4)] hover:shadow-[0_12px_32px_rgba(229,35,27,0.6)] transition-shadow cursor-pointer"
           >
             Book a Free Strategy Call <ArrowRight size={15} />
-          </motion.a>
+          </motion.button>
         </motion.div>
       </div>
     </section>
