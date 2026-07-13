@@ -1,9 +1,7 @@
 'use client';
 
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
-import { useRef } from 'react';
-import Image from 'next/image';
-import { useChat } from '@/app/context/ChatContext';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Search, PenTool, Cpu, Code2, BugOff, Rocket, RefreshCw } from 'lucide-react';
 
 interface Stage {
@@ -12,7 +10,6 @@ interface Stage {
   subtitle: string;
   description: string;
   icon: React.ElementType;
-  imageUrl: string;
 }
 
 const stages: Stage[] = [
@@ -22,7 +19,6 @@ const stages: Stage[] = [
     subtitle: 'Requirement Analysis',
     description: 'Deep dive into your vision. We analyze market dynamics, user needs, and technical feasibility to architect solutions that transcend expectations.',
     icon: Search,
-    imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80'
   },
   {
     id: 2,
@@ -30,7 +26,6 @@ const stages: Stage[] = [
     subtitle: 'UI / UX Craftsmanship',
     description: 'Where aesthetics meet psychology. Every pixel, every interaction designed to captivate users and drive engagement through intuitive experiences.',
     icon: PenTool,
-    imageUrl: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80'
   },
   {
     id: 3,
@@ -38,7 +33,6 @@ const stages: Stage[] = [
     subtitle: 'System Planning',
     description: 'Building the invisible foundation. Scalable infrastructure, optimized databases, and robust frameworks that power enterprise-grade performance.',
     icon: Cpu,
-    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80'
   },
   {
     id: 4,
@@ -46,7 +40,6 @@ const stages: Stage[] = [
     subtitle: 'Code Execution',
     description: 'Transforming blueprints into reality. Clean code, agile sprints, and continuous integration bring your product to life with precision engineering.',
     icon: Code2,
-    imageUrl: 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&q=80'
   },
   {
     id: 5,
@@ -54,7 +47,6 @@ const stages: Stage[] = [
     subtitle: 'Quality Assurance',
     description: 'Zero tolerance for imperfection. Rigorous testing protocols, automated checks, and security audits ensure flawless functionality across all scenarios.',
     icon: BugOff,
-    imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80'
   },
   {
     id: 6,
@@ -62,7 +54,6 @@ const stages: Stage[] = [
     subtitle: 'Launch Execution',
     description: 'Go-live with confidence. Seamless deployment pipelines, performance optimization, and infrastructure monitoring for a smooth market entry.',
     icon: Rocket,
-    imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80'
   },
   {
     id: 7,
@@ -70,181 +61,185 @@ const stages: Stage[] = [
     subtitle: 'Post-Launch Support',
     description: 'Your success is our mission. Continuous optimization, feature enhancements, and 24/7 support to scale your solution as you grow.',
     icon: RefreshCw,
-    imageUrl: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80'
   }
 ];
 
 const TimelineNode = ({ stage, index }: { stage: Stage; index: number }) => {
-  const isEven = index % 2 === 0;
+  const isLeft = index % 2 === 0;
 
   return (
-    <div className="relative flex flex-col md:flex-row items-center justify-between w-full mb-24 md:mb-32 group">
+    <div className="relative w-full py-8 md:py-16 flex flex-col md:flex-row items-center justify-center group">
 
-      {/* THE GLOWING NODE (Center on Desktop, Left on Mobile) 
-        Positioned absolutely to sit perfectly on the tracking line.
-      */}
-      <div className="absolute left-[28px] md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2 z-20 flex items-center justify-center">
-        <motion.div
-          initial={{ scale: 0, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
-          viewport={{ once: true, margin: "-20%" }}
-          transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-          className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-black border-2 border-zinc-800 group-hover:border-red-600 transition-colors duration-500 flex items-center justify-center relative shadow-[0_0_0_0_rgba(220,38,38,0)] group-hover:shadow-[0_0_30px_0_rgba(220,38,38,0.4)]"
-        >
-          <stage.icon className="w-5 h-5 md:w-6 md:h-6 text-zinc-500 group-hover:text-red-500 transition-colors duration-500" />
+      {/* --- DESKTOP SNAKE PATH BACKGROUND --- */}
+      <div
+        className={`hidden md:block absolute top-[-50%] h-full w-1/2 border-dashed border-[#3f0000] -z-10 transition-colors duration-500 group-hover:border-red-900/60
+        ${isLeft
+            ? 'left-[10%] border-t border-l border-b rounded-l-[120px]'
+            : 'right-[10%] border-t border-r border-b rounded-r-[120px]'
+          }`}
+      />
 
-          {/* Subtle pulse ring */}
-          <div className="absolute inset-0 rounded-full border border-red-500/0 group-hover:animate-ping opacity-20" />
-        </motion.div>
+      {/* --- MOBILE VERTICAL LINE --- */}
+      <div className="absolute left-[2.25rem] top-0 bottom-0 w-[1px] bg-dashed bg-repeat-y bg-[length:1px_8px] bg-gradient-to-b from-transparent via-[#3f0000] to-transparent md:hidden -z-10" />
+
+      {/* --- DESKTOP LAYOUT --- */}
+      <div className="hidden md:flex w-full max-w-5xl items-center justify-between relative z-10">
+
+        {isLeft ? (
+          <>
+            {/* Left: Phase Badge & Solid Connector */}
+            <div className="flex-1 flex items-center justify-start relative">
+              <div className="w-28 h-28 lg:w-32 lg:h-32 rounded-full border border-red-900/40 bg-[#050505] flex flex-col items-center justify-center shadow-2xl z-10 transition-transform duration-500 group-hover:scale-105">
+                <span className="text-zinc-500 text-[10px] tracking-widest font-semibold uppercase mb-1">Phase</span>
+                <span className="text-[#E6192B] text-2xl lg:text-3xl font-bold tracking-tighter">0{stage.id}</span>
+              </div>
+              <div className="flex-1 h-[1px] bg-gradient-to-r from-red-900/60 to-[#E6192B] mx-4 transition-all duration-500 group-hover:from-red-600" />
+            </div>
+
+            {/* Right: Icon & Text Block */}
+            <div className="flex-1 flex items-start justify-start gap-6 lg:gap-8 pl-4">
+              <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-[#E6192B] flex items-center justify-center shadow-[0_0_20px_rgba(230,25,43,0.3)] shrink-0 z-10 mt-1">
+                <stage.icon className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+              </div>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="flex flex-col text-left"
+              >
+                <h3 className="text-xl lg:text-2xl font-bold text-white tracking-wide uppercase mb-1">{stage.title}</h3>
+                <h4 className="text-xs lg:text-sm text-zinc-400 font-medium mb-3">{stage.subtitle}</h4>
+                <p className="text-sm text-zinc-500 leading-relaxed max-w-sm">{stage.description}</p>
+              </motion.div>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Left: Text Block & Icon */}
+            <div className="flex-1 flex items-start justify-end gap-6 lg:gap-8 pr-4 text-right">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="flex flex-col items-end"
+              >
+                <h3 className="text-xl lg:text-2xl font-bold text-white tracking-wide uppercase mb-1">{stage.title}</h3>
+                <h4 className="text-xs lg:text-sm text-zinc-400 font-medium mb-3">{stage.subtitle}</h4>
+                <p className="text-sm text-zinc-500 leading-relaxed max-w-sm text-right">{stage.description}</p>
+              </motion.div>
+              <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-[#E6192B] flex items-center justify-center shadow-[0_0_20px_rgba(230,25,43,0.3)] shrink-0 z-10 mt-1">
+                <stage.icon className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+              </div>
+            </div>
+
+            {/* Right: Solid Connector & Phase Badge */}
+            <div className="flex-1 flex items-center justify-end relative">
+              <div className="flex-1 h-[1px] bg-gradient-to-l from-red-900/60 to-[#E6192B] mx-4 transition-all duration-500 group-hover:from-red-600" />
+              <div className="w-28 h-28 lg:w-32 lg:h-32 rounded-full border border-red-900/40 bg-[#050505] flex flex-col items-center justify-center shadow-2xl z-10 transition-transform duration-500 group-hover:scale-105">
+                <span className="text-zinc-500 text-[10px] tracking-widest font-semibold uppercase mb-1">Phase</span>
+                <span className="text-[#E6192B] text-2xl lg:text-3xl font-bold tracking-tighter">0{stage.id}</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
-      {/* CONTENT BLOCK (Alternates Left/Right on Desktop, always Right on Mobile) 
-      */}
-      <motion.div
-        initial={{ opacity: 0, x: isEven ? -50 : 50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, margin: "-10%" }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
-        className={`w-full md:w-[45%] pl-20 md:pl-0 flex flex-col ${isEven ? 'md:items-end md:text-right' : 'md:items-start md:text-left'} ${isEven ? 'md:order-1' : 'md:order-2'}`}
-      >
-        <div className="mb-2">
-          <span className="text-red-600 font-mono text-sm md:text-base font-bold tracking-widest">
-            PHASE 0{stage.id}
-          </span>
-        </div>
-        <h3 className="text-3xl md:text-5xl font-black text-white mb-3 tracking-tight">
-          {stage.title}
-        </h3>
-        <h4 className="text-lg md:text-xl text-zinc-400 font-medium mb-4">
-          {stage.subtitle}
-        </h4>
-        <p className="text-base md:text-lg text-zinc-500 leading-relaxed bg-white/[0.02] border border-white/5 p-5 md:p-6 rounded-2xl backdrop-blur-sm">
-          {stage.description}
-        </p>
-      </motion.div>
+      {/* --- MOBILE LAYOUT --- */}
+      <div className="md:hidden flex w-full items-start gap-6 px-4 z-10">
 
-      {/* IMAGE BLOCK (Alternates Right/Left on Desktop, hidden on very small screens, shown on tablet+) 
-      */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, rotateY: isEven ? 10 : -10 }}
-        whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
-        viewport={{ once: true, margin: "-10%" }}
-        transition={{ duration: 0.8, type: "spring" }}
-        className={`hidden sm:block w-full md:w-[45%] pl-20 md:pl-0 mt-8 md:mt-0 ${isEven ? 'md:order-2' : 'md:order-1'}`}
-      >
-        <div className="relative w-full aspect-video rounded-3xl overflow-hidden border border-white/10 group-hover:border-red-500/30 transition-colors duration-500 shadow-2xl">
-          <Image
-            src={stage.imageUrl}
-            alt={stage.title}
-            fill
-            className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        {/* Mobile Left Column: Icon/Line */}
+        <div className="flex flex-col items-center mt-2">
+          <div className="w-10 h-10 rounded-full border border-red-900/50 bg-[#050505] flex flex-col items-center justify-center mb-2 shrink-0">
+            <span className="text-[#E6192B] text-sm font-bold leading-none">0{stage.id}</span>
+          </div>
+          <div className="w-6 h-6 rounded-full bg-[#E6192B] flex items-center justify-center shadow-[0_0_15px_rgba(230,25,43,0.4)] shrink-0">
+            <stage.icon className="w-3 h-3 text-white" />
+          </div>
         </div>
-      </motion.div>
+
+        {/* Mobile Right Column: Text */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="flex flex-col pb-8"
+        >
+          <h3 className="text-lg font-bold text-white tracking-wide uppercase">{stage.title}</h3>
+          <h4 className="text-xs text-[#E6192B] font-medium mb-2">{stage.subtitle}</h4>
+          <p className="text-sm text-zinc-400 leading-relaxed">{stage.description}</p>
+        </motion.div>
+      </div>
 
     </div>
   );
 };
 
-export default function DevelopmentJourney() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { toggleChat } = useChat();
-
-  // Tracks the scroll progress specifically within the timeline area
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start center", "end end"]
-  });
-
-  // Smooths out the line filling animation
-  const scaleY = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
-
-  // Intro Parallax
-  const headerY = useTransform(scrollYProgress, [0, 0.2], [0, -50]);
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-
+export default function DevelopmentJourneyMinimal() {
   return (
-    <div className="bg-[#030303] min-h-screen relative font-sans overflow-hidden">
+    <div className="bg-[#050505] min-h-screen relative font-sans overflow-hidden py-24 selection:bg-[#E6192B]/30 selection:text-white">
 
-      {/* Grainy Noise Background */}
-      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      {/* HEADER SECTION */}
+      <div className="text-center mb-16 md:mb-28 flex flex-col items-center px-4 relative z-20">
 
-      {/* HERO SECTION */}
-      <motion.section
-        style={{ y: headerY, opacity: headerOpacity }}
-        className="relative pt-40 pb-20 md:pt-52 md:pb-32 px-6 text-center z-10 max-w-5xl mx-auto"
-      >
-        <div className="inline-flex items-center gap-3 bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-full mb-8">
-          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-          <span className="text-red-500 text-xs md:text-sm font-bold tracking-widest uppercase">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="inline-block border border-zinc-800 rounded-full px-5 py-1.5 mb-6 bg-zinc-950/50"
+        >
+          <span className="text-zinc-400 text-[10px] tracking-[0.2em] uppercase font-semibold">
             The DamnX Framework
           </span>
-        </div>
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-tighter mb-6">
-          DEVELOPMENT <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-900">
-            JOURNEY
-          </span>
-        </h1>
-        <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-4xl md:text-5xl lg:text-6xl font-black text-zinc-100 tracking-tight leading-none mb-2 uppercase"
+        >
+          Development
+        </motion.h1>
+
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-4xl md:text-5xl lg:text-6xl font-black text-[#E6192B] tracking-tight leading-none mb-8 uppercase"
+        >
+          Journey
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="text-sm md:text-base text-zinc-400 max-w-xl mx-auto mb-10 leading-relaxed font-medium"
+        >
           Seven stages of absolute engineering excellence. From raw vision to digital dominance. This is how we build the future.
-        </p>
-      </motion.section>
+        </motion.p>
+
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ delay: 0.4, duration: 0.8 }}
+          className="w-16 h-[2px] bg-zinc-200 rounded-full"
+        />
+      </div>
 
       {/* TIMELINE SECTION */}
-      <section ref={containerRef} className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative w-full max-w-6xl mx-auto overflow-hidden px-4 md:px-0">
 
-        {/* The Track Line (Background) */}
-        <div className="absolute left-[44px] md:left-1/2 top-0 bottom-0 w-[2px] bg-zinc-900 -translate-x-1/2" />
+        {/* Top/Bottom gradient masks for smooth fade in/out of the dashed line */}
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#050505] to-transparent z-10 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050505] to-transparent z-10 pointer-events-none" />
 
-        {/* The Animated Red Progress Line */}
-        <motion.div
-          style={{ scaleY }}
-          className="absolute left-[44px] md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-red-500 via-red-600 to-red-900 origin-top -translate-x-1/2 z-10 shadow-[0_0_15px_rgba(220,38,38,0.5)]"
-        />
-
-        {/* The Stages */}
-        <div className="relative z-20 pt-10">
+        <div className="relative z-0 pt-8 pb-8">
           {stages.map((stage, index) => (
             <TimelineNode key={stage.id} stage={stage} index={index} />
           ))}
         </div>
-      </section>
-
-      {/* OUTRO / CTA SECTION */}
-      <section className="relative py-32 px-6 text-center z-10">
-        <div className="absolute inset-0 bg-red-600/5 blur-[100px] rounded-full max-w-3xl mx-auto" />
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="relative z-20 max-w-3xl mx-auto"
-        >
-          <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter">
-            READY TO BUILD <br />
-            <span className="text-red-600">SOMETHING DAMN GREAT?</span>
-          </h2>
-          <p className="text-zinc-400 text-lg md:text-xl mb-10">
-            Let's bypass the templates and engineer a custom digital product that leaves your competition in the dust.
-          </p>
-
-          <button
-            onClick={toggleChat}
-            className="group relative px-8 py-4 bg-red-600 text-white font-bold uppercase tracking-widest overflow-hidden rounded-lg transition-transform hover:scale-105 active:scale-95"
-          >
-            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-            <span className="relative z-10 flex items-center gap-2">
-              Start Your Journey <Rocket className="w-4 h-4" />
-            </span>
-          </button>
-        </motion.div>
       </section>
 
     </div>
