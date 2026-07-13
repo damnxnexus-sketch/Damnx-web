@@ -62,7 +62,7 @@ export default function Home() {
       <Suspense fallback={<div className="min-h-screen bg-black" />}>
         <WhyChooseUs />
       </Suspense>
-      <Footer />
+
     </>
   );
 }
