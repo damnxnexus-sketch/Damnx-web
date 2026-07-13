@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { Instagram, Play, ArrowRight } from "lucide-react";
+import { Instagram, ArrowRight } from "lucide-react";
 import { useChat } from "@/app/context/ChatContext";
 
 /**
@@ -15,33 +15,33 @@ type Client = {
   name: string;
   category: string;
   avatar: string;
-  thumbnail: string;
+  videoSrc: string;
 };
 
 const clients: Client[] = [
   {
-    name: "Arahnyam Resort",
-    category: "Hospitality",
+    name: "Arahnyam",
+    category: "Resort & Hospitality",
     avatar: "/avatar.png",
-    thumbnail: "/assets%202/147.png",
+    videoSrc: "/Arahnyam%20vid-1.mp4",
   },
   {
-    name: "Mudhouse Cafe",
+    name: "Mudhouse",
     category: "Cafe & Dining",
     avatar: "/avatar.png",
-    thumbnail: "/assets%202/98440.png",
+    videoSrc: "/Mudhouse%20vid-1.mp4",
   },
   {
-    name: "Swadha Organics",
-    category: "Organic / Wellness",
+    name: "Daal Bhat",
+    category: "Restaurant & Eatery",
     avatar: "/avatar.png",
-    thumbnail: "/assets%202/Frame%209%20(1).jpg",
+    videoSrc: "/Daal%20bhat%20vid-3.mp4",
   },
   {
-    name: "XQL Systems",
-    category: "Technology",
+    name: "Frontyard Cafe",
+    category: "Bespoke Cafe",
     avatar: "/avatar.png",
-    thumbnail: "/assets%202/Frame%2032.png",
+    videoSrc: "/Frontyard%20cafe%20vid-1.mp4",
   },
 ];
 
@@ -56,6 +56,7 @@ const fadeUp = {
 
 function ClientCard({ client, index }: { client: Client; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const { openChat } = useChat();
 
   const rotateX = useSpring(useMotionValue(0), { stiffness: 260, damping: 24, mass: 0.6 });
@@ -68,6 +69,13 @@ function ClientCard({ client, index }: { client: Client; index: number }) {
     const [gx, gy] = v;
     return `radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,0.28) 0%, transparent 55%)`;
   });
+
+  // Automatically fast forward the video to 2.0x playback speed
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 2.0;
+    }
+  }, []);
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     const rect = ref.current?.getBoundingClientRect();
@@ -119,17 +127,20 @@ function ClientCard({ client, index }: { client: Client; index: number }) {
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
         className="relative h-full w-full"
       >
-        {/* base photo plane */}
+        {/* base video plane */}
         <div
           style={{ transform: "translateZ(0px)" }}
           className="absolute inset-0 overflow-hidden rounded-[1.75rem] border border-white/10 bg-black shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
         >
-          <motion.img
-            src={client.thumbnail}
-            alt={`${client.name} work`}
-            whileHover={{ scale: 1.08 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute inset-0 h-full w-full object-cover"
+          <video
+            ref={videoRef}
+            src={client.videoSrc}
+            loop
+            muted
+            playsInline
+            autoPlay
+            preload="metadata"
+            className="absolute inset-0 h-full w-full object-cover opacity-75 group-hover:opacity-90 group-hover:scale-[1.03] transition-all duration-500"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-black/45" />
           {/* cursor-tracked glare */}
@@ -140,7 +151,7 @@ function ClientCard({ client, index }: { client: Client; index: number }) {
           />
         </div>
 
-        {/* top bar — floats above the photo plane */}
+        {/* top bar — floats above the photo/video plane */}
         <div
           style={{ transform: "translateZ(55px)" }}
           className="absolute inset-x-3 top-3 flex items-center justify-between sm:inset-x-4 sm:top-4"
@@ -158,23 +169,6 @@ function ClientCard({ client, index }: { client: Client; index: number }) {
           </span>
         </div>
 
-        {/* play button — floats highest above the plane */}
-        <div style={{ transform: "translateZ(95px)" }} className="absolute inset-0 flex items-center justify-center">
-          <span className="relative flex h-14 w-14 items-center justify-center sm:h-16 sm:w-16">
-            <motion.span
-              animate={{ scale: [1, 1.55, 1], opacity: [0.55, 0, 0.55] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute inset-0 rounded-full bg-[#E5231B]/50"
-            />
-            <motion.span
-              whileHover={{ scale: 1.12 }}
-              transition={{ type: "spring", stiffness: 400, damping: 16 }}
-              className="relative flex h-12 w-12 items-center justify-center rounded-full bg-white text-black shadow-[0_10px_30px_rgba(0,0,0,0.5)] sm:h-14 sm:w-14"
-            >
-              <Play size={20} fill="black" className="ml-0.5" />
-            </motion.span>
-          </span>
-        </div>
 
         {/* bottom text block */}
         <div
