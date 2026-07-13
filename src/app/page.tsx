@@ -23,6 +23,11 @@ const ServicesShowcase = dynamic(() => import("@/components/Services"), {
   ssr: false
 });
 
+const WebDevEngineeringSection = dynamic(() => import("@/components/WebDevEngineeringSection"), {
+  loading: () => <div className="min-h-[50vh] bg-black" />,
+  ssr: false
+});
+
 const MarketingGrowthSection = dynamic(() => import("@/components/MarketingGrowthSection"), {
   loading: () => <div className="min-h-[50vh] bg-black" />,
   ssr: false
@@ -57,6 +62,9 @@ export default function Home() {
       </Suspense>
       <Suspense fallback={<div className="min-h-screen bg-black" />}>
         <ServicesShowcase />
+      </Suspense>
+      <Suspense fallback={<div className="min-h-[50vh] bg-black" />}>
+        <WebDevEngineeringSection />
       </Suspense>
       <Suspense fallback={<div className="min-h-[50vh] bg-black" />}>
         <MarketingGrowthSection />

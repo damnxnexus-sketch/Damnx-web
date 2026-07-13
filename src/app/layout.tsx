@@ -5,6 +5,7 @@ import { ChatProvider } from './context/ChatContext';
 import Preloader from "@/components/LoadFix";
 import Footer from "@/components/Footer";
 import DynamicIslandHeader from "@/components/header";
+import BackButton from "@/components/BackButton";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -258,6 +259,7 @@ export default function RootLayout({
         <Preloader>
         <ChatProvider>
           <DynamicIslandHeader />
+          <BackButton />
           {children}
         </ChatProvider>
         </Preloader>

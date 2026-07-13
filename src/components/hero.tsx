@@ -1,472 +1,336 @@
-'use client';
-import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Globe, Smartphone, Palette, Layout, Code2 } from 'lucide-react';
-import { useChat } from '@/app/context/ChatContext';
+"use client";
 
-export default function DamnXHero() {
-  const [currentWord, setCurrentWord] = useState(0);
-  const [isChanging, setIsChanging] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [bottomBlur, setBottomBlur] = useState(0);
-  const heroRef = useRef<HTMLDivElement>(null);
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowDown } from "lucide-react";
+import { useChat } from "@/app/context/ChatContext";
+
+/**
+ * DamnX Solutions — "we build cool stuff. technically." Hero (v3)
+ * -------------------------------------------------------------------------
+ * Drop into: app/components/ServeEverythingHero.tsx
+ * Deps:      npm i framer-motion lucide-react
+ *
+ * Changes from v2:
+ *  - Casualized headline copy + lowercase treatment, italic red accent
+ *    word with a playful tilt instead of stiff formal casing.
+ *  - Subtext trimmed to one crisp line, no channel-listing.
+ *  - Added a second decorative "fan" bottom-right, a mirrored variant
+ *    (more petals, reversed spin direction, warmer gradient) instead of
+ *    a duplicate of the top-left one.
+ *  - Decorative shapes are now `hidden sm:block` — on mobile the huge
+ *    headline takes the full width and any absolutely-positioned
+ *    decoration WILL collide with it, so rather than fight that with
+ *    fragile per-breakpoint offsets, mobile gets a clean, undecorated
+ *    headline and the shapes only appear once there's room (tablet up).
+ *  - Added a very subtle dot-grid texture + vignette for atmosphere.
+ */
+
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+/* ────────────────────────────────────────────────────────────────────── */
+/*  Word-mask wipe — each word slides up out of a clipped box.            */
+/* ────────────────────────────────────────────────────────────────────── */
+function MaskRevealWords({
+  text,
+  delay = 0,
+  reduced,
+}: {
+  text: string;
+  delay?: number;
+  reduced: boolean;
+}) {
+  const words = text.split(" ");
+  return (
+    <span className="inline-block">
+      {words.map((word, i) => (
+        <span
+          key={`${word}-${i}`}
+          className="mr-[0.22em] inline-block overflow-hidden align-bottom"
+          style={{ paddingBottom: "0.18em", marginBottom: "-0.18em" }}
+        >
+          <motion.span
+            className="inline-block"
+            initial={reduced ? { opacity: 0 } : { y: "115%" }}
+            animate={reduced ? { opacity: 1 } : { y: "0%" }}
+            transition={{ duration: reduced ? 0.4 : 0.9, delay: delay + i * 0.12, ease: EASE }}
+          >
+            {word}
+          </motion.span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────────── */
+/*  Per-letter 3D flip — fast cascading character reveal.                 */
+/* ────────────────────────────────────────────────────────────────────── */
+function FlipRevealLetters({
+  text,
+  delay = 0,
+  reduced,
+}: {
+  text: string;
+  delay?: number;
+  reduced: boolean;
+}) {
+  const letters = text.split("");
+  return (
+    <span className="inline-block" style={{ perspective: 600 }}>
+      {letters.map((ch, i) => (
+        <motion.span
+          key={i}
+          className="inline-block"
+          style={{ transformOrigin: "50% 100%" }}
+          initial={reduced ? { opacity: 0 } : { opacity: 0, rotateX: -90, y: 18 }}
+          animate={reduced ? { opacity: 1 } : { opacity: 1, rotateX: 0, y: 0 }}
+          transition={{ duration: reduced ? 0.3 : 0.55, delay: delay + i * 0.032, ease: EASE }}
+        >
+          {ch === " " ? "\u00A0" : ch}
+        </motion.span>
+      ))}
+    </span>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────────── */
+/*  Horizontal wipe reveal — accent word, curtain sweeps open.            */
+/* ────────────────────────────────────────────────────────────────────── */
+function WipeRevealText({
+  text,
+  delay = 0,
+  reduced,
+  className,
+}: {
+  text: string;
+  delay?: number;
+  reduced: boolean;
+  className?: string;
+}) {
+  return (
+    <motion.span
+      className={`inline-block ${className ?? ""}`}
+      initial={reduced ? { opacity: 0 } : { clipPath: "inset(0 100% 0 0)", opacity: 0, rotate: 0 }}
+      animate={
+        reduced
+          ? { opacity: 1 }
+          : { clipPath: "inset(0 0% 0 0)", opacity: 1, rotate: -3 }
+      }
+      transition={{ duration: reduced ? 0.4 : 0.9, delay, ease: EASE }}
+    >
+      {text}
+    </motion.span>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────────── */
+/*  Decorative fan — reusable, takes a mirror flag so the second one      */
+/*  reads as a variant rather than a copy-paste duplicate.                */
+/*                                                                        */
+/*  Geometry: 3 wedge "petals" spaced exactly 120° apart around the       */
+/*  centre, each spanning 70° — leaving three equal 50° gaps. The little  */
+/*  companion dot sits at the *midpoint of one of those gaps*, at the     */
+/*  same radius as the petal tips, so it visually nests into the pinwheel */
+/*  instead of floating in disconnected space.                           */
+/*                                                                        */
+/*  Mirroring is done via Framer's `scaleX` style key (not a raw CSS      */
+/*  `transform` string) — Framer Motion composes x/y/scale/rotate itself  */
+/*  on every frame, so setting a plain `transform: scaleX(-1)` in style   */
+/*  gets clobbered by its own animation engine. Passing `scaleX` as a     */
+/*  motion-aware style value lets Framer fold it into the same transform  */
+/*  it's already managing, so the flip actually sticks.                  */
+/* ────────────────────────────────────────────────────────────────────── */
+
+const FAN_CX = 70;
+const FAN_CY = 70;
+const FAN_R = 58;
+
+function polarPoint(angleDeg: number, radius: number) {
+  const rad = (angleDeg * Math.PI) / 180;
+  return { x: FAN_CX + radius * Math.cos(rad), y: FAN_CY + radius * Math.sin(rad) };
+}
+
+function petalPath(startAngle: number, sweep: number, radius: number) {
+  const p1 = polarPoint(startAngle, radius);
+  const p2 = polarPoint(startAngle + sweep, radius);
+  return `M ${FAN_CX} ${FAN_CY} L ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} A ${radius} ${radius} 0 0 1 ${p2.x.toFixed(2)} ${p2.y.toFixed(2)} Z`;
+}
+
+// three petals, 120° apart, each 70° wide → three equal 50° gaps
+const PETAL_ANGLES = [-90, 30, 150];
+const PETAL_SWEEP = 70;
+// companion dot sits in the middle of the first gap, same radius as petals
+const DOT_ANGLE = PETAL_ANGLES[0] + PETAL_SWEEP + (120 - PETAL_SWEEP) / 2;
+const DOT_POS = polarPoint(DOT_ANGLE, FAN_R);
+
+function DecorativeFan({
+  mirrored = false,
+  reduced,
+  delay = 0,
+}: {
+  mirrored?: boolean;
+  reduced: boolean;
+  delay?: number;
+}) {
+  const gradId = mirrored ? "petalGradientB" : "petalGradientA";
+  return (
+    <motion.svg
+      initial={{ opacity: 0, scale: 0.5, rotate: mirrored ? 25 : -25, scaleX: mirrored ? -1 : 1 }}
+      animate={{ opacity: 1, scale: 1, rotate: 0, scaleX: mirrored ? -1 : 1 }}
+      transition={{ duration: 0.9, delay, ease: EASE }}
+      viewBox="0 0 140 140"
+      className="h-20 w-20 md:h-28 md:w-28"
+      aria-hidden
+    >
+      <defs>
+        <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={mirrored ? "#fdb03d" : "#ff8a3d"} />
+          <stop offset="100%" stopColor="#E5231B" />
+        </linearGradient>
+      </defs>
+      <motion.g
+        animate={reduced ? {} : { rotate: mirrored ? -360 : 360 }}
+        transition={reduced ? {} : { duration: 44, repeat: Infinity, ease: "linear" }}
+        style={{ transformOrigin: `${FAN_CX}px ${FAN_CY}px` }}
+      >
+        <path d={petalPath(PETAL_ANGLES[0], PETAL_SWEEP, FAN_R)} fill={`url(#${gradId})`} />
+        <path d={petalPath(PETAL_ANGLES[1], PETAL_SWEEP, FAN_R)} fill="#E5231B" opacity="0.85" />
+        <path d={petalPath(PETAL_ANGLES[2], PETAL_SWEEP, FAN_R)} fill="#ff5c4d" opacity="0.6" />
+        <circle cx={DOT_POS.x} cy={DOT_POS.y} r={13} fill="#fdf6e3" />
+      </motion.g>
+    </motion.svg>
+  );
+}
+
+export default function ServeEverythingHero() {
+  const reduced = !!useReducedMotion();
   const { toggleChat } = useChat();
 
-  const words = ["WEBSITES", "MOBILE APPS", "CUSTOM SOFTWARE", "UI/UX DESIGN", "LOGOS"];
-
-  const services = [
-    { icon: Globe, label: "Websites", color: "from-blue-400 to-blue-600" },
-    { icon: Smartphone, label: "Mobile Apps", color: "from-green-400 to-green-600" },
-    { icon: Palette, label: "UI/UX Design", color: "from-purple-400 to-purple-600" },
-    { icon: Layout, label: "Logos", color: "from-orange-400 to-orange-600" },
-    { icon: Code2, label: "Custom Software", color: "from-red-400 to-red-600" }
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsChanging(true);
-      setTimeout(() => {
-        setCurrentWord((prev) => (prev + 1) % words.length);
-        setIsChanging(false);
-      }, 700);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [words.length]);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 15;
-      const y = (e.clientY / window.innerHeight - 0.5) * 15;
-      setMousePosition({ x, y });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  useEffect(() => {
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          if (!heroRef.current) {
-            ticking = false;
-            return;
-          }
-
-          const rect = heroRef.current.getBoundingClientRect();
-          const windowHeight = window.innerHeight;
-
-          const bottomDistance = Math.max(0, windowHeight - rect.bottom);
-          const bottomBoundaryBlur = Math.min(4, (150 - bottomDistance) / 150 * 4);
-          setBottomBlur(bottomDistance < 150 ? bottomBoundaryBlur : 0);
-
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
-    <div className="relative min-h-screen bg-black overflow-hidden">
-
-      <div className="absolute bottom-0 left-0 right-0 h-64 overflow-hidden">
-        <svg className="absolute bottom-0 w-full h-full" viewBox="0 0 1440 320" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style={{ stopColor: '#dc2626', stopOpacity: 0.8 }}>
-                <animate attributeName="stop-color" values="#dc2626; #ef4444; #dc2626" dur="4s" repeatCount="indefinite" />
-              </stop>
-              <stop offset="50%" style={{ stopColor: '#ef4444', stopOpacity: 0.9 }}>
-                <animate attributeName="stop-color" values="#ef4444; #f87171; #ef4444" dur="4s" repeatCount="indefinite" />
-              </stop>
-              <stop offset="100%" style={{ stopColor: '#dc2626', stopOpacity: 0.8 }}>
-                <animate attributeName="stop-color" values="#dc2626; #ef4444; #dc2626" dur="4s" repeatCount="indefinite" />
-              </stop>
-            </linearGradient>
-          </defs>
-          <path fill="url(#waveGradient)" fillOpacity="0.6" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,154.7C672,160,768,224,864,240C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
-            <animate attributeName="d" dur="8s" repeatCount="indefinite" values="
-              M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,154.7C672,160,768,224,864,240C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z;
-              M0,192L48,197.3C96,203,192,213,288,197.3C384,181,480,139,576,138.7C672,139,768,181,864,202.7C960,224,1056,224,1152,213.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z;
-              M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,154.7C672,160,768,224,864,240C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" />
-          </path>
-        </svg>
-
-        <svg className="absolute bottom-0 w-full h-full" viewBox="0 0 1440 320" preserveAspectRatio="none">
-          <path fill="url(#waveGradient)" fillOpacity="0.3" d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,240C672,256,768,256,864,234.7C960,213,1056,171,1152,165.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
-            <animate attributeName="d" dur="10s" repeatCount="indefinite" values="
-              M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,240C672,256,768,256,864,234.7C960,213,1056,171,1152,165.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z;
-              M0,256L48,240C96,224,192,192,288,192C384,192,480,224,576,234.7C672,245,768,235,864,218.7C960,203,1056,181,1152,181.3C1248,181,1344,203,1392,213.3L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z;
-              M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,240C672,256,768,256,864,234.7C960,213,1056,171,1152,165.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" />
-          </path>
-        </svg>
-
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-red-600/20 to-transparent blur-xl"></div>
-      </div>
-
+    <section className="relative overflow-hidden bg-black px-5 pt-32 pb-10 sm:px-10 sm:pt-40 sm:pb-14 lg:px-16 lg:pt-48">
+      {/* ambient red glow */}
       <div
-        ref={heroRef}
-        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex items-start lg:items-center pt-24 pb-8 lg:py-12"
-      >
-        <div className="w-full grid lg:grid-cols-2 gap-8 lg:gap-12 items-start lg:items-center max-w-7xl mx-auto">
-
-          <div className="space-y-4 sm:space-y-6 lg:space-y-8 animate-fadeInUp opacity-0 order-2 lg:order-1 mt-4 lg:mt-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-
-            <div className="space-y-3 sm:space-y-4 text-center lg:text-left">
-              <div className="animate-fadeInUp opacity-0" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-7xl font-black leading-tight">
-                  <span className="relative inline-block" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.1)' }}>
-                    <span className="relative z-10 bg-gradient-to-br from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
-                      WE BUILD
-                    </span>
-                    <span className="absolute top-0 left-0 right-0 h-[40%] bg-gradient-to-b from-white/60 via-white/30 to-transparent bg-clip-text text-transparent overflow-hidden pointer-events-none">
-                      WE BUILD
-                    </span>
-                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent bg-clip-text text-transparent transform -skew-x-12 translate-x-[-200%] animate-shine pointer-events-none">
-                      WE BUILD
-                    </span>
-                  </span>
-                </h1>
-              </div>
-
-              <div className="relative h-24 sm:h-28 md:h-32 lg:h-32 flex justify-center lg:justify-start">
-                {words.map((word, idx) => (
-                  <div
-                    key={idx}
-                    className={`absolute inset-0 flex items-center justify-center lg:justify-start transition-all duration-700 ${idx === currentWord && !isChanging
-                      ? 'opacity-100 scale-100 blur-0'
-                      : 'opacity-0 scale-90 blur-md pointer-events-none'
-                      }`}
-                  >
-                    <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-7xl font-black group">
-                      <span className="relative inline-block" style={{ WebkitTextStroke: '1px rgba(239,68,68,0.2)' }}>
-                        <span className="absolute inset-0 bg-gradient-to-br from-red-400 via-red-600 to-red-800 bg-clip-text text-transparent blur-md opacity-50">
-                          {word}
-                        </span>
-
-                        <span className="relative z-10 bg-gradient-to-br from-red-400 via-red-600 to-red-700 bg-clip-text text-transparent">
-                          {word}
-                        </span>
-
-                        <span className="absolute top-0 left-0 right-0 h-[35%] bg-gradient-to-b from-white/50 via-white/25 to-transparent bg-clip-text text-transparent overflow-hidden pointer-events-none">
-                          {word}
-                        </span>
-
-                        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent bg-clip-text text-transparent transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1500 pointer-events-none">
-                          {word}
-                        </span>
-
-                        <span className="absolute bottom-0 left-0 right-0 h-[20%] bg-gradient-to-t from-black/30 to-transparent bg-clip-text text-transparent pointer-events-none">
-                          {word}
-                        </span>
-                      </span>
-
-                      <span className="absolute top-full left-0 right-0 mt-0.5 opacity-10 bg-gradient-to-b from-red-500/40 to-transparent bg-clip-text text-transparent blur-sm transform scale-y-[-0.4] origin-top pointer-events-none">
-                        {word}
-                      </span>
-                    </h2>
-                  </div>
-                ))}
-              </div>
-
-              <p className="text-xl sm:text-2xl md:text-2xl lg:text-2xl text-gray-300 font-light animate-fadeInUp opacity-0" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
-                THAT <span className="relative inline-block">
-                  <span className="text-white font-bold relative" style={{ WebkitTextStroke: '0.5px rgba(255,255,255,0.1)' }}>
-                    <span className="bg-gradient-to-b from-white via-gray-100 to-gray-200 bg-clip-text text-transparent">DOMINATE</span>
-                    <span className="absolute top-0 left-0 right-0 h-[40%] bg-gradient-to-b from-white/50 to-transparent bg-clip-text text-transparent pointer-events-none">DOMINATE</span>
-                  </span>
-                </span> THE DIGITAL WORLD
-              </p>
-            </div>
-
-            <p className="text-gray-400 text-base sm:text-lg max-w-xl leading-relaxed animate-fadeInUp opacity-0 text-center lg:text-left mx-auto lg:mx-0" style={{ animationDelay: '0.8s', animationFillMode: 'forwards' }}>
-              We transform bold ideas into exceptional digital experiences.
-              From concept to deployment, we build solutions that set new standards.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 animate-fadeInUp opacity-0 justify-center lg:justify-start" style={{ animationDelay: '1s', animationFillMode: 'forwards' }}>
-              <button onClick={toggleChat} className="group relative px-8 py-4 rounded-2xl overflow-hidden transform hover:scale-105 transition-all duration-300">
-                <div className="absolute inset-0 bg-gradient-to-br from-red-500 via-red-600 to-red-700 group-hover:from-red-400 group-hover:via-red-600 group-hover:to-red-800 transition-all duration-500"></div>
-
-                <div className="absolute inset-0 rounded-2xl border-2 border-white/0 group-hover:border-white/30 transition-all duration-500"></div>
-
-                <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700 rounded-2xl"></div>
-
-                <span className="relative z-10 flex items-center justify-center gap-3 text-white font-black text-base tracking-wider">
-                  LET&apos;S TALK
-                </span>
-              </button>
-            </div>
-
-            <div className="flex flex-wrap justify-center lg:justify-start gap-8 sm:gap-10 animate-fadeInUp opacity-0" style={{ animationDelay: '1.2s', animationFillMode: 'forwards' }}>
-              {[
-                { num: "100+", label: "PROJECTS" },
-                { num: "98%", label: "SATISFACTION" },
-                { num: "24/7", label: "SUPPORT" }
-              ].map((stat, idx) => (
-                <div key={idx} className="relative group">
-                  <div className="text-3xl sm:text-4xl font-black relative">
-                    <span className="relative" style={{ WebkitTextStroke: '0.5px rgba(239,68,68,0.2)' }}>
-                      <span className="bg-gradient-to-br from-red-400 via-red-500 to-red-600 bg-clip-text text-transparent">
-                        {stat.num}
-                      </span>
-                      <span className="absolute top-0 left-0 right-0 h-[40%] bg-gradient-to-b from-white/40 to-transparent bg-clip-text text-transparent pointer-events-none">
-                        {stat.num}
-                      </span>
-                    </span>
-                  </div>
-                  <div className="text-gray-400 text-xs font-semibold tracking-widest mt-1">{stat.label}</div>
-                  <div className="h-0.5 w-0 group-hover:w-full bg-gradient-to-r from-red-600 to-red-400 transition-all duration-500 mt-1"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="relative flex items-end lg:items-center justify-center lg:justify-end animate-fadeInUp opacity-0 order-1 lg:order-2 h-[40vh] lg:h-auto mt-16 lg:mt-0" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
-
-            <div className="absolute bottom-0 lg:top-1/2 lg:-translate-y-1/2 w-[300px] h-[300px] lg:w-[400px] lg:h-[400px] bg-red-600/10 rounded-full blur-[100px] animate-pulse"></div>
-
-            <div
-              className="relative z-10 transform transition-transform duration-200 ease-out"
-              style={{
-                transform: `perspective(1000px) rotateX(${mousePosition.y * 0.3}deg) rotateY(${mousePosition.x * 0.3}deg)`
-              }}
-            >
-              <img
-                src="/robo.png"
-                alt="AI Robot"
-                className="w-full max-w-[320px] sm:max-w-[380px] lg:max-w-lg xl:max-w-xl h-auto object-contain animate-floatSlow"
-                style={{
-                  filter: 'drop-shadow(0 20px 60px rgba(239, 68, 68, 0.3))'
-                }}
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const nextElement = target.nextElementSibling as HTMLElement;
-                  if (nextElement) {
-                    nextElement.style.display = 'flex';
-                  }
-                }}
-              />
-              <div className="hidden w-full max-w-[280px] sm:max-w-xs lg:max-w-lg xl:max-w-xl aspect-square items-center justify-center">
-                <div className="text-6xl animate-pulse">🤖</div>
-              </div>
-
-              <div className="absolute inset-0 pointer-events-none">
-                {services.map((service, idx) => {
-                  const positionsDesktop = [
-                    { top: '-2rem', right: '-3rem', size: 'w-24 h-24' },
-                    { top: '25%', left: '-3rem', size: 'w-20 h-20' },
-                    { bottom: '-1rem', right: '-2rem', size: 'w-20 h-20' },
-                    { top: '2rem', left: '-2rem', size: 'w-16 h-16' },
-                    { bottom: '3rem', left: '0', size: 'w-18 h-18' }
-                  ];
-                  const posDesktop = positionsDesktop[idx];
-                  const Icon = service.icon;
-
-                  return (
-                    <div
-                      key={idx}
-                      className="absolute hidden lg:block"
-                      style={{
-                        animation: `orbitDesktop ${8 + idx * 0.5}s ease-in-out infinite`,
-                        animationDelay: `${idx * 0.3}s`,
-                        top: posDesktop.top,
-                        left: posDesktop.left,
-                        right: posDesktop.right
-                      }}
-                    >
-                      <div className={`relative ${posDesktop.size} transform-gpu animate-rotate3d`} style={{ transformStyle: 'preserve-3d', animationDuration: `20s` }}>
-                        <div className="absolute inset-0 backdrop-blur-2xl bg-gradient-to-br from-red-600/40 to-red-800/30 border border-white/40 rounded-2xl flex flex-col items-center justify-center gap-2 p-3 shadow-2xl shadow-red-600/30" style={{ transform: 'translateZ(12px)' }}>
-                          <div className="absolute top-0 left-1/4 right-1/4 h-1/3 bg-gradient-to-b from-white/60 via-white/20 to-transparent rounded-2xl blur-sm"></div>
-                          <Icon className="w-7 h-7 text-white relative z-10 drop-shadow-lg" strokeWidth={2} />
-                          <span className="text-white text-[9px] font-bold text-center leading-tight relative z-10 drop-shadow-md">{service.label}</span>
-                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl"></div>
-                        </div>
-                        <div className="absolute inset-0 backdrop-blur-2xl bg-gradient-to-br from-red-700/40 to-red-900/30 border border-white/40 rounded-2xl shadow-2xl shadow-red-600/30" style={{ transform: 'translateZ(-12px) rotateY(180deg)' }}>
-                          <div className="absolute inset-0 bg-gradient-to-tl from-white/20 via-white/5 to-transparent rounded-2xl"></div>
-                          <div className="absolute bottom-0 left-1/4 right-1/4 h-1/3 bg-gradient-to-t from-red-400/20 to-transparent rounded-2xl blur-sm"></div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-                {services.map((service, idx) => {
-                  const positionsMobile = [
-                    { top: '-1rem', right: '-1.5rem', size: 'w-16 h-16' },
-                    { top: '20%', left: '-1.5rem', size: 'w-14 h-14' },
-                    { bottom: '-0.5rem', right: '-1rem', size: 'w-14 h-14' },
-                    { top: '1rem', left: '-1rem', size: 'w-12 h-12' },
-                    { bottom: '2rem', left: '0', size: 'w-13 h-13' }
-                  ];
-                  const pos = positionsMobile[idx];
-                  const Icon = service.icon;
-
-                  return (
-                    <div
-                      key={`mobile-${idx}`}
-                      className="absolute lg:hidden"
-                      style={{
-                        animation: `orbitMobile ${7 + idx * 0.4}s ease-in-out infinite`,
-                        animationDelay: `${idx * 0.3}s`,
-                        top: pos.top,
-                        left: pos.left,
-                        right: pos.right
-                      }}
-                    >
-                      <div className={`relative ${pos.size} transform-gpu animate-rotate3d`} style={{ transformStyle: 'preserve-3d', animationDuration: `20s` }}>
-                        <div className="absolute inset-0 backdrop-blur-2xl bg-gradient-to-br from-red-600/40 to-red-800/30 border border-white/40 rounded-2xl flex flex-col items-center justify-center gap-1 p-2 shadow-2xl shadow-red-600/30" style={{ transform: 'translateZ(12px)' }}>
-                          <div className="absolute top-0 left-1/4 right-1/4 h-1/3 bg-gradient-to-b from-white/60 via-white/20 to-transparent rounded-2xl blur-sm"></div>
-                          <Icon className="w-5 h-5 text-white relative z-10 drop-shadow-lg" strokeWidth={2} />
-                          <span className="text-white text-[8px] font-bold text-center leading-tight relative z-10 drop-shadow-md">{service.label}</span>
-                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl"></div>
-                        </div>
-                        <div className="absolute inset-0 backdrop-blur-2xl bg-gradient-to-br from-red-700/40 to-red-900/30 border border-white/40 rounded-2xl shadow-2xl shadow-red-600/30" style={{ transform: 'translateZ(-12px) rotateY(180deg)' }}>
-                          <div className="absolute inset-0 bg-gradient-to-tl from-white/20 via-white/5 to-transparent rounded-2xl"></div>
-                          <div className="absolute bottom-0 left-1/4 right-1/4 h-1/3 bg-gradient-to-t from-red-400/20 to-transparent rounded-2xl blur-sm"></div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <div
-        className="absolute bottom-0 left-0 right-0 h-12 md:h-16 pointer-events-none"
-        style={{
-          background: 'linear-gradient(to top, rgba(0,0,0,1), transparent)',
-          backdropFilter: `blur(${Math.max(0, bottomBlur * 0.4)}px)`,
-          WebkitBackdropFilter: `blur(${Math.max(0, bottomBlur * 0.4)}px)`,
-          zIndex: 50,
-          transition: 'all 0.1s ease-out'
-        }}
+        aria-hidden
+        className="pointer-events-none absolute -top-40 left-1/4 h-[420px] w-[420px] rounded-full opacity-30 blur-[130px]"
+        style={{ background: "radial-gradient(circle, #E5231B 0%, transparent 70%)" }}
       />
 
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
+      {/* subtle dot-grid texture for atmosphere */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.07]"
+        style={{
+          backgroundImage: "radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px)",
+          backgroundSize: "26px 26px",
+        }}
+      />
+      {/* vignette to keep edges dark/moody */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{ boxShadow: "inset 0 0 160px 40px rgba(0,0,0,0.8)" }}
+      />
 
-        @keyframes floatSlow {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-15px);
-          }
-        }
+      {/* DamnX logo watermark — fills the empty right side on wider screens.
+          Place your logo asset at /public/damnx-logo.png (transparent PNG
+          or SVG works best). Sits low-opacity and behind the fans/text so
+          it reads as a background mark, not competing for attention. */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-0 hidden w-[40%] items-center justify-end pr-4 opacity-[0.45] md:flex lg:pr-10">
+        <motion.img
+          src="/logo.png"
+          alt=""
+          aria-hidden="true"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.4, ease: EASE }}
+          className="h-[55%] w-auto object-contain grayscale-0"
+        />
+      </div>
 
-        @keyframes shine {
-          0% {
-            transform: translateX(-200%) skewX(-12deg);
-          }
-          100% {
-            transform: translateX(200%) skewX(-12deg);
-          }
-        }
+      {/* top-left fan — hidden on mobile so it never collides with the headline */}
+      <div className="absolute left-[8%] top-8 z-10 hidden sm:block lg:left-[10%] lg:top-12">
+        <DecorativeFan reduced={reduced} delay={0} />
+      </div>
 
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-20px);
-          }
-        }
+      {/* bottom-right fan — the requested variant: mirrored, extra petal,
+          warmer gradient, spins the opposite direction */}
+      <div className="absolute bottom-6 right-[6%] z-10 hidden sm:block lg:bottom-10 lg:right-[9%]">
+        <DecorativeFan mirrored reduced={reduced} delay={0.2} />
+      </div>
 
-        @keyframes orbitDesktop {
-          0% {
-            transform: translate(0, 0);
-          }
-          25% {
-            transform: translate(15px, -15px);
-          }
-          50% {
-            transform: translate(0, -25px);
-          }
-          75% {
-            transform: translate(-15px, -15px);
-          }
-          100% {
-            transform: translate(0, 0);
-          }
-        }
+      {/* headline — casual lowercase, three distinct reveal choreographies */}
+      <div className="relative">
+        <h1
+          className="font-extrabold lowercase leading-[0.95] tracking-tight text-[#fdf6e3]"
+          style={{ fontSize: "clamp(3.2rem, 11vw, 9.5rem)" }}
+        >
+          <MaskRevealWords text="everything" delay={0.1} reduced={reduced} />
+        </h1>
+        <h1
+          className="font-extrabold lowercase leading-[0.95] tracking-tight text-[#fdf6e3]"
+          style={{ fontSize: "clamp(3.2rem, 11vw, 9.5rem)", marginLeft: "clamp(1rem, 8vw, 6rem)" }}
+        >
+          <FlipRevealLetters text="engineered" delay={0.55} reduced={reduced} />
+        </h1>
+        <h1
+          className="font-extrabold italic lowercase leading-[0.95] tracking-tight text-[#E5231B]"
+          style={{ fontSize: "clamp(3.2rem, 11vw, 9.5rem)", marginLeft: "clamp(2rem, 14vw, 11rem)" }}
+        >
+          <WipeRevealText text="better." delay={1.05} reduced={reduced} />
+        </h1>
+      </div>
 
-        @keyframes orbitMobile {
-          0% {
-            transform: translate(0, 0);
-          }
-          25% {
-            transform: translate(10px, -10px);
-          }
-          50% {
-            transform: translate(0, -15px);
-          }
-          75% {
-            transform: translate(-10px, -10px);
-          }
-          100% {
-            transform: translate(0, 0);
-          }
-        }
+      {/* bottom row: bracket note + CTA */}
+      <div className="relative mt-14 flex flex-col items-start justify-between gap-8 sm:mt-20 sm:flex-row sm:items-center sm:gap-6">
+        <p className="flex max-w-sm items-start gap-1 text-base leading-snug text-[#fdf6e3] sm:text-lg">
+          <motion.span
+            initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0, rotate: -180 }}
+            whileInView={reduced ? { opacity: 1 } : { opacity: 1, scale: 1, rotate: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 1.9, type: "spring", stiffness: 260, damping: 16 }}
+            className="text-3xl font-light text-[#fdf6e3]/70 sm:text-4xl"
+          >
+            {"{"}
+          </motion.span>
+          <motion.span
+            initial={reduced ? { opacity: 0 } : { opacity: 0, filter: "blur(8px)", y: 10 }}
+            whileInView={reduced ? { opacity: 1 } : { opacity: 1, filter: "blur(0px)", y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 2.0, ease: EASE }}
+            className="pt-0.5"
+          >
+            <span className="font-bold">
+              Damn<span className="text-[#E5231B]">X</span> Solutions
+            </span>{" "}
+            — premium builds, sharp design, marketing that actually grows your brand.
+          </motion.span>
+          <motion.span
+            initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0, rotate: 180 }}
+            whileInView={reduced ? { opacity: 1 } : { opacity: 1, scale: 1, rotate: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 2.05, type: "spring", stiffness: 260, damping: 16 }}
+            className="text-3xl font-light text-[#fdf6e3]/70 sm:text-4xl"
+          >
+            {"}"}
+          </motion.span>
+        </p>
 
-        @keyframes rotate3d {
-          0% {
-            transform: perspective(1500px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-          }
-          25% {
-            transform: perspective(1500px) rotateX(5deg) rotateY(8deg) rotateZ(2deg);
-          }
-          50% {
-            transform: perspective(1500px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-          }
-          75% {
-            transform: perspective(1500px) rotateX(-5deg) rotateY(-8deg) rotateZ(-2deg);
-          }
-          100% {
-            transform: perspective(1500px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-          }
-        }
-
-        .animate-fadeInUp {
-          animation: fadeInUp 1s ease-out;
-        }
-
-        .animate-floatSlow {
-          animation: floatSlow 6s ease-in-out infinite;
-        }
-
-        .animate-shine {
-          animation: shine 8s ease-in-out infinite;
-        }
-
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-
-        .animate-rotate3d {
-          animation: rotate3d 30s ease-in-out infinite;
-          transform-style: preserve-3d;
-        }
-      `}</style>
-    </div>
+        <motion.button
+          onClick={toggleChat}
+          initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6, y: 20 }}
+          whileInView={reduced ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 2.2, type: "spring", stiffness: 280, damping: 16 }}
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.96 }}
+          className="group inline-flex shrink-0 items-center gap-3 rounded-full border-2 border-[#E5231B] px-6 py-3.5 text-sm font-bold text-white transition-colors duration-300 hover:bg-[#E5231B] sm:text-base cursor-pointer"
+        >
+          Let&apos;s Talk
+          <span className="flex h-6 w-6 items-center justify-center rounded-full border border-[#E5231B] transition-colors duration-300 group-hover:border-white">
+            <ArrowDown size={13} className="group-hover:translate-y-0.5 transition-transform duration-200" />
+          </span>
+        </motion.button>
+      </div>
+    </section>
   );
 }
