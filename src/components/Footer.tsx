@@ -180,7 +180,7 @@ export default function Footer() {
             {/* Quick stats */}
             <div className="mt-8 flex flex-col gap-2">
               {[
-                { value: "50+", label: "Projects Delivered" },
+                { value: "125+", label: "Projects Delivered" },
                 { value: "100%", label: "Client Satisfaction" },
               ].map(({ value, label }) => (
                 <div key={label} className="flex items-center gap-3">

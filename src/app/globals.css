@@ -148,6 +148,20 @@
     touch-action: manipulation;
   }
   
+  /* Marquee animations for client ticker */
+  @keyframes client-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @keyframes client-marquee-reverse {
+    from { transform: translateX(-50%); }
+    to   { transform: translateX(0); }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position:  200% center; }
+  }
+
   /* Custom scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;

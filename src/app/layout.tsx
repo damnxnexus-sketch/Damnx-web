@@ -4,6 +4,7 @@ import "./globals.css";
 import { ChatProvider } from './context/ChatContext';
 import Preloader from "@/components/LoadFix";
 import Footer from "@/components/Footer";
+import DynamicIslandHeader from "@/components/header";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -256,6 +257,7 @@ export default function RootLayout({
       >
         <Preloader>
         <ChatProvider>
+          <DynamicIslandHeader />
           {children}
         </ChatProvider>
         </Preloader>
