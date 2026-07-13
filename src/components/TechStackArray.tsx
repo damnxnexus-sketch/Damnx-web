@@ -26,30 +26,30 @@ export default function PremiumTechStack() {
   return (
     <div className="relative w-full h-[80vh] min-h-[600px] bg-[#050505] flex items-center justify-center overflow-hidden font-sans">
 
-      {/* Background Marquee Layer - Now ambient and subtle */}
+      {/* Top Background Marquee Layer */}
       <div
-        className="absolute inset-0 flex items-center z-0 opacity-60"
+        className="absolute top-12 left-0 right-0 z-0 opacity-50 flex items-center overflow-hidden"
         style={{
           maskImage: 'linear-gradient(to right, transparent, black 20%, black 80%, transparent)',
           WebkitMaskImage: 'linear-gradient(to right, transparent, black 20%, black 80%, transparent)'
         }}
       >
         <motion.div
-          className="flex gap-6 md:gap-10 px-4"
+          className="flex gap-6 md:gap-10 px-4 whitespace-nowrap"
           animate={{ x: [0, -1000] }}
           transition={{
             x: {
               repeat: Infinity,
               repeatType: 'loop',
-              duration: 35, // Slowed down for a calmer feel
+              duration: 35,
               ease: 'linear',
             },
           }}
         >
-          {[...ALL_TECHS, ...ALL_TECHS, ...ALL_TECHS].map((tech, i) => (
+          {[...ALL_TECHS, ...ALL_TECHS].map((tech, i) => (
             <div
-              key={i}
-              className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105 ${tech.bg === 'light'
+              key={`top-${i}`}
+              className={`w-10 h-10 md:w-14 md:h-14 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105 ${tech.bg === 'light'
                 ? 'bg-white/90 shadow-sm'
                 : 'bg-zinc-900/50 border border-white/5 backdrop-blur-sm'
                 }`}
@@ -57,7 +57,46 @@ export default function PremiumTechStack() {
               <img
                 src={tech.icon}
                 alt={tech.name}
-                className="w-6 h-6 md:w-8 md:h-8 object-contain opacity-80"
+                className="w-5 h-5 md:w-7 md:h-7 object-contain opacity-80"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Bottom Background Marquee Layer */}
+      <div
+        className="absolute bottom-12 left-0 right-0 z-0 opacity-50 flex items-center overflow-hidden"
+        style={{
+          maskImage: 'linear-gradient(to right, transparent, black 20%, black 80%, transparent)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 20%, black 80%, transparent)'
+        }}
+      >
+        <motion.div
+          className="flex gap-6 md:gap-10 px-4 whitespace-nowrap"
+          animate={{ x: [-1000, 0] }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              repeatType: 'loop',
+              duration: 35,
+              ease: 'linear',
+            },
+          }}
+        >
+          {[...ALL_TECHS, ...ALL_TECHS].map((tech, i) => (
+            <div
+              key={`bottom-${i}`}
+              className={`w-10 h-10 md:w-14 md:h-14 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105 ${tech.bg === 'light'
+                ? 'bg-white/90 shadow-sm'
+                : 'bg-zinc-900/50 border border-white/5 backdrop-blur-sm'
+                }`}
+            >
+              <img
+                src={tech.icon}
+                alt={tech.name}
+                className="w-5 h-5 md:w-7 md:h-7 object-contain opacity-80"
                 loading="lazy"
               />
             </div>

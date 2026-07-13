@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useScroll } from 'framer-motion';
 import { Search, PenTool, Cpu, Code2, BugOff, Rocket, RefreshCw } from 'lucide-react';
 
 interface Stage {
@@ -79,9 +79,6 @@ const TimelineNode = ({ stage, index }: { stage: Stage; index: number }) => {
           }`}
       />
 
-      {/* --- MOBILE VERTICAL LINE --- */}
-      <div className="absolute left-[2.25rem] top-0 bottom-0 w-[1px] bg-dashed bg-repeat-y bg-[length:1px_8px] bg-gradient-to-b from-transparent via-[#3f0000] to-transparent md:hidden -z-10" />
-
       {/* --- DESKTOP LAYOUT --- */}
       <div className="hidden md:flex w-full max-w-5xl items-center justify-between relative z-10">
 
@@ -150,25 +147,26 @@ const TimelineNode = ({ stage, index }: { stage: Stage; index: number }) => {
       <div className="md:hidden flex w-full items-start gap-6 px-4 z-10">
 
         {/* Mobile Left Column: Icon/Line */}
-        <div className="flex flex-col items-center mt-2">
-          <div className="w-10 h-10 rounded-full border border-red-900/50 bg-[#050505] flex flex-col items-center justify-center mb-2 shrink-0">
+        <div className="flex flex-col items-center mt-2 relative shrink-0">
+          <div className="w-10 h-10 rounded-full border border-red-900/50 bg-[#050505] flex flex-col items-center justify-center mb-2 shrink-0 z-10">
             <span className="text-[#E6192B] text-sm font-bold leading-none">0{stage.id}</span>
           </div>
-          <div className="w-6 h-6 rounded-full bg-[#E6192B] flex items-center justify-center shadow-[0_0_15px_rgba(230,25,43,0.4)] shrink-0">
+          <div className="w-6 h-6 rounded-full bg-[#E6192B] flex items-center justify-center shadow-[0_0_15px_rgba(230,25,43,0.4)] shrink-0 z-10">
             <stage.icon className="w-3 h-3 text-white" />
           </div>
         </div>
 
-        {/* Mobile Right Column: Text */}
+        {/* Mobile Right Column: Text Card */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-col pb-8"
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="flex-1 flex flex-col p-5 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-sm pb-6"
         >
           <h3 className="text-lg font-bold text-white tracking-wide uppercase">{stage.title}</h3>
-          <h4 className="text-xs text-[#E6192B] font-medium mb-2">{stage.subtitle}</h4>
-          <p className="text-sm text-zinc-400 leading-relaxed">{stage.description}</p>
+          <h4 className="text-xs text-[#E6192B] font-semibold tracking-wider mb-2 font-mono">{stage.subtitle}</h4>
+          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-light">{stage.description}</p>
         </motion.div>
       </div>
 
@@ -177,6 +175,12 @@ const TimelineNode = ({ stage, index }: { stage: Stage; index: number }) => {
 };
 
 export default function DevelopmentJourneyMinimal() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 65%", "end 35%"]
+  });
+
   return (
     <div className="bg-[#050505] min-h-screen relative font-sans overflow-hidden py-24 selection:bg-[#E6192B]/30 selection:text-white">
 
@@ -229,11 +233,33 @@ export default function DevelopmentJourneyMinimal() {
       </div>
 
       {/* TIMELINE SECTION */}
-      <section className="relative w-full max-w-6xl mx-auto overflow-hidden px-4 md:px-0">
+      <section ref={containerRef} className="relative w-full max-w-6xl mx-auto overflow-hidden px-4 md:px-0">
 
         {/* Top/Bottom gradient masks for smooth fade in/out of the dashed line */}
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#050505] to-transparent z-10 pointer-events-none" />
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050505] to-transparent z-10 pointer-events-none" />
+
+        {/* Mobile Continuous Wavy 'Rope' Path */}
+        <div className="absolute left-[35px] top-16 bottom-36 w-[10px] md:hidden pointer-events-none z-0">
+          <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 10 100">
+            {/* Background Rope Track */}
+            <path
+              d="M 5 0 C 8 5, 2 10, 5 15 C 8 20, 2 25, 5 30 C 8 35, 2 40, 5 45 C 8 50, 2 55, 5 60 C 8 65, 2 70, 5 75 C 8 80, 2 85, 5 90 C 8 95, 2 100, 5 100"
+              fill="none"
+              stroke="#221212"
+              strokeWidth="1.5"
+            />
+            {/* Animated Active Glowing Rope */}
+            <motion.path
+              d="M 5 0 C 8 5, 2 10, 5 15 C 8 20, 2 25, 5 30 C 8 35, 2 40, 5 45 C 8 50, 2 55, 5 60 C 8 65, 2 70, 5 75 C 8 80, 2 85, 5 90 C 8 95, 2 100, 5 100"
+              fill="none"
+              stroke="#E6192B"
+              strokeWidth="1.5"
+              style={{ pathLength: scrollYProgress }}
+              className="drop-shadow-[0_0_4px_rgba(230,25,43,0.8)]"
+            />
+          </svg>
+        </div>
 
         <div className="relative z-0 pt-8 pb-8">
           {stages.map((stage, index) => (
