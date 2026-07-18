@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { Home, FileText, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useChat } from "@/app/context/ChatContext";
+import { usePathname } from "next/navigation";
 
 const navItems = [
   { name: "Home", icon: Home, href: "/" },
@@ -14,9 +15,13 @@ const navItems = [
 
 export default function DynamicIslandHeader() {
   const [expanded, setExpanded] = useState(false);
-  const [isMobile, setIsMobile] = useState(false); // New state to track if we are on a phone
+  const [isMobile, setIsMobile] = useState(false);
   const { openChat } = useChat();
   const headerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  // Hide on global page — it has its own nav
+  if (pathname === "/global") return null;
 
   // 1. Detect screen size on load and on resize
   useEffect(() => {

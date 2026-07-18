@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from "react";
@@ -10,7 +11,7 @@ const techPillars = [
   {
     icon: Cpu,
     title: "Next-Gen Performance",
-    description: "We engineer with Next.js, React, and Angular. Leveraged static site generation (SSG), server-side rendering (SSR), and type-safe architectures ensure sub-second loads."
+    description: "We engineer with Next.js, React, and TypeScript. Leveraged static site generation (SSG) and server-side edge rendering ensure sub-second load times."
   },
   {
     icon: Database,
@@ -29,15 +30,15 @@ export default function WebDevEngineeringSection() {
 
   return (
     <section className="relative w-full py-24 px-6 md:px-12 lg:px-16 bg-black overflow-hidden border-t border-white/[0.04]">
-      
+
       {/* Background soft glow */}
-      <div 
-        aria-hidden 
+      <div
+        aria-hidden
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] max-w-[700px] h-[400px] rounded-full bg-gradient-to-tr from-zinc-900/40 via-red-950/5 to-transparent blur-[120px] pointer-events-none"
       />
 
       <div className="relative z-10 w-full max-w-6xl mx-auto">
-        
+
         {/* --- HEADER SECTION --- */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16 md:mb-20">
           <div className="max-w-2xl">
@@ -54,9 +55,9 @@ export default function WebDevEngineeringSection() {
           </div>
           <div className="flex flex-col items-start gap-4 max-w-md">
             <p className="text-zinc-400 text-sm md:text-base font-light leading-relaxed">
-              Cheap templates and sluggish sites harm your credibility. We build custom-engineered, SEO-dominant digital systems from scratch utilizing industry-leading frameworks like Next.js, React, and Angular.
+              Cheap templates and sluggish sites harm your credibility. We build custom-engineered, SEO-dominant digital systems from scratch, ensuring bulletproof security and instant responsiveness.
             </p>
-            <button 
+            <button
               onClick={toggleChat}
               className="inline-flex items-center gap-2 text-xs font-mono text-white hover:text-[#E5231B] transition-colors group mt-2 cursor-pointer"
             >
@@ -77,8 +78,8 @@ export default function WebDevEngineeringSection() {
             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-1">Google Core Web Vitals Score</span>
           </div>
           <div className="flex flex-col col-span-2 md:col-span-1">
-            <span className="text-xl sm:text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-zinc-400">Next.js • React • Angular</span>
-            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-2.5">Core Tech Stacks</span>
+            <span className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-[#E5231B]">TypeScript</span>
+            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-1">Type-Safe Architecture</span>
           </div>
         </div>
 
@@ -116,13 +117,13 @@ export default function WebDevEngineeringSection() {
 
         {/* --- BOTTOM CTA --- */}
         <div className="flex justify-center mt-16 md:mt-20">
-          <button 
+          <button
             onClick={toggleChat}
             className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full border border-white/10 bg-white/5 hover:border-[#E5231B]/40 hover:bg-[#E5231B]/10 overflow-hidden transition-all duration-300 cursor-pointer"
           >
             {/* Background slider hover effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#E5231B]/20 to-transparent translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300" />
-            
+
             <span className="relative z-10 text-sm font-medium text-white tracking-wide">
               Initialize Custom Web Architecture
             </span>
