@@ -9,8 +9,8 @@ export default function BackButton() {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Hide the back button on the main homepage and global page
-  if (pathname === "/" || pathname === "/global") return null;
+  // Hide the back button on the main homepage
+  if (pathname === "/") return null;
 
   const handleBack = () => {
     // If there is history to go back to, use it. Otherwise, fallback to home.

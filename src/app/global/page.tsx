@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import GlobalNav from "./GlobalNav";
 import GlobalHero from "./GlobalHero";
 import GlobalDelivery from "./GlobalDelivery";
 import GlobalServices from "./GlobalServices";
@@ -49,9 +48,6 @@ export const metadata: Metadata = {
 export default function GlobalPage() {
   return (
     <div className="bg-white">
-      {/* Suppress the existing floating island header visually with a full-width overlay nav */}
-      <GlobalNav />
-
       <main>
         <GlobalHero />
         <GlobalDelivery />

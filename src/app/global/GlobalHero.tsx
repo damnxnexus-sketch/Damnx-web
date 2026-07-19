@@ -100,7 +100,7 @@ export default function GlobalHero() {
 
       <motion.div
         style={{ y, opacity }}
-        className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 pt-32 pb-20"
+        className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 pt-24 pb-20"
       >
         {/* Eyebrow */}
         <motion.div
