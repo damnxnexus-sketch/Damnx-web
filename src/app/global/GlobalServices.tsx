@@ -183,9 +183,8 @@ export default function GlobalServices() {
                     </AnimatePresence>
                   </div>
 
-                  {/* Price range + arrow */}
+                  {/* Arrow */}
                   <div className="col-span-12 sm:col-span-2 pl-6 sm:pl-0 flex sm:flex-col sm:items-end gap-3 sm:gap-2">
-                    <span className="text-xs font-bold text-[#E5231B]">{svc.range}</span>
                     <motion.div
                       animate={{ rotate: isHovered ? 0 : -10, opacity: isHovered ? 1 : 0.3 }}
                       className="flex h-8 w-8 items-center justify-center rounded-full border border-[#0a0a0a]/15"
