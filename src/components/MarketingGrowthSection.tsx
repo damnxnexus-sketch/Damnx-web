@@ -70,7 +70,7 @@ export default function MarketingGrowthSection() {
             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-1">Average Business ROI</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-3xl md:text-4xl font-black text-white">125+</span>
+            <span className="text-3xl md:text-4xl font-black text-white">150+</span>
             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-1">Growth Campaigns Launched</span>
           </div>
           <div className="flex flex-col col-span-2 md:col-span-1">

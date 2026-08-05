@@ -306,7 +306,7 @@ export default function WhyChooseUs() {
           className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-5"
         >
           {[
-            { value: '125+', label: 'Projects Done'    },
+            { value: '150+', label: 'Projects Done'    },
             { value: '2yr',  label: 'Free Maintenance' },
             { value: '98%',  label: 'Client Retention' },
             { value: '24/7', label: 'Support Access'   },
