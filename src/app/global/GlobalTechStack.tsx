@@ -21,7 +21,7 @@ const technologies = [
   { name: "Kubernetes", src: "/global page assets/icons8-kubernetes-48 1.png" },
   { name: "PostgreSQL", src: "/global page assets/postgre.png" },
   { name: "MongoDB", src: "/global page assets/mongodb-seeklogo 1.png" },
-  { name: "OpenAI", src: "/global page assets/favpng_f42061df40cdb73b1d904d0e56e02861 1.png" },
+  { name: "OpenAI", src: "/global page assets/Vector.png" },
   { name: "Anthropic", src: "/global page assets/anthropic-com-logo-removebg-preview 1.png" },
   { name: "LangChain", src: "/global page assets/Langchain--Streamline-Simple-Icons 1.png" },
   { name: "Supabase", src: "/global page assets/icons8-supabase-48 1.png" },

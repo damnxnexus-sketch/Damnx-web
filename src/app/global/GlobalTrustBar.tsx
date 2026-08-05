@@ -40,12 +40,6 @@ function AnimatedStat({ value, label, detail, index }: { value: string; label: s
   );
 }
 
-const industries = [
-  "Healthcare", "Finance", "Education", "Hospitality",
-  "Retail", "Real Estate", "Travel", "Manufacturing",
-  "Government", "Artificial Intelligence",
-];
-
 export default function GlobalStats() {
   return (
     <>
@@ -90,48 +84,7 @@ export default function GlobalStats() {
         </div>
       </section>
 
-      {/* Industries */}
-      <section id="industries" className="bg-[#f9f8f6] py-24 sm:py-36 border-t border-[#0a0a0a]/6">
-        <div className="mx-auto max-w-7xl px-6 sm:px-10">
-          <motion.p
-            initial={{ opacity: 0, x: -16 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-3 mb-8 text-[11px] font-bold tracking-[0.3em] uppercase text-[#0a0a0a]/40"
-          >
-            <span className="w-6 h-px bg-[#E5231B]" />
-            Industries
-          </motion.p>
 
-          <div className="flex flex-wrap gap-3">
-            {industries.map((industry, i) => (
-              <motion.div
-                key={industry}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05, duration: 0.4, ease: EASE }}
-                whileHover={{ scale: 1.04 }}
-                className="group cursor-default rounded-full border border-[#0a0a0a]/10 bg-white px-5 py-3 hover:border-[#0a0a0a]/30 hover:bg-[#0a0a0a] transition-all duration-300"
-              >
-                <span className="text-sm font-bold text-[#0a0a0a] group-hover:text-white transition-colors duration-300">
-                  {industry}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="mt-12 text-sm text-[#0a0a0a]/35 font-light max-w-md leading-relaxed"
-          >
-            Deep domain knowledge across 10+ industries — we understand your market before we write a single line of code.
-          </motion.p>
-        </div>
-      </section>
     </>
   );
 }
