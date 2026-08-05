@@ -4,6 +4,7 @@ import GlobalDelivery from "./GlobalDelivery";
 import GlobalServices from "./GlobalServices";
 import GlobalProcess from "./GlobalProcess";
 import GlobalTrustBar from "./GlobalTrustBar";
+import GlobalTechStack from "./GlobalTechStack";
 import GlobalTestimonials from "./GlobalTestimonials";
 import GlobalPriceEstimator from "./GlobalPriceEstimator";
 import GlobalWhyUs from "./GlobalWhyUs";
@@ -54,6 +55,7 @@ export default function GlobalPage() {
         <GlobalServices />
         <GlobalProcess />
         <GlobalTrustBar />
+        <GlobalTechStack />
         <GlobalTestimonials />
         <GlobalPriceEstimator />
         <GlobalWhyUs />
