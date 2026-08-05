@@ -6,7 +6,7 @@ import { ArrowRight, Mail, Github, Linkedin, Instagram } from "lucide-react";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function GlobalCTAAndFooter() {
+export default function GlobalCTA() {
   const [email, setEmail] = useState("");
   const [idea, setIdea] = useState("");
   const [sent, setSent] = useState(false);
@@ -33,146 +33,203 @@ export default function GlobalCTAAndFooter() {
   return (
     <>
       {/* CTA Section */}
-      <section id="contact" className="bg-[#f9f8f6] py-24 sm:py-40 overflow-hidden border-t border-[#0a0a0a]/6">
+      <section id="contact" className="bg-white py-24 sm:py-32 overflow-hidden border-t border-[#0a0a0a]/6">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-            {/* Left: Headline */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+            {/* Left: Headline & Stats */}
             <div>
               <motion.p
                 initial={{ opacity: 0, x: -16 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="flex items-center gap-3 mb-8 text-[11px] font-bold tracking-[0.3em] uppercase text-[#0a0a0a]/40"
+                className="flex items-center gap-3 mb-6 text-[12px] font-medium tracking-[0.1em] uppercase text-[#0a0a0a]/60"
               >
-                <span className="w-6 h-px bg-[#E5231B]" />
-                Get in Touch
+                <span className="w-10 h-px bg-[#0a0a0a]" />
+                GET IN TOUCH
               </motion.p>
+              
               <motion.h2
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, ease: EASE }}
-                className="font-black text-[#0a0a0a] leading-[0.93] tracking-tight mb-8"
-                style={{ fontSize: "clamp(2.8rem, 6vw, 6rem)" }}
+                className="font-black text-[#0a0a0a] leading-[1.05] tracking-tight mb-8"
+                style={{ fontSize: "clamp(3.5rem, 6vw, 5rem)" }}
               >
                 Your vision.
                 <br />
                 Our craft.
                 <br />
-                <span className="text-[#E5231B]">Let&apos;s build.</span>
+                <span className="text-[#E5231B]">Let&apos;s build </span>
+                <span className="font-serif italic font-normal text-black" style={{ fontSize: "clamp(3.5rem, 6vw, 5rem)" }}>together.</span>
               </motion.h2>
+              
               <motion.p
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1, duration: 0.6 }}
-                className="text-base sm:text-lg text-[#0a0a0a]/50 leading-relaxed font-light max-w-md"
+                className="text-lg sm:text-xl text-[#0a0a0a]/60 leading-relaxed max-w-md font-medium mb-16"
               >
-                Whether you&apos;re a startup in Austin or a global enterprise in Singapore — we&apos;re your engineering partner from day one. NDA signed. Proposal within 24 hours.
+                Whether you&apos;re a startup, a business, or a global enterprise in Singapore - we turn ideas into digital products that people love.
               </motion.p>
 
-              {/* Contact methods */}
+              {/* Stats Grid */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
-                className="mt-10 flex flex-col gap-4"
+                className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center sm:text-left"
               >
-                <a
-                  href="mailto:damnx.nexus@gmail.com"
-                  className="group flex items-center gap-3 text-sm text-[#0a0a0a]/60 hover:text-[#0a0a0a] transition-colors"
-                >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#0a0a0a]/12 group-hover:border-[#0a0a0a]/30 group-hover:bg-[#0a0a0a] transition-all duration-300">
-                    <Mail size={14} className="text-[#0a0a0a]/50 group-hover:text-white transition-colors duration-300" />
-                  </span>
-                  damnx.nexus@gmail.com
-                </a>
-                <a
-                  href="https://wa.me/916388037374"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center gap-3 text-sm text-[#0a0a0a]/60 hover:text-[#0a0a0a] transition-colors"
-                >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#0a0a0a]/12 group-hover:border-[#0a0a0a]/30 group-hover:bg-[#0a0a0a] transition-all duration-300">
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-[#0a0a0a]/50 group-hover:text-white transition-colors duration-300">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                    </svg>
-                  </span>
-                  WhatsApp +91 6388 037 374
-                </a>
+                <div className="flex flex-col items-center sm:items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-5 h-5 text-red-500" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm text-[#0a0a0a]">24 Hrs</p>
+                    <p className="text-xs text-[#0a0a0a]/60">Proposal Promise</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center sm:items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-5 h-5 text-green-500" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm text-[#0a0a0a]">200+</p>
+                    <p className="text-xs text-[#0a0a0a]/60">Projects Delivered</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center sm:items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-cyan-100 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-5 h-5 text-cyan-500" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm text-[#0a0a0a]">4.9/5</p>
+                    <p className="text-xs text-[#0a0a0a]/60">Client Rating</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center sm:items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-5 h-5 text-indigo-500" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm text-[#0a0a0a]">15+</p>
+                    <p className="text-xs text-[#0a0a0a]/60">Countries Served</p>
+                  </div>
+                </div>
               </motion.div>
             </div>
 
-            {/* Right: Form */}
+            {/* Right: Form Card */}
             <motion.div
               initial={{ opacity: 0, x: 24 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, ease: EASE }}
-              className="rounded-3xl border border-[#0a0a0a]/8 bg-white p-8 sm:p-10"
+              className="rounded-2xl border border-gray-100 bg-white p-8 sm:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.08)] max-w-[500px] w-full mx-auto lg:ml-auto"
             >
               {sent ? (
                 <div className="flex flex-col items-start gap-5 py-8">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#E5231B]">
-                    <ArrowRight size={22} className="text-white" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-5 h-5 text-red-500" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
                   </div>
                   <h3 className="text-2xl font-black text-[#0a0a0a]">Message received.</h3>
-                  <p className="text-[#0a0a0a]/50 text-sm leading-relaxed">
-                    We&apos;ll review your brief and respond within 6 business hours with a tailored proposal.
+                  <p className="text-[#0a0a0a]/60 text-sm leading-relaxed">
+                    We&apos;ll review your brief and respond within 24 hours with a tailored proposal.
                   </p>
                   <button
                     onClick={() => { setSent(false); setEmail(""); setIdea(""); }}
-                    className="text-xs text-[#0a0a0a]/30 hover:text-[#0a0a0a]/60 transition-colors cursor-pointer"
+                    className="text-xs text-[#0a0a0a]/50 hover:text-[#0a0a0a] transition-colors cursor-pointer mt-4"
                   >
                     Send another message
                   </button>
                 </div>
               ) : (
                 <>
-                  <h3 className="text-xl font-black text-[#0a0a0a] mb-1">Start a conversation</h3>
-                  <p className="text-sm text-[#0a0a0a]/40 mb-8">
-                    No obligation. Proposal delivered in 24 hours.
-                  </p>
-                  <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-[10px] font-bold tracking-wider uppercase text-[#0a0a0a]/35">
-                        Work Email *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@company.com"
-                        className="w-full rounded-xl border border-[#e8e8e8] bg-[#f9f8f6] px-4 py-3.5 text-sm text-[#0a0a0a] placeholder-[#0a0a0a]/25 outline-none focus:border-[#0a0a0a]/40 transition-colors"
-                      />
+                  <div className="mb-8">
+                    <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mb-6">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-4 h-4 text-red-500 ml-1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-[10px] font-bold tracking-wider uppercase text-[#0a0a0a]/35">
-                        Project brief (optional)
+                    <h3 className="text-2xl font-bold text-[#0a0a0a] mb-2 tracking-tight">Start a conversation</h3>
+                    <p className="text-[13px] text-[#0a0a0a]/60">
+                      No obligation. Proposal delivered in <span className="text-red-500 font-semibold">24 hours.</span>
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[11px] font-semibold text-[#0a0a0a]/60 uppercase tracking-wide">
+                        WORK EMAIL
                       </label>
-                      <textarea
-                        rows={4}
-                        value={idea}
-                        onChange={(e) => setIdea(e.target.value)}
-                        placeholder="Tell us about your project..."
-                        className="w-full resize-none rounded-xl border border-[#e8e8e8] bg-[#f9f8f6] px-4 py-3.5 text-sm text-[#0a0a0a] placeholder-[#0a0a0a]/25 outline-none focus:border-[#0a0a0a]/40 transition-colors"
-                      />
+                      <div className="relative">
+                        <input
+                          type="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="Your@Company.com"
+                          className="w-full rounded-lg bg-[#f8f9fa] px-4 py-3.5 text-sm text-[#0a0a0a] placeholder-[#0a0a0a]/30 outline-none border border-transparent focus:border-gray-200 focus:bg-white transition-all"
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-4 h-4 text-gray-400" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                        </div>
+                      </div>
                     </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[11px] font-semibold text-[#0a0a0a]/60 uppercase tracking-wide">
+                        TELL US ABOUT YOUR PROJECT
+                      </label>
+                      <div className="relative">
+                        <textarea
+                          rows={4}
+                          required
+                          value={idea}
+                          onChange={(e) => setIdea(e.target.value)}
+                          placeholder="Share Your Idea, Goals And Requirements"
+                          className="w-full resize-none rounded-lg bg-[#f8f9fa] px-4 py-3.5 text-sm text-[#0a0a0a] placeholder-[#0a0a0a]/30 outline-none border border-transparent focus:border-gray-200 focus:bg-white transition-all"
+                        />
+                        <div className="absolute right-4 bottom-4">
+                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-4 h-4 text-gray-400" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                       <div className="flex flex-col gap-2">
+                         <label className="text-[11px] font-semibold text-[#0a0a0a]/60 tracking-wide">
+                           Select Your Budget
+                         </label>
+                         <input
+                            type="text"
+                            placeholder="$10k - $25k"
+                            className="w-full rounded-lg bg-[#f8f9fa] px-4 py-3 text-sm text-[#0a0a0a] placeholder-[#0a0a0a]/30 outline-none border border-transparent focus:border-gray-200 focus:bg-white transition-all"
+                          />
+                       </div>
+                       <div className="flex flex-col gap-2">
+                         <label className="text-[11px] font-semibold text-[#0a0a0a]/60 tracking-wide">
+                           Select Timeframe
+                         </label>
+                         <input
+                            type="text"
+                            placeholder="Select Timeframe"
+                            className="w-full rounded-lg bg-[#f8f9fa] px-4 py-3 text-sm text-[#0a0a0a] placeholder-[#0a0a0a]/30 outline-none border border-transparent focus:border-gray-200 focus:bg-white transition-all"
+                          />
+                       </div>
+                    </div>
+
                     <motion.button
                       type="submit"
-                      whileHover={{ scale: 1.02, y: -1 }}
+                      whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.98 }}
-                      transition={{ type: "spring", stiffness: 380, damping: 18 }}
-                      className="w-full inline-flex items-center justify-center gap-3 rounded-xl bg-[#0a0a0a] py-4 text-sm font-bold text-white hover:bg-[#E5231B] transition-colors duration-400 cursor-pointer"
+                      className="w-full rounded-xl bg-[#242124] py-4 text-sm font-bold text-white hover:bg-black transition-colors duration-300 mt-2"
                     >
                       Send My Brief
-                      <ArrowRight size={14} />
                     </motion.button>
-                    <p className="text-center text-[11px] text-[#0a0a0a]/25">
-                      🔒 NDA signed on request. Your idea is safe.
-                    </p>
                   </form>
                 </>
               )}
@@ -181,80 +238,6 @@ export default function GlobalCTAAndFooter() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-[#0a0a0a] pt-20 sm:pt-28 pb-8 overflow-hidden">
-        <div className="mx-auto max-w-7xl px-6 sm:px-10">
-          {/* Top section */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 pb-16 border-b border-white/8">
-            {/* Brand */}
-            <div className="lg:col-span-4">
-              <div className="flex items-center gap-2.5 mb-5">
-                <div className="w-8 h-8 rounded-lg bg-[#E5231B] flex items-center justify-center shrink-0">
-                  <span className="text-white font-black text-xs tracking-tighter">DX</span>
-                </div>
-                <span className="font-bold text-sm tracking-wide text-white">DAMNX Solutions</span>
-              </div>
-              <p className="text-sm text-white/35 leading-relaxed font-light max-w-xs mb-8">
-                Designing tomorrow&apos;s digital experiences. Premium engineering for global businesses.
-              </p>
-              <div className="flex flex-col gap-1 text-xs text-white/25">
-                <p className="font-semibold text-white/40 mb-1">Offices</p>
-                <p>🇮🇳 India — Haldwani, Uttarakhand</p>
-                <p className="text-white/20">Serving clients globally</p>
-              </div>
-            </div>
-
-            {/* Links */}
-            <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-8">
-              {footerLinks.map((col) => (
-                <div key={col.heading}>
-                  <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/25 mb-5">
-                    {col.heading}
-                  </p>
-                  <ul className="flex flex-col gap-3">
-                    {col.links.map((link) => (
-                      <li key={link}>
-                        <a
-                          href="#"
-                          className="text-sm text-white/40 hover:text-white transition-colors duration-200 font-light"
-                        >
-                          {link}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom bar */}
-          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-white/20">
-              © 2026 DAMNX Solutions. All rights reserved.
-            </p>
-
-            {/* Socials */}
-            <div className="flex items-center gap-3">
-              {socials.map(({ icon: Icon, label, href }) => (
-                <a
-                  key={label}
-                  href={href}
-                  aria-label={label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/30 hover:border-white/30 hover:text-white transition-all duration-200"
-                >
-                  <Icon size={14} />
-                </a>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-4 text-xs text-white/20">
-              <a href="#" className="hover:text-white/40 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white/40 transition-colors">Terms</a>
-            </div>
-          </div>
-        </div>
-      </footer>
     </>
   );
 }
