@@ -210,14 +210,14 @@ export default function GlobalDelivery() {
   );
 
   return (
-    <section className="bg-[#FCFCFC] py-16 px-6 lg:px-12 min-h-screen flex items-center justify-center font-sans overflow-hidden">
-      <div className="max-w-6xl w-full mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16">
+    <section className="bg-[#FCFCFC] py-16 px-4 sm:px-6 lg:px-12 min-h-screen flex items-center justify-center font-sans overflow-hidden">
+      <div className="max-w-6xl w-full mx-auto flex flex-col lg:flex-row gap-6 sm:gap-10 lg:gap-16">
         
         {/* Sidebar */}
-        <div className="w-full lg:w-[320px] shrink-0 bg-[#2A2B2A] rounded-[32px] p-5 relative overflow-hidden flex flex-col h-[560px] shadow-2xl">
+        <div className="w-full lg:w-[320px] shrink-0 bg-[#2A2B2A] rounded-[24px] sm:rounded-[32px] p-4 sm:p-5 relative overflow-hidden flex flex-col h-auto lg:h-[560px] shadow-2xl">
           
           {/* Search */}
-          <div className="relative mb-6 z-10">
+          <div className="relative mb-4 sm:mb-6 z-10">
             <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
             <input 
               type="text"
@@ -228,32 +228,32 @@ export default function GlobalDelivery() {
             />
           </div>
 
-          {/* List */}
-          <div className="flex-1 overflow-y-auto space-y-1 pr-2 z-10 custom-scrollbar">
+          {/* List — horizontal scroll on mobile, vertical on desktop */}
+          <div className="flex flex-row lg:flex-col flex-nowrap lg:flex-wrap overflow-x-auto lg:overflow-y-auto gap-1 pr-0 lg:pr-2 z-10 custom-scrollbar pb-1 lg:pb-0 flex-1">
             {filtered.map(country => {
               const isActive = selected.name === country.name;
               return (
                 <button
                   key={country.name}
                   onClick={() => setSelected(country)}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-[16px] transition-colors ${
+                  className={`w-auto lg:w-full flex items-center justify-between shrink-0 lg:shrink px-3 sm:px-4 py-2.5 sm:py-3 rounded-[14px] sm:rounded-[16px] transition-colors ${
                     isActive ? 'bg-[#3A3B3A]' : 'hover:bg-[#3A3B3A]/60'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl leading-none">{country.flag}</span>
-                    <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-gray-300'}`}>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <span className="text-xl sm:text-2xl leading-none">{country.flag}</span>
+                    <span className={`text-xs sm:text-sm font-medium whitespace-nowrap ${isActive ? 'text-white' : 'text-gray-300'}`}>
                       {country.name}
                     </span>
                   </div>
-                  <ArrowRight size={16} className={isActive ? 'text-white' : 'text-gray-400'} />
+                  <ArrowRight size={14} className={`ml-2 lg:ml-0 ${isActive ? 'text-white' : 'text-gray-400'} hidden lg:block`} />
                 </button>
               )
             })}
           </div>
 
-          {/* Airplane graphic */}
-          <div className="absolute bottom-4 left-0 w-[90%] h-[100px] pointer-events-none opacity-[0.15] flex items-end ml-4">
+          {/* Airplane graphic — only on desktop */}
+          <div className="hidden lg:flex absolute bottom-4 left-0 w-[90%] h-[100px] pointer-events-none opacity-[0.15] items-end ml-4">
              <svg className="absolute w-full h-full top-0 left-0" viewBox="0 0 200 100" preserveAspectRatio="none">
                <path d="M10,80 Q30,60 50,80 T90,60 Q130,40 140,70 T180,20" fill="none" stroke="white" strokeWidth="2.5" strokeDasharray="4 6" />
              </svg>
@@ -263,8 +263,8 @@ export default function GlobalDelivery() {
 
         {/* Content */}
         <div className="flex-1 pt-2 sm:pt-6 relative min-w-0">
-           {/* Background Map */}
-           <div className="absolute top-[-40px] right-[-40px] w-full max-w-[600px] h-[400px] opacity-[0.06] pointer-events-none z-0">
+           {/* Background Map — desktop only */}
+           <div className="hidden lg:block absolute top-[-40px] right-[-40px] w-full max-w-[600px] h-[400px] opacity-[0.06] pointer-events-none z-0">
              <Image src="/global page assets/countries.png" alt="World Map" fill className="object-contain object-right-top" />
            </div>
 
@@ -277,70 +277,70 @@ export default function GlobalDelivery() {
                transition={{ duration: 0.3 }}
                className="relative z-10"
              >
-               <h2 className="text-lg font-semibold text-gray-900 mb-1">Shipping to</h2>
+               <h2 className="text-sm sm:text-lg font-semibold text-gray-900 mb-1">Shipping to</h2>
                
-               <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3">
-                  <div>
-                    <h1 className="text-4xl sm:text-5xl lg:text-[4rem] font-black text-black leading-[0.9] tracking-tight">
+               <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3 gap-2">
+                  <div className="min-w-0">
+                    <h1 className="text-3xl sm:text-4xl lg:text-[4rem] font-black text-black leading-[0.9] tracking-tight truncate">
                       {selected.name}
                     </h1>
-                    <p className="text-lg font-medium text-gray-800 mt-2">
+                    <p className="text-sm sm:text-lg font-medium text-gray-800 mt-1 sm:mt-2">
                       {selected.timezone.split(' (')[0]} {selected.timezone.includes('(') ? `(${selected.timezone.split(' (')[1]}` : ''}
                     </p>
                   </div>
-                  <div className="mt-3 sm:mt-0 text-left sm:text-right">
+                  <div className="sm:text-right shrink-0">
                     <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-1">Base Price</p>
-                    <span className="text-4xl sm:text-5xl lg:text-[4.5rem] font-black text-[#E5231B] leading-none tracking-tight">
+                    <span className="text-3xl sm:text-4xl lg:text-[4.5rem] font-black text-[#E5231B] leading-none tracking-tight">
                       {formatLocalPrice(selected.startingPrice, selected)}
                     </span>
                   </div>
                </div>
 
                {/* 4 Col Info Card */}
-               <div className="bg-white rounded-[1.5rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100/80 p-5 sm:p-6 flex flex-col md:flex-row gap-6 mt-8 mb-8">
+               <div className="bg-white rounded-[1.25rem] sm:rounded-[1.5rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100/80 p-4 sm:p-5 sm:p-6 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-6 sm:mt-8 mb-6 sm:mb-8">
                   {/* Overlap */}
-                  <div className="flex-1 flex flex-col items-center text-center px-2 md:border-r border-gray-100 last:border-0">
-                     <div className="w-10 h-10 rounded-full bg-[#FFE5EC] text-[#FF4D8D] flex items-center justify-center mb-3">
-                       <Clock size={18} strokeWidth={2.5} />
+                  <div className="flex flex-col items-center text-center px-1 sm:px-2">
+                     <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#FFE5EC] text-[#FF4D8D] flex items-center justify-center mb-2 sm:mb-3">
+                       <Clock size={16} strokeWidth={2.5} />
                      </div>
-                     <p className="font-bold text-gray-900 mb-1 text-sm">{selected.overlap}</p>
-                     <p className="text-xs text-gray-500 font-medium">Timezone overlap</p>
+                     <p className="font-bold text-gray-900 mb-1 text-xs sm:text-sm">{selected.overlap}</p>
+                     <p className="text-[10px] sm:text-xs text-gray-500 font-medium">Timezone overlap</p>
                   </div>
                   {/* Delivery */}
-                  <div className="flex-1 flex flex-col items-center text-center px-2 md:border-r border-gray-100 last:border-0">
-                     <div className="w-10 h-10 rounded-full bg-[#E5F9F8] text-[#00C4B8] flex items-center justify-center mb-3">
-                       <Calendar size={18} strokeWidth={2.5} />
+                  <div className="flex flex-col items-center text-center px-1 sm:px-2">
+                     <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#E5F9F8] text-[#00C4B8] flex items-center justify-center mb-2 sm:mb-3">
+                       <Calendar size={16} strokeWidth={2.5} />
                      </div>
-                     <p className="font-bold text-gray-900 mb-1 text-sm">{selected.delivery}</p>
-                     <p className="text-xs text-gray-500 font-medium">Timezone overlap</p>
+                     <p className="font-bold text-gray-900 mb-1 text-xs sm:text-sm">{selected.delivery}</p>
+                     <p className="text-[10px] sm:text-xs text-gray-500 font-medium">Delivery time</p>
                   </div>
                   {/* Support */}
-                  <div className="flex-1 flex flex-col items-center text-center px-2 md:border-r border-gray-100 last:border-0">
-                     <div className="w-10 h-10 rounded-full bg-[#FFF5D1] text-[#E6B800] flex items-center justify-center mb-3">
-                       <Headphones size={18} strokeWidth={2.5} />
+                  <div className="flex flex-col items-center text-center px-1 sm:px-2">
+                     <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#FFF5D1] text-[#E6B800] flex items-center justify-center mb-2 sm:mb-3">
+                       <Headphones size={16} strokeWidth={2.5} />
                      </div>
-                     <p className="font-bold text-gray-900 mb-1 text-sm">{selected.support.replace(' IST', '')}</p>
-                     <p className="text-xs text-gray-500 font-medium">Timezone overlap</p>
+                     <p className="font-bold text-gray-900 mb-1 text-xs sm:text-sm">{selected.support.replace(' IST', '')}</p>
+                     <p className="text-[10px] sm:text-xs text-gray-500 font-medium">Support hours</p>
                   </div>
                   {/* Tax */}
-                  <div className="flex-1 flex flex-col items-center text-center px-2 md:border-r border-gray-100 last:border-0">
-                     <div className="w-10 h-10 rounded-full bg-[#EBE5FF] text-[#8C52FF] flex items-center justify-center mb-3">
-                       <Coins size={18} strokeWidth={2.5} />
+                  <div className="flex flex-col items-center text-center px-1 sm:px-2">
+                     <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#EBE5FF] text-[#8C52FF] flex items-center justify-center mb-2 sm:mb-3">
+                       <Coins size={16} strokeWidth={2.5} />
                      </div>
-                     <p className="font-bold text-gray-900 mb-1 text-sm uppercase">{selected.tax.split(' (')[0]}</p>
-                     <p className="text-xs text-gray-500 font-medium">{selected.tax.includes('(') ? selected.tax.substring(selected.tax.indexOf('(')+1, selected.tax.indexOf(')')) : 'Local services apply'}</p>
+                     <p className="font-bold text-gray-900 mb-1 text-xs sm:text-sm uppercase">{selected.tax.split(' (')[0]}</p>
+                     <p className="text-[10px] sm:text-xs text-gray-500 font-medium">{selected.tax.includes('(') ? selected.tax.substring(selected.tax.indexOf('(')+1, selected.tax.indexOf(')')) : 'Local services apply'}</p>
                   </div>
                </div>
 
                {/* Payment Methods */}
-               <h3 className="text-lg font-bold text-black mb-4">Payment Method</h3>
-               <div className="bg-white rounded-[1.5rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100/80 p-5 sm:p-6 flex flex-row flex-wrap justify-center sm:justify-between items-center gap-y-6">
+               <h3 className="text-base sm:text-lg font-bold text-black mb-3 sm:mb-4">Payment Method</h3>
+               <div className="bg-white rounded-[1.25rem] sm:rounded-[1.5rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100/80 p-4 sm:p-5 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-0">
                   {selected.payment.map((method, i) => (
-                    <div key={method} className={`flex-1 flex flex-col items-center justify-center min-w-[90px] ${i !== selected.payment.length - 1 ? 'sm:border-r border-gray-100' : ''}`}>
-                       <div className="h-8 flex items-center justify-center mb-3 text-[#0a0a0a]">
+                    <div key={method} className={`flex flex-col items-center justify-center ${i !== selected.payment.length - 1 ? 'sm:border-r border-gray-100' : ''} py-2`}>
+                       <div className="h-7 sm:h-8 flex items-center justify-center mb-2 sm:mb-3 text-[#0a0a0a]">
                           {renderPaymentIcon(method)}
                        </div>
-                       <p className="text-xs font-medium text-gray-600 text-center">{method}</p>
+                       <p className="text-[10px] sm:text-xs font-medium text-gray-600 text-center">{method}</p>
                     </div>
                   ))}
                </div>

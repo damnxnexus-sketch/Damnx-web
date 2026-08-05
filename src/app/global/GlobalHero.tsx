@@ -40,12 +40,12 @@ export default function GlobalHero() {
       <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12 flex flex-col lg:flex-row items-center justify-between gap-12 pt-24 pb-20">
         
         {/* Left Content */}
-        <div className="flex-1 w-full max-w-xl mt-10 lg:mt-0">
+        <div className="flex-1 w-full max-w-xl mt-6 lg:mt-0 text-center lg:text-left">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex items-center gap-4 mb-6"
+            className="flex items-center gap-4 mb-6 justify-center lg:justify-start"
           >
             <div className="w-10 h-[1px] bg-black" />
             <span className="uppercase text-xs tracking-[0.2em] text-[#2D2D2D] font-medium">Global Digital Studio</span>
@@ -63,8 +63,8 @@ export default function GlobalHero() {
           </motion.h1>
         </div>
 
-        {/* Right Content - Images */}
-        <div className="flex-1 relative w-full h-[500px] lg:h-[600px] hidden lg:block mt-12 lg:mt-0">
+        {/* Right Content - Images: visible on md+ */}
+        <div className="flex-1 relative w-full h-[400px] md:h-[500px] lg:h-[600px] hidden md:block mt-6 lg:mt-0">
           
           {/* Card 1 - Top Right */}
           <motion.div 

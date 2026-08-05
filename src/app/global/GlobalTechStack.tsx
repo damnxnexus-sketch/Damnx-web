@@ -34,14 +34,14 @@ export default function GlobalTechStack() {
       <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8">
         
         {/* Industries Bar */}
-        <div className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-5 flex flex-col lg:flex-row items-start lg:items-center gap-6 mb-24 overflow-x-auto no-scrollbar">
+        <div className="bg-white rounded-[20px] sm:rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-4 sm:p-5 flex flex-col lg:flex-row items-start lg:items-center gap-4 sm:gap-6 mb-16 sm:mb-24">
           <div className="flex items-center gap-3 shrink-0 lg:pl-2">
              <Image src="/global page assets/industries.png" alt="Building" width={22} height={22} className="object-contain" />
              <span className="font-bold text-gray-800 text-[15px]">Industries</span>
           </div>
-          <div className="flex flex-row flex-nowrap lg:flex-wrap items-center gap-2">
+          <div className="flex flex-row flex-wrap items-center gap-2">
              {industries.map((industry, i) => (
-                <div key={i} className="px-5 py-2.5 bg-[#F9F9F9] hover:bg-gray-100 transition-colors rounded-full text-[13px] font-medium text-gray-600 whitespace-nowrap">
+                <div key={i} className="px-4 py-2 bg-[#F9F9F9] hover:bg-gray-100 transition-colors rounded-full text-[12px] sm:text-[13px] font-medium text-gray-600 whitespace-nowrap">
                   {industry}
                 </div>
              ))}
@@ -62,7 +62,7 @@ export default function GlobalTechStack() {
         </div>
 
         {/* Tech Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 sm:gap-5 justify-center">
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4 lg:gap-5 justify-center">
           {technologies.map((tech, i) => (
             <motion.div
               key={tech.name}

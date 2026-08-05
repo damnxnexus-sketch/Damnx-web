@@ -136,26 +136,29 @@ export default function GlobalServices() {
                   )}
                 </AnimatePresence>
 
-                <div className="relative z-10 grid grid-cols-12 gap-4 sm:gap-8 items-start">
+                <div className="relative z-10 flex flex-col sm:grid sm:grid-cols-12 gap-3 sm:gap-4 sm:gap-8 items-start">
                   {/* Number */}
-                  <div className="col-span-2 sm:col-span-1">
+                  <div className="col-span-2 sm:col-span-1 hidden sm:block">
                     <span className={`font-mono text-xs transition-colors duration-300 ${isHovered ? "text-[#E5231B]" : "text-[#0a0a0a]/25"}`}>
                       {svc.num}
                     </span>
                   </div>
 
-                  {/* Title + expand */}
-                  <div className="col-span-10 sm:col-span-4">
+                  {/* Title + num on mobile */}
+                  <div className="col-span-10 sm:col-span-4 flex items-center gap-3">
+                    <span className={`font-mono text-xs sm:hidden transition-colors duration-300 ${isHovered ? "text-[#E5231B]" : "text-[#0a0a0a]/25"}`}>
+                      {svc.num}
+                    </span>
                     <h3
                       className={`font-black leading-tight tracking-tight transition-colors duration-300 ${isHovered ? "text-[#0a0a0a]" : "text-[#0a0a0a]"}`}
-                      style={{ fontSize: "clamp(1.25rem, 2.2vw, 1.75rem)" }}
+                      style={{ fontSize: "clamp(1.15rem, 2.2vw, 1.75rem)" }}
                     >
                       {svc.title}
                     </h3>
                   </div>
 
                   {/* Description */}
-                  <div className="col-span-12 sm:col-span-5 pl-6 sm:pl-0">
+                  <div className="col-span-12 sm:col-span-5 pl-0 sm:pl-0">
                     <p className="text-sm text-[#0a0a0a]/50 leading-relaxed font-light">
                       {svc.desc}
                     </p>
@@ -184,7 +187,7 @@ export default function GlobalServices() {
                   </div>
 
                   {/* Arrow */}
-                  <div className="col-span-12 sm:col-span-2 pl-6 sm:pl-0 flex sm:flex-col sm:items-end gap-3 sm:gap-2">
+                  <div className="hidden sm:flex col-span-12 sm:col-span-2 flex sm:flex-col sm:items-end gap-3 sm:gap-2">
                     <motion.div
                       animate={{ rotate: isHovered ? 0 : -10, opacity: isHovered ? 1 : 0.3 }}
                       className="flex h-8 w-8 items-center justify-center rounded-full border border-[#0a0a0a]/15"
