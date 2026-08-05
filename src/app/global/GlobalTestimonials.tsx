@@ -4,33 +4,6 @@ import { motion } from "framer-motion";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-const techStack = [
-  { name: "Next.js", category: "Frontend" },
-  { name: "React", category: "Frontend" },
-  { name: "Node.js", category: "Backend" },
-  { name: "Python", category: "Backend" },
-  { name: "FastAPI", category: "Backend" },
-  { name: "AWS", category: "Cloud" },
-  { name: "Azure", category: "Cloud" },
-  { name: "Docker", category: "DevOps" },
-  { name: "Kubernetes", category: "DevOps" },
-  { name: "PostgreSQL", category: "Database" },
-  { name: "MongoDB", category: "Database" },
-  { name: "OpenAI", category: "AI" },
-  { name: "Anthropic", category: "AI" },
-  { name: "LangChain", category: "AI" },
-  { name: "Supabase", category: "Backend" },
-  { name: "Firebase", category: "Backend" },
-];
-
-const categoryColors: Record<string, string> = {
-  Frontend: "#6366f1",
-  Backend: "#10b981",
-  Cloud: "#f59e0b",
-  DevOps: "#ec4899",
-  Database: "#8b5cf6",
-  AI: "#E5231B",
-};
 
 const caseStudies = [
   {
@@ -83,54 +56,6 @@ const caseStudies = [
 export default function GlobalTechAndWork() {
   return (
     <>
-      {/* Tech Stack */}
-      <section className="bg-white py-24 sm:py-36 overflow-hidden">
-        <div className="mx-auto max-w-7xl px-6 sm:px-10">
-          <motion.p
-            initial={{ opacity: 0, x: -16 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-3 mb-8 text-[11px] font-bold tracking-[0.3em] uppercase text-[#0a0a0a]/40"
-          >
-            <span className="w-6 h-px bg-[#E5231B]" />
-            Technology
-          </motion.p>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="font-black text-[#0a0a0a] leading-[0.93] tracking-tight mb-14 sm:mb-20"
-            style={{ fontSize: "clamp(2rem, 4vw, 4rem)" }}
-          >
-            Built with the
-            <br />
-            world&apos;s best tools.
-          </motion.h2>
-
-          <div className="flex flex-wrap gap-3">
-            {techStack.map((tech, i) => (
-              <motion.div
-                key={tech.name}
-                initial={{ opacity: 0, scale: 0.85 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.04, duration: 0.4, ease: EASE }}
-                whileHover={{ scale: 1.06, y: -2 }}
-                className="group flex items-center gap-2.5 rounded-2xl border border-[#e8e8e8] bg-[#f9f8f6] px-5 py-3 cursor-default hover:border-[#0a0a0a]/20 transition-all duration-300"
-              >
-                <div
-                  className="w-2 h-2 rounded-full shrink-0"
-                  style={{ background: categoryColors[tech.category] }}
-                />
-                <span className="text-sm font-bold text-[#0a0a0a]">{tech.name}</span>
-                <span className="text-[10px] text-[#0a0a0a]/30 font-medium">{tech.category}</span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Case Studies */}
       <section id="work" className="bg-[#f9f8f6] py-24 sm:py-36 border-t border-[#0a0a0a]/6">
