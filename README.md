@@ -71,7 +71,6 @@ Ensure you have the following installed on your system:
 git clone https://github.com/damnx-solutions/website.git
 cd website
 ```
-
 2. **Install dependencies**
 
 ```bash
