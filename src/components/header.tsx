@@ -2,13 +2,14 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import { Home, FileText, TrendingUp } from "lucide-react";
+import { Home, FileText, TrendingUp, Globe } from "lucide-react";
 import Link from "next/link";
 import { useChat } from "@/app/context/ChatContext";
 
 const navItems = [
   { name: "Home", icon: Home, href: "/" },
   { name: "Marketing", icon: TrendingUp, href: "/marketing" },
+  { name: "Global", icon: Globe, href: "/global" },
   { name: "Blogs", icon: FileText, href: "/blogs" },
 ];
 
