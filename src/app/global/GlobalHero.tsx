@@ -1,198 +1,132 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-
-const EASE = [0.16, 1, 0.3, 1] as const;
-
-function AnimatedChar({ char, delay }: { char: string; delay: number }) {
-  return (
-    <span className="inline-block overflow-hidden" style={{ paddingBottom: "0.05em" }}>
-      <motion.span
-        className="inline-block"
-        initial={{ y: "110%" }}
-        animate={{ y: "0%" }}
-        transition={{ duration: 1, delay, ease: EASE }}
-      >
-        {char === " " ? "\u00A0" : char}
-      </motion.span>
-    </span>
-  );
-}
-
-function SplitText({
-  text,
-  baseDelay = 0,
-  className = "",
-}: {
-  text: string;
-  baseDelay?: number;
-  className?: string;
-}) {
-  const words = text.split(" ");
-  let charIndex = 0;
-  return (
-    <span className={`inline ${className}`}>
-      {words.map((word, wi) => (
-        <span key={wi} className="inline-block mr-[0.22em]">
-          {word.split("").map((ch, ci) => {
-            const delay = baseDelay + charIndex++ * 0.022;
-            return <AnimatedChar key={`${wi}-${ci}`} char={ch} delay={delay} />;
-          })}
-        </span>
-      ))}
-    </span>
-  );
-}
+import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function GlobalHero() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-
   return (
-    <section
-      ref={containerRef}
-      className="relative min-h-screen bg-[#f9f8f6] flex flex-col justify-center overflow-hidden"
-    >
-      {/* Subtle grid */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.04]"
+    <section className="relative w-full min-h-screen bg-[#FDF8F6] overflow-hidden flex flex-col justify-center font-sans">
+      
+      {/* Background Curved Shape */}
+      <div 
+        className="absolute top-0 right-0 h-full w-[55%] bg-white hidden lg:block z-0 pointer-events-none"
         style={{
-          backgroundImage:
-            "linear-gradient(#0a0a0a 1px, transparent 1px), linear-gradient(90deg, #0a0a0a 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+          clipPath: "ellipse(100% 100% at 100% 50%)"
         }}
       />
 
-      {/* Large ambient geometric — top right */}
-      <motion.div
-        aria-hidden
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.8, ease: EASE }}
-        className="pointer-events-none absolute top-0 right-0 w-[45vw] h-[45vw] max-w-[700px] max-h-[700px] rounded-full"
-        style={{
-          background:
-            "radial-gradient(circle at 70% 30%, rgba(229,35,27,0.06) 0%, transparent 70%)",
-        }}
-      />
+      {/* Star 1 - Top Left */}
+      <div className="absolute top-[20%] left-[10%] z-10 pointer-events-none">
+        <Image 
+          src="/global page assets/star.png" 
+          alt="star"
+          width={48}
+          height={48}
+          className="w-8 h-8 md:w-10 md:h-10 object-contain"
+        />
+      </div>
+      
+      {/* Star 2 - Bottom Right */}
+      <div className="absolute bottom-[15%] right-[20%] z-10 pointer-events-none">
+        <Image 
+          src="/global page assets/star.png" 
+          alt="star"
+          width={96}
+          height={96}
+          className="w-16 h-16 md:w-20 md:h-20 object-contain"
+        />
+      </div>
 
-      {/* Small floating elements */}
-      <motion.div
-        aria-hidden
-        animate={{ y: [0, -12, 0], rotate: [0, 5, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="pointer-events-none absolute top-[20%] right-[12%] w-3 h-3 rounded-full bg-[#E5231B]/30"
-      />
-      <motion.div
-        aria-hidden
-        animate={{ y: [0, 10, 0], rotate: [0, -8, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        className="pointer-events-none absolute bottom-[30%] right-[20%] w-1.5 h-1.5 rounded-full bg-[#0a0a0a]/20"
-      />
-
-      <motion.div
-        style={{ y, opacity }}
-        className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 pt-24 pb-20"
-      >
-        {/* Eyebrow */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, ease: EASE }}
-          className="flex items-center gap-3 mb-10"
-        >
-          <div className="w-8 h-px bg-[#E5231B]" />
-          <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#0a0a0a]/50">
-            Global Digital Studio
-          </span>
-        </motion.div>
-
-        {/* Main headline */}
-        <h1
-          className="font-black text-[#0a0a0a] leading-[0.92] tracking-tight mb-10"
-          style={{ fontSize: "clamp(3.2rem, 8.5vw, 9rem)" }}
-        >
-          <div className="overflow-hidden">
-            <SplitText text="Building digital" baseDelay={0.1} />
-          </div>
-          <div className="overflow-hidden">
-            <SplitText text="experiences for" baseDelay={0.28} />
-          </div>
-          <div className="overflow-hidden">
-            <SplitText
-              text="businesses worldwide."
-              baseDelay={0.46}
-              className="text-[#E5231B]"
-            />
-          </div>
-        </h1>
-
-        {/* Subheading + CTAs */}
-        <div className="flex flex-col lg:flex-row lg:items-end gap-10 lg:gap-20">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.9, ease: EASE }}
-            className="max-w-lg text-base sm:text-lg text-[#0a0a0a]/55 leading-relaxed font-light"
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12 flex flex-col lg:flex-row items-center justify-between gap-12 pt-24 pb-20">
+        
+        {/* Left Content */}
+        <div className="flex-1 w-full max-w-xl mt-10 lg:mt-0">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="flex items-center gap-4 mb-6"
           >
-            We design, engineer, and scale websites, mobile apps, AI products, SaaS platforms, and enterprise software for ambitious companies across the globe.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.0, ease: EASE }}
-            className="flex flex-wrap gap-4 shrink-0"
-          >
-            <a
-              href="#contact"
-              className="group relative inline-flex items-center gap-3 rounded-full bg-[#0a0a0a] px-8 py-4 text-sm font-bold text-white overflow-hidden hover:bg-[#E5231B] transition-colors duration-500"
-            >
-              Start Your Project
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="transition-transform group-hover:translate-x-1 duration-300">
-                <path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </a>
-            <a
-              href="#services"
-              className="inline-flex items-center gap-2 rounded-full border border-[#0a0a0a]/20 px-8 py-4 text-sm font-bold text-[#0a0a0a] hover:border-[#0a0a0a] transition-colors duration-300"
-            >
-              Explore Services
-            </a>
+            <div className="w-10 h-[1px] bg-black" />
+            <span className="uppercase text-xs tracking-[0.2em] text-[#2D2D2D] font-medium">Global Digital Studio</span>
           </motion.div>
+
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-4xl md:text-5xl lg:text-[4.5rem] font-bold leading-[1.1] tracking-tight text-[#111111]"
+          >
+            Building digital <br/>
+            experiences for <br/>
+            <span className="text-[#E5231B]">businesses <br/> worldwide.</span>
+          </motion.h1>
         </div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
-          className="mt-20 flex items-center gap-4"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-            className="flex flex-col items-center gap-1"
+        {/* Right Content - Images */}
+        <div className="flex-1 relative w-full h-[500px] lg:h-[600px] hidden lg:block mt-12 lg:mt-0">
+          
+          {/* Card 1 - Top Right */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8, rotate: 0 }}
+            animate={{ opacity: 1, scale: 1, rotate: 15 }}
+            transition={{ duration: 1, delay: 0.4, type: "spring", bounce: 0.4 }}
+            className="absolute top-12 right-8 w-[280px] bg-[#3A3A3A] rounded-[32px] p-4 pb-8 shadow-2xl flex flex-col items-center z-10"
           >
-            <div className="w-px h-12 bg-gradient-to-b from-[#0a0a0a]/20 to-transparent" />
-            <div className="w-1.5 h-1.5 rounded-full bg-[#0a0a0a]/30" />
+             {/* Pushpin */}
+             <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 drop-shadow-md">
+                <div className="w-6 h-6 bg-[#E5231B] rounded-full shadow-inner relative z-10 border border-[#CC0000]">
+                  <div className="absolute top-[3px] left-[3px] w-2 h-2 bg-white/40 rounded-full" />
+                </div>
+                <div className="w-[3px] h-4 bg-[#9CA3AF] absolute -bottom-2 left-1/2 -translate-x-1/2 -z-10 shadow-sm rounded-b-sm" />
+             </div>
+             
+             <div className="w-full aspect-square rounded-[24px] overflow-hidden bg-white shadow-inner flex items-center justify-center">
+               <Image 
+                 src="/global page assets/hero section image1.jpg" 
+                 alt="Crafting Iconic Identities" 
+                 width={300} 
+                 height={300} 
+                 className="w-full h-full object-cover object-center"
+               />
+             </div>
+             <p className="text-white text-xl font-medium text-center mt-5 leading-tight">
+               Crafting Iconic <br/> Identities
+             </p>
           </motion.div>
-          <span className="text-[10px] tracking-[0.25em] uppercase text-[#0a0a0a]/30 font-semibold">
-            Scroll to explore
-          </span>
-        </motion.div>
-      </motion.div>
 
-      {/* Bottom rule */}
-      <div className="absolute bottom-0 left-6 right-6 sm:left-10 sm:right-10 h-px bg-[#0a0a0a]/8" />
+          {/* Card 2 - Bottom Left */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8, rotate: 0 }}
+            animate={{ opacity: 1, scale: 1, rotate: -10 }}
+            transition={{ duration: 1, delay: 0.6, type: "spring", bounce: 0.4 }}
+            className="absolute bottom-16 left-4 w-[240px] bg-[#3A3A3A] rounded-[28px] p-3 pb-6 shadow-2xl flex flex-col items-center z-20"
+          >
+             {/* Pushpin */}
+             <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 drop-shadow-md">
+                <div className="w-5 h-5 bg-[#E5231B] rounded-full shadow-inner relative z-10 border border-[#CC0000]">
+                  <div className="absolute top-[2px] left-[2px] w-1.5 h-1.5 bg-white/40 rounded-full" />
+                </div>
+                <div className="w-[2px] h-3 bg-[#9CA3AF] absolute -bottom-2 left-1/2 -translate-x-1/2 -z-10 shadow-sm rounded-b-sm" />
+             </div>
+
+             <div className="w-full aspect-square rounded-[20px] overflow-hidden bg-white shadow-inner flex items-center justify-center">
+               <Image 
+                 src="/global page assets/hero section image2.png" 
+                 alt="Make Your Mark" 
+                 width={240} 
+                 height={240} 
+                 className="w-full h-full object-cover object-center"
+               />
+             </div>
+             <p className="text-white text-lg font-medium text-center mt-4 leading-tight">
+               Make Your <br/> Mark
+             </p>
+          </motion.div>
+
+        </div>
+      </div>
     </section>
   );
 }
+

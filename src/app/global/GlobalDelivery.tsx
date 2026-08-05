@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ChevronRight } from "lucide-react";
-
-const EASE = [0.16, 1, 0.3, 1] as const;
+import { Search, ArrowRight, Clock, Calendar, Headphones, Coins, Landmark, Globe, CreditCard, Plane } from "lucide-react";
+import Image from "next/image";
 
 interface CountryData {
   name: string;
@@ -33,7 +32,7 @@ const COUNTRIES: CountryData[] = [
     delivery: "4–12 weeks",
     support: "6 PM – 3 AM IST",
     payment: ["Visa / Mastercard", "ACH Transfer", "Wire Transfer", "PayPal"],
-    startingPrice: 3000,
+    startingPrice: 100000,
     tax: "No VAT on offshore services",
   },
   {
@@ -47,7 +46,7 @@ const COUNTRIES: CountryData[] = [
     delivery: "4–12 weeks",
     support: "6 PM – 3 AM IST",
     payment: ["Visa / Mastercard", "EFT Transfer", "Wire Transfer"],
-    startingPrice: 3000,
+    startingPrice: 100000,
     tax: "GST/HST varies by province (B2B export exempt)",
   },
   {
@@ -61,7 +60,7 @@ const COUNTRIES: CountryData[] = [
     delivery: "4–10 weeks",
     support: "3:30 PM – 12:30 AM IST",
     payment: ["Visa / Mastercard", "BACS Transfer", "Direct Debit", "SWIFT"],
-    startingPrice: 3000,
+    startingPrice: 100000,
     tax: "20% VAT (not applicable for B2B exports)",
   },
   {
@@ -75,7 +74,7 @@ const COUNTRIES: CountryData[] = [
     delivery: "4–12 weeks",
     support: "4 AM – 1 PM IST",
     payment: ["Visa / Mastercard", "Bank Transfer", "BPAY", "PayPal"],
-    startingPrice: 3000,
+    startingPrice: 100000,
     tax: "GST not applicable for offshore B2B services",
   },
   {
@@ -89,7 +88,7 @@ const COUNTRIES: CountryData[] = [
     delivery: "4–10 weeks",
     support: "12:30 PM – 9:30 PM IST",
     payment: ["Visa / Mastercard", "SEPA Transfer", "SWIFT", "Invoice"],
-    startingPrice: 3000,
+    startingPrice: 100000,
     tax: "VAT 0% on B2B services from outside EU",
   },
   {
@@ -103,21 +102,21 @@ const COUNTRIES: CountryData[] = [
     delivery: "4–10 weeks",
     support: "12:30 PM – 9:30 PM IST",
     payment: ["Visa / Mastercard", "SEPA Transfer", "SWIFT"],
-    startingPrice: 3000,
+    startingPrice: 100000,
     tax: "VAT 0% on B2B services from outside EU",
   },
   {
     name: "Singapore",
     flag: "🇸🇬",
     currency: "SGD",
-    symbol: "S$",
+    symbol: "$", // Display as $ as requested in design
     rate: 1.34,
     timezone: "SGT (UTC+8)",
     overlap: "2.5 hr behind India",
     delivery: "3–10 weeks",
     support: "6 AM – 3 PM IST",
     payment: ["Visa / Mastercard", "PayNow", "Bank Transfer", "SWIFT"],
-    startingPrice: 3000,
+    startingPrice: 100000,
     tax: "GST 9% (may apply for local services)",
   },
   {
@@ -131,7 +130,7 @@ const COUNTRIES: CountryData[] = [
     delivery: "3–8 weeks",
     support: "7:30 AM – 4:30 PM IST",
     payment: ["Visa / Mastercard", "Wire Transfer", "Cheque", "PayPal"],
-    startingPrice: 3000,
+    startingPrice: 100000,
     tax: "VAT 5% (B2B offshore may be exempt)",
   },
   {
@@ -145,7 +144,7 @@ const COUNTRIES: CountryData[] = [
     delivery: "4–10 weeks",
     support: "8 AM – 5 PM IST",
     payment: ["Visa / Mastercard", "SADAD", "Wire Transfer"],
-    startingPrice: 3000,
+    startingPrice: 100000,
     tax: "VAT 15% (B2B offshore may be exempt)",
   },
   {
@@ -159,20 +158,51 @@ const COUNTRIES: CountryData[] = [
     delivery: "2–8 weeks",
     support: "9 AM – 8 PM IST",
     payment: ["UPI", "NEFT / RTGS", "Credit Card", "Razorpay"],
-    startingPrice: 3000,
+    startingPrice: 100000,
     tax: "GST 18% applicable",
   },
 ];
 
-function formatLocalPrice(usd: number, country: CountryData): string {
-  const local = Math.round((usd * country.rate) / 100) * 100;
+function formatLocalPrice(inr: number, country: CountryData): string {
+  // Base price is in INR. Convert to USD first (rate 83.5) then to local currency.
+  const usd = inr / 83.5;
+  const local = country.name === "India" ? inr : Math.round((usd * country.rate) / 100) * 100;
+  
+  if (country.name === "India" && local >= 100_000) {
+    return `₹${(local / 100_000).toFixed(0)} Lakh`;
+  }
+  
   if (local >= 1_000_000) return `${country.symbol}${(local / 1_000_000).toFixed(1)}M`;
-  if (local >= 1_000) return `${country.symbol}${(local / 1_000).toFixed(0)}K`;
+  if (local >= 1_000) return `${country.symbol}${(local / 1_000).toFixed(0)}k`;
   return `${country.symbol}${local.toLocaleString()}`;
 }
 
+const renderPaymentIcon = (method: string) => {
+  const m = method.toLowerCase();
+  if (m.includes("visa") || m.includes("mastercard")) {
+    return <Image src="/global page assets/visa (1).png" alt="Visa" width={48} height={20} className="h-5 w-auto object-contain" />;
+  }
+  if (m.includes("paynow")) {
+    return <Image src="/global page assets/paynow.png" alt="PayNow" width={48} height={20} className="h-5 w-auto object-contain" />;
+  }
+  if (m.includes("bank") || m.includes("wire") || m.includes("ach") || m.includes("eft") || m.includes("bacs")) {
+    return <Landmark size={24} className="text-[#0a0a0a]" />;
+  }
+  if (m.includes("swift") || m.includes("global")) {
+    return <Globe size={24} className="text-[#0a0a0a]" />;
+  }
+  if (m.includes("paypal")) {
+    return <span className="font-bold text-lg italic text-blue-700">PayPal</span>;
+  }
+  if (m.includes("upi")) {
+    return <span className="font-bold text-lg text-gray-800">UPI</span>;
+  }
+  
+  return <CreditCard size={24} className="text-gray-700" />;
+};
+
 export default function GlobalDelivery() {
-  const [selected, setSelected] = useState<CountryData>(COUNTRIES[0]);
+  const [selected, setSelected] = useState<CountryData>(COUNTRIES.find(c => c.name === "Singapore") || COUNTRIES[0]);
   const [search, setSearch] = useState("");
 
   const filtered = COUNTRIES.filter((c) =>
@@ -180,169 +210,156 @@ export default function GlobalDelivery() {
   );
 
   return (
-    <section className="bg-white py-24 sm:py-36 overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        {/* Section header */}
-        <div className="mb-16 sm:mb-24">
-          <motion.p
-            initial={{ opacity: 0, x: -16 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-3 mb-5 text-[11px] font-bold tracking-[0.3em] uppercase text-[#0a0a0a]/40"
-          >
-            <span className="w-6 h-px bg-[#E5231B]" />
-            Global Reach
-          </motion.p>
-          <motion.h2
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="font-black text-[#0a0a0a] leading-[0.93] tracking-tight"
-            style={{ fontSize: "clamp(2.5rem, 5.5vw, 5.5rem)" }}
-          >
-            Global delivery.
-            <br />
-            <span className="text-[#0a0a0a]/30">Local understanding.</span>
-          </motion.h2>
-        </div>
+    <section className="bg-[#FCFCFC] py-16 px-6 lg:px-12 min-h-screen flex items-center justify-center font-sans overflow-hidden">
+      <div className="max-w-6xl w-full mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16">
+        
+        {/* Sidebar */}
+        <div className="w-full lg:w-[320px] shrink-0 bg-[#2A2B2A] rounded-[32px] p-5 relative overflow-hidden flex flex-col h-[560px] shadow-2xl">
+          
+          {/* Search */}
+          <div className="relative mb-6 z-10">
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input 
+              type="text"
+              placeholder="Search countries"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-transparent border border-gray-600 rounded-full py-2.5 pl-10 pr-4 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
+            />
+          </div>
 
-        {/* Two-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          {/* Left: Country selector */}
-          <div className="lg:col-span-4">
-            {/* Search */}
-            <div className="relative mb-5">
-              <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0a0a0a]/30" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search country..."
-                className="w-full rounded-xl border border-[#e8e8e8] bg-[#f9f8f6] pl-10 pr-4 py-3 text-sm text-[#0a0a0a] placeholder-[#0a0a0a]/30 outline-none focus:border-[#0a0a0a]/40 transition-colors"
-              />
-            </div>
-
-            {/* Country list */}
-            <div className="flex flex-col gap-1 max-h-[480px] overflow-y-auto pr-1">
-              {filtered.map((country) => {
-                const isActive = selected.name === country.name;
-                return (
-                  <button
-                    key={country.name}
-                    onClick={() => setSelected(country)}
-                    className={`group flex items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all duration-200 cursor-pointer ${
-                      isActive
-                        ? "bg-[#0a0a0a] text-white"
-                        : "hover:bg-[#f0f0ee] text-[#0a0a0a]"
-                    }`}
-                  >
-                    <span className="text-xl leading-none shrink-0">{country.flag}</span>
-                    <span className={`text-sm font-semibold flex-1 ${isActive ? "text-white" : "text-[#0a0a0a]"}`}>
+          {/* List */}
+          <div className="flex-1 overflow-y-auto space-y-1 pr-2 z-10 custom-scrollbar">
+            {filtered.map(country => {
+              const isActive = selected.name === country.name;
+              return (
+                <button
+                  key={country.name}
+                  onClick={() => setSelected(country)}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-[16px] transition-colors ${
+                    isActive ? 'bg-[#3A3B3A]' : 'hover:bg-[#3A3B3A]/60'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl leading-none">{country.flag}</span>
+                    <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-gray-300'}`}>
                       {country.name}
                     </span>
-                    <span className={`text-[11px] font-mono ${isActive ? "text-white/50" : "text-[#0a0a0a]/30"}`}>
-                      {country.currency}
-                    </span>
-                    <ChevronRight size={13} className={`shrink-0 transition-transform ${isActive ? "text-white/60 translate-x-0.5" : "text-[#0a0a0a]/20 group-hover:translate-x-0.5"}`} />
-                  </button>
-                );
-              })}
-            </div>
+                  </div>
+                  <ArrowRight size={16} className={isActive ? 'text-white' : 'text-gray-400'} />
+                </button>
+              )
+            })}
           </div>
 
-          {/* Right: Country detail */}
-          <div className="lg:col-span-8">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={selected.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.4, ease: EASE }}
-                className="h-full rounded-3xl border border-[#e8e8e8] bg-[#f9f8f6] p-8 sm:p-10"
-              >
-                {/* Country header */}
-                <div className="flex items-center gap-4 mb-8 pb-8 border-b border-[#e8e8e8]">
-                  <span className="text-5xl leading-none">{selected.flag}</span>
-                  <div>
-                    <h3 className="text-2xl sm:text-3xl font-black text-[#0a0a0a]">
-                      {selected.name}
-                    </h3>
-                    <p className="text-sm text-[#0a0a0a]/45 mt-0.5">{selected.timezone}</p>
-                  </div>
-                  <div className="ml-auto text-right">
-                    <p className="text-[11px] font-bold tracking-widest uppercase text-[#0a0a0a]/30 mb-1">
-                      Starting from
-                    </p>
-                    <p className="text-3xl font-black text-[#E5231B]">
-                      {formatLocalPrice(selected.startingPrice, selected)}
-                    </p>
-                    <p className="text-xs text-[#0a0a0a]/30">{selected.currency} · web project</p>
-                  </div>
-                </div>
-
-                {/* Detail grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {/* Timezone overlap */}
-                  <div className="rounded-2xl border border-[#e8e8e8] bg-white p-5">
-                    <p className="text-[10px] font-bold tracking-widest uppercase text-[#0a0a0a]/30 mb-2">
-                      Timezone Overlap
-                    </p>
-                    <p className="text-base font-bold text-[#0a0a0a]">{selected.overlap}</p>
-                    <p className="text-xs text-[#0a0a0a]/40 mt-1">
-                      Daily sync window available
-                    </p>
-                  </div>
-
-                  {/* Delivery estimate */}
-                  <div className="rounded-2xl border border-[#e8e8e8] bg-white p-5">
-                    <p className="text-[10px] font-bold tracking-widest uppercase text-[#0a0a0a]/30 mb-2">
-                      Delivery Estimate
-                    </p>
-                    <p className="text-base font-bold text-[#0a0a0a]">{selected.delivery}</p>
-                    <p className="text-xs text-[#0a0a0a]/40 mt-1">Depending on project scope</p>
-                  </div>
-
-                  {/* Support hours */}
-                  <div className="rounded-2xl border border-[#e8e8e8] bg-white p-5">
-                    <p className="text-[10px] font-bold tracking-widest uppercase text-[#0a0a0a]/30 mb-2">
-                      Support Hours (IST)
-                    </p>
-                    <p className="text-base font-bold text-[#0a0a0a]">{selected.support}</p>
-                    <p className="text-xs text-[#0a0a0a]/40 mt-1">+ 24/7 async communication</p>
-                  </div>
-
-                  {/* Tax info */}
-                  <div className="rounded-2xl border border-[#e8e8e8] bg-white p-5">
-                    <p className="text-[10px] font-bold tracking-widest uppercase text-[#0a0a0a]/30 mb-2">
-                      Tax
-                    </p>
-                    <p className="text-sm font-bold text-[#0a0a0a] leading-snug">{selected.tax}</p>
-                  </div>
-
-                  {/* Payment methods */}
-                  <div className="sm:col-span-2 rounded-2xl border border-[#e8e8e8] bg-white p-5">
-                    <p className="text-[10px] font-bold tracking-widest uppercase text-[#0a0a0a]/30 mb-3">
-                      Payment Methods
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {selected.payment.map((p) => (
-                        <span
-                          key={p}
-                          className="rounded-full border border-[#e8e8e8] bg-[#f9f8f6] px-3.5 py-1.5 text-xs font-semibold text-[#0a0a0a]/65"
-                        >
-                          {p}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+          {/* Airplane graphic */}
+          <div className="absolute bottom-4 left-0 w-[90%] h-[100px] pointer-events-none opacity-[0.15] flex items-end ml-4">
+             <svg className="absolute w-full h-full top-0 left-0" viewBox="0 0 200 100" preserveAspectRatio="none">
+               <path d="M10,80 Q30,60 50,80 T90,60 Q130,40 140,70 T180,20" fill="none" stroke="white" strokeWidth="2.5" strokeDasharray="4 6" />
+             </svg>
+             <Plane size={48} className="text-white absolute top-[-5px] right-[5px] -rotate-45" />
           </div>
         </div>
+
+        {/* Content */}
+        <div className="flex-1 pt-2 sm:pt-6 relative min-w-0">
+           {/* Background Map */}
+           <div className="absolute top-[-40px] right-[-40px] w-full max-w-[600px] h-[400px] opacity-[0.06] pointer-events-none z-0">
+             <Image src="/global page assets/countries.png" alt="World Map" fill className="object-contain object-right-top" />
+           </div>
+
+           <AnimatePresence mode="wait">
+             <motion.div
+               key={selected.name}
+               initial={{ opacity: 0, y: 10 }}
+               animate={{ opacity: 1, y: 0 }}
+               exit={{ opacity: 0, y: -10 }}
+               transition={{ duration: 0.3 }}
+               className="relative z-10"
+             >
+               <h2 className="text-lg font-semibold text-gray-900 mb-1">Shipping to</h2>
+               
+               <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3">
+                  <div>
+                    <h1 className="text-4xl sm:text-5xl lg:text-[4rem] font-black text-black leading-[0.9] tracking-tight">
+                      {selected.name}
+                    </h1>
+                    <p className="text-lg font-medium text-gray-800 mt-2">
+                      {selected.timezone.split(' (')[0]} {selected.timezone.includes('(') ? `(${selected.timezone.split(' (')[1]}` : ''}
+                    </p>
+                  </div>
+                  <div className="mt-3 sm:mt-0 text-left sm:text-right">
+                    <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-1">Base Price</p>
+                    <span className="text-4xl sm:text-5xl lg:text-[4.5rem] font-black text-[#E5231B] leading-none tracking-tight">
+                      {formatLocalPrice(selected.startingPrice, selected)}
+                    </span>
+                  </div>
+               </div>
+
+               {/* 4 Col Info Card */}
+               <div className="bg-white rounded-[1.5rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100/80 p-5 sm:p-6 flex flex-col md:flex-row gap-6 mt-8 mb-8">
+                  {/* Overlap */}
+                  <div className="flex-1 flex flex-col items-center text-center px-2 md:border-r border-gray-100 last:border-0">
+                     <div className="w-10 h-10 rounded-full bg-[#FFE5EC] text-[#FF4D8D] flex items-center justify-center mb-3">
+                       <Clock size={18} strokeWidth={2.5} />
+                     </div>
+                     <p className="font-bold text-gray-900 mb-1 text-sm">{selected.overlap}</p>
+                     <p className="text-xs text-gray-500 font-medium">Timezone overlap</p>
+                  </div>
+                  {/* Delivery */}
+                  <div className="flex-1 flex flex-col items-center text-center px-2 md:border-r border-gray-100 last:border-0">
+                     <div className="w-10 h-10 rounded-full bg-[#E5F9F8] text-[#00C4B8] flex items-center justify-center mb-3">
+                       <Calendar size={18} strokeWidth={2.5} />
+                     </div>
+                     <p className="font-bold text-gray-900 mb-1 text-sm">{selected.delivery}</p>
+                     <p className="text-xs text-gray-500 font-medium">Timezone overlap</p>
+                  </div>
+                  {/* Support */}
+                  <div className="flex-1 flex flex-col items-center text-center px-2 md:border-r border-gray-100 last:border-0">
+                     <div className="w-10 h-10 rounded-full bg-[#FFF5D1] text-[#E6B800] flex items-center justify-center mb-3">
+                       <Headphones size={18} strokeWidth={2.5} />
+                     </div>
+                     <p className="font-bold text-gray-900 mb-1 text-sm">{selected.support.replace(' IST', '')}</p>
+                     <p className="text-xs text-gray-500 font-medium">Timezone overlap</p>
+                  </div>
+                  {/* Tax */}
+                  <div className="flex-1 flex flex-col items-center text-center px-2 md:border-r border-gray-100 last:border-0">
+                     <div className="w-10 h-10 rounded-full bg-[#EBE5FF] text-[#8C52FF] flex items-center justify-center mb-3">
+                       <Coins size={18} strokeWidth={2.5} />
+                     </div>
+                     <p className="font-bold text-gray-900 mb-1 text-sm uppercase">{selected.tax.split(' (')[0]}</p>
+                     <p className="text-xs text-gray-500 font-medium">{selected.tax.includes('(') ? selected.tax.substring(selected.tax.indexOf('(')+1, selected.tax.indexOf(')')) : 'Local services apply'}</p>
+                  </div>
+               </div>
+
+               {/* Payment Methods */}
+               <h3 className="text-lg font-bold text-black mb-4">Payment Method</h3>
+               <div className="bg-white rounded-[1.5rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100/80 p-5 sm:p-6 flex flex-row flex-wrap justify-center sm:justify-between items-center gap-y-6">
+                  {selected.payment.map((method, i) => (
+                    <div key={method} className={`flex-1 flex flex-col items-center justify-center min-w-[90px] ${i !== selected.payment.length - 1 ? 'sm:border-r border-gray-100' : ''}`}>
+                       <div className="h-8 flex items-center justify-center mb-3 text-[#0a0a0a]">
+                          {renderPaymentIcon(method)}
+                       </div>
+                       <p className="text-xs font-medium text-gray-600 text-center">{method}</p>
+                    </div>
+                  ))}
+               </div>
+             </motion.div>
+           </AnimatePresence>
+        </div>
       </div>
+      <style dangerouslySetInnerHTML={{__html: `
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background-color: #555;
+          border-radius: 10px;
+        }
+      `}} />
     </section>
   );
 }
