@@ -49,7 +49,7 @@ const CountUpNumber = ({ end, duration = 2000, suffix = '' }: CountUpProps) => {
 export default function TrophyCabinet() {
   const stats = [
     {
-      value: 100,
+      value: 150,
       suffix: '+',
       label: 'Projects Delivered',
       icon: (
