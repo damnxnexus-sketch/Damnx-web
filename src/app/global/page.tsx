@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     siteName: "DAMNX Solutions",
     title: "DAMNX Solutions — Global Digital Engineering Studio",
     description:
-      "Building digital experiences for businesses worldwide. 50+ projects. 12+ countries. Transparent global pricing.",
+      "Building digital experiences for businesses worldwide. 150+ projects. 12+ countries. Transparent global pricing.",
     images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
   },
   twitter: {

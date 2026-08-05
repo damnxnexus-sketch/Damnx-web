@@ -6,7 +6,7 @@ import { motion, useInView } from "framer-motion";
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 const stats = [
-  { value: "50+", label: "Projects Delivered", detail: "Across web, mobile, AI & SaaS" },
+  { value: "150+", label: "Projects Delivered", detail: "Across web, mobile, AI & SaaS" },
   { value: "12+", label: "Countries Served", detail: "US, UK, UAE, SG, AU & more" },
   { value: "99%", label: "Client Satisfaction", detail: "Measured post-delivery" },
   { value: "24/7", label: "Global Support", detail: "Always-on for critical issues" },
