@@ -3,119 +3,246 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
-
-const phases = [
+const nodes = [
   {
-    num: "01",
+    num: "1",
     title: "Discover",
-    subtitle: "Understand before we build.",
-    desc: "We start with deep discovery — stakeholder interviews, competitive analysis, user research, and technical feasibility. Every decision is grounded in data, not assumptions.",
+    subtitle: "Understand Before We Build.",
+    gradient: "linear-gradient(135deg, #22c55e, #84cc16)",
+    shadow: "rgba(34,197,94,0.35)",
   },
   {
-    num: "02",
+    num: "2",
     title: "Design",
-    subtitle: "Visual thinking before visual output.",
-    desc: "Information architecture, wireframing, design systems, and high-fidelity prototypes — built with your users at the center and your brand goals in focus.",
+    subtitle: "Visual Thinking Before Visual Output",
+    gradient: "linear-gradient(135deg, #ec4899, #f43f5e)",
+    shadow: "rgba(236,72,153,0.35)",
   },
   {
-    num: "03",
+    num: "3",
     title: "Develop",
-    subtitle: "Clean code. Scalable systems.",
-    desc: "Agile sprints, rigorous code reviews, automated testing, and continuous integration. We build for performance, security, and long-term maintainability.",
+    subtitle: "Clean Code, Scalable Systems.",
+    gradient: "linear-gradient(135deg, #f97316, #fb923c)",
+    shadow: "rgba(249,115,22,0.35)",
   },
   {
-    num: "04",
+    num: "4",
     title: "Launch",
-    subtitle: "Precise deployment. Zero anxiety.",
-    desc: "Staged rollouts, infrastructure provisioning, load testing, and go-live support. We make launch day feel like just another Tuesday.",
+    subtitle: "Precise Deployment. Zero Anxiety.",
+    gradient: "linear-gradient(135deg, #0ea5e9, #38bdf8)",
+    shadow: "rgba(14,165,233,0.35)",
   },
   {
-    num: "05",
+    num: "5",
     title: "Scale",
-    subtitle: "Growth beyond launch.",
-    desc: "Post-launch analytics, performance optimization, feature iteration, and 2-year free maintenance. Your product grows with your ambition.",
+    subtitle: "Growth Beyond Launch",
+    gradient: "linear-gradient(135deg, #0284c7, #0369a1)",
+    shadow: "rgba(2,132,199,0.35)",
   },
 ];
 
-export default function GlobalProcess() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
+function Pill({
+  node,
+  delay,
+  align = "center",
+}: {
+  node: (typeof nodes)[0];
+  delay: number;
+  align?: "left" | "center" | "right";
+}) {
+  const alignClass =
+    align === "left"
+      ? "items-end text-right"
+      : align === "right"
+      ? "items-start text-left"
+      : "items-center text-center";
 
   return (
-    <section className="bg-[#0a0a0a] py-24 sm:py-36 overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        {/* Header */}
-        <div className="mb-20 sm:mb-32">
-          <motion.p
-            initial={{ opacity: 0, x: -16 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-3 mb-5 text-[11px] font-bold tracking-[0.3em] uppercase text-white/30"
-          >
-            <span className="w-6 h-px bg-[#E5231B]" />
-            How We Work
-          </motion.p>
-          <motion.h2
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="font-black text-white leading-[0.93] tracking-tight"
-            style={{ fontSize: "clamp(2.5rem, 5.5vw, 5.5rem)" }}
-          >
-            From vision
-            <br />
-            <span className="text-white/25">to reality.</span>
-          </motion.h2>
-        </div>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.85 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, margin: "-30px" }}
+      transition={{ delay, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      className={`flex flex-col gap-1 ${alignClass}`}
+    >
+      <p
+        className="font-semibold text-gray-500 leading-snug"
+        style={{ fontSize: "clamp(8px, 1.8vw, 11px)", maxWidth: "clamp(70px, 16vw, 120px)" }}
+      >
+        {node.subtitle}
+      </p>
+      <div
+        className="rounded-full text-white font-bold whitespace-nowrap"
+        style={{
+          background: node.gradient,
+          boxShadow: `0 4px 16px ${node.shadow}`,
+          fontSize: "clamp(10px, 2.8vw, 18px)",
+          padding: "clamp(4px, 1vw, 10px) clamp(10px, 2.5vw, 28px)",
+        }}
+      >
+        {node.title}
+      </div>
+    </motion.div>
+  );
+}
 
-        {/* Phase list */}
-        <div ref={containerRef} className="flex flex-col gap-0">
-          {phases.map((phase, i) => (
-            <motion.div
-              key={phase.num}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.7, delay: i * 0.08, ease: EASE }}
-              className="group relative grid grid-cols-12 gap-6 sm:gap-12 py-12 sm:py-16 border-t border-white/10 last:border-b hover:border-white/20 transition-colors duration-500"
+function Dot({ node, delay }: { node: (typeof nodes)[0]; delay: number }) {
+  return (
+    <motion.div
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true, margin: "-30px" }}
+      transition={{ delay, type: "spring", stiffness: 260, damping: 18 }}
+      className="rounded-full text-white flex items-center justify-center font-bold border-2 border-white shadow-md shrink-0"
+      style={{
+        background: node.gradient,
+        width: "clamp(20px, 4vw, 32px)",
+        height: "clamp(20px, 4vw, 32px)",
+        fontSize: "clamp(9px, 1.8vw, 13px)",
+      }}
+    >
+      {node.num}
+    </motion.div>
+  );
+}
+
+export default function GlobalProcess() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const circlePath   = useTransform(scrollYProgress, [0.05, 0.48], [0, 1]);
+  const leftLegPath  = useTransform(scrollYProgress, [0.38, 0.65], [0, 1]);
+  const rightLegPath = useTransform(scrollYProgress, [0.38, 0.65], [0, 1]);
+  const barPath      = useTransform(scrollYProgress, [0.60, 0.85], [0, 1]);
+
+  // Center circle size: scales with viewport, fixed between 100px–280px
+  const circleSize = "clamp(100px, 30vw, 280px)";
+
+  return (
+    <section ref={sectionRef} className="bg-[#f4f4f6] py-12 sm:py-24 overflow-hidden">
+      <div className="mx-auto w-full max-w-5xl px-2 sm:px-8">
+        <div
+          className="relative grid mx-auto"
+          style={{
+            // Center col is fixed to circle size; sides take remaining space equally
+            gridTemplateColumns: `1fr ${circleSize} 1fr`,
+            gridTemplateRows: "auto auto auto",
+            maxWidth: "900px",
+          }}
+        >
+          {/* ─── SVG OVERLAY ─── 
+              viewBox 0 0 900 600 matches maxWidth:900px proportionally.
+              SVG scales with the container via preserveAspectRatio.
+              Circle center: x=450 (center of 900px), y=240, radius=120
+          */}
+          <svg
+            viewBox="0 0 900 600"
+            preserveAspectRatio="xMidYMid meet"
+            className="absolute inset-0 w-full h-full pointer-events-none z-0"
+            style={{ overflow: "visible" }}
+          >
+            {/* Circle */}
+            <motion.circle
+              cx="450" cy="240" r="120"
+              fill="none" stroke="#1C1A4A" strokeWidth="5.5" strokeLinecap="round"
+              style={{ pathLength: circlePath }}
+            />
+            {/* Left leg */}
+            <motion.path
+              d="M 338 345 C 310 430, 210 470, 150 555"
+              fill="none" stroke="#1C1A4A" strokeWidth="5.5" strokeLinecap="round"
+              style={{ pathLength: leftLegPath }}
+            />
+            {/* Right leg */}
+            <motion.path
+              d="M 562 345 C 590 430, 690 470, 750 555"
+              fill="none" stroke="#1C1A4A" strokeWidth="5.5" strokeLinecap="round"
+              style={{ pathLength: rightLegPath }}
+            />
+            {/* Horizontal bar */}
+            <motion.line
+              x1="40" y1="555" x2="860" y2="555"
+              stroke="#1C1A4A" strokeWidth="5.5" strokeLinecap="round"
+              style={{ pathLength: barPath }}
+            />
+          </svg>
+
+          {/* ─── ROW 1: DISCOVER (top center) ─── */}
+          <div className="col-start-1 row-start-1" />
+          <div className="col-start-2 row-start-1 flex flex-col items-center relative z-10" style={{ paddingBottom: "clamp(8px, 2vw, 20px)" }}>
+            <Pill node={nodes[0]} delay={0.2} />
+            <div style={{ marginTop: "clamp(6px, 1.5vw, 12px)" }}>
+              <Dot node={nodes[0]} delay={0.4} />
+            </div>
+          </div>
+          <div className="col-start-3 row-start-1" />
+
+          {/* ─── ROW 2: DESIGN | CIRCLE | DEVELOP ─── */}
+          <div className="col-start-1 row-start-2 flex flex-col items-end justify-center relative z-10" style={{ gap: "clamp(4px, 1vw, 10px)", paddingRight: "clamp(6px, 1.5vw, 20px)" }}>
+            <Dot node={nodes[1]} delay={0.55} />
+            <Pill node={nodes[1]} delay={0.35} align="left" />
+          </div>
+
+          {/* Central circle */}
+          <motion.div
+            initial={{ scale: 0.75, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
+            className="col-start-2 row-start-2 flex items-center justify-center relative z-10"
+          >
+            <div
+              className="rounded-full bg-white flex flex-col items-center justify-center"
+              style={{
+                width: circleSize,
+                height: circleSize,
+                boxShadow: "0 10px 40px rgba(0,0,0,0.10)",
+              }}
             >
-              {/* Hover fill */}
-              <motion.div
-                className="absolute inset-0 -mx-6 sm:-mx-10 bg-white/[0.025] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              />
+              <span style={{ fontSize: "clamp(9px, 2.2vw, 18px)", fontWeight: 700 }}>From</span>
+              <span
+                className="font-black text-[#E5231B] leading-none tracking-tight"
+                style={{ fontSize: "clamp(18px, 5.5vw, 52px)" }}
+              >
+                Vision
+              </span>
+              <span style={{ fontSize: "clamp(9px, 2.2vw, 18px)", fontWeight: 700 }}>to</span>
+              <span
+                className="font-black text-[#E5231B] leading-none tracking-tight"
+                style={{ fontSize: "clamp(18px, 5.5vw, 52px)" }}
+              >
+                Reality
+              </span>
+            </div>
+          </motion.div>
 
-              {/* Phase number */}
-              <div className="relative col-span-2 sm:col-span-1 flex flex-col items-start pt-1">
-                <span className="font-mono text-xs text-[#E5231B] font-bold">{phase.num}</span>
-                <div className={`mt-3 w-px bg-white/10 flex-1 ${i < phases.length - 1 ? "block" : "hidden"}`} style={{ minHeight: 60 }} />
-              </div>
+          <div className="col-start-3 row-start-2 flex flex-col items-start justify-center relative z-10" style={{ gap: "clamp(4px, 1vw, 10px)", paddingLeft: "clamp(6px, 1.5vw, 20px)" }}>
+            <Dot node={nodes[2]} delay={0.55} />
+            <Pill node={nodes[2]} delay={0.35} align="right" />
+          </div>
 
-              {/* Title */}
-              <div className="relative col-span-10 sm:col-span-4 lg:col-span-3">
-                <h3
-                  className="font-black text-white leading-tight tracking-tight"
-                  style={{ fontSize: "clamp(1.8rem, 3.5vw, 3rem)" }}
-                >
-                  {phase.title}
-                </h3>
-                <p className="mt-2 text-xs font-bold tracking-wider uppercase text-white/30">
-                  {phase.subtitle}
-                </p>
-              </div>
+          {/* ─── ROW 3: LAUNCH | spacer | SCALE ─── */}
+          <div
+            className="col-start-1 row-start-3 flex flex-col items-end justify-start relative z-10"
+            style={{ gap: "clamp(4px, 1vw, 10px)", paddingRight: "clamp(6px, 1.5vw, 20px)", paddingTop: "clamp(24px, 6vw, 60px)" }}
+          >
+            <Dot node={nodes[3]} delay={0.70} />
+            <Pill node={nodes[3]} delay={0.50} align="left" />
+          </div>
 
-              {/* Description */}
-              <div className="relative col-span-12 sm:col-span-7 lg:col-span-8 pl-6 sm:pl-0">
-                <p className="text-base sm:text-lg text-white/45 leading-relaxed font-light max-w-2xl">
-                  {phase.desc}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+          <div className="col-start-2 row-start-3" style={{ height: "clamp(80px, 16vw, 150px)" }} />
+
+          <div
+            className="col-start-3 row-start-3 flex flex-col items-start justify-start relative z-10"
+            style={{ gap: "clamp(4px, 1vw, 10px)", paddingLeft: "clamp(6px, 1.5vw, 20px)", paddingTop: "clamp(24px, 6vw, 60px)" }}
+          >
+            <Dot node={nodes[4]} delay={0.70} />
+            <Pill node={nodes[4]} delay={0.50} align="right" />
+          </div>
         </div>
       </div>
     </section>
