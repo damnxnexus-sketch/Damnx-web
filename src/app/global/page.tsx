@@ -9,6 +9,7 @@ import GlobalTechStack from "./GlobalTechStack";
 import GlobalPriceEstimator from "./GlobalPriceEstimator";
 import GlobalWhyUs from "./GlobalWhyUs";
 import GlobalCTA from "./GlobalCTA";
+import CalendlyChatbot from "@/components/Chatbot";
 
 export const metadata: Metadata = {
   title: "DAMNX Solutions — Global Digital Engineering Studio",
@@ -61,6 +62,7 @@ export default function GlobalPage() {
         <GlobalWhyUs />
         <GlobalCTA />
       </main>
+      <CalendlyChatbot />
     </div>
   );
 }
