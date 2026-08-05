@@ -75,8 +75,8 @@ export default function DynamicIslandHeader() {
         onClick={() => !expanded && !isMobile && setExpanded(true)}
         initial={{ width: 160, height: 48, borderRadius: 24 }}
         animate={{
-          width: expanded ? "min(380px, 90vw)" : 160,
-          height: expanded ? 72 : 48,
+          width: expanded ? "min(440px, 95vw)" : 160,
+          height: expanded ? 56 : 48,
           borderRadius: 36,
         }}
         transition={{
@@ -124,10 +124,9 @@ export default function DynamicIslandHeader() {
                     onClick={() => {
                       if (!isMobile) setExpanded(false);
                     }}
-                    className="relative px-2 sm:px-3 py-2 group flex flex-col items-center justify-center rounded-lg hover:bg-white/10 transition-colors"
+                    className="relative px-2 sm:px-3 py-1.5 group flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors"
                   >
-                    <item.icon className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" />
-                    <span className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-white/50 whitespace-nowrap">
+                    <span className="text-[11px] sm:text-xs font-medium text-white/70 group-hover:text-white transition-colors whitespace-nowrap">
                       {item.name}
                     </span>
                   </Link>
