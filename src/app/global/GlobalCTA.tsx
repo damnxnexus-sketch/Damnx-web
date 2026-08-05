@@ -14,6 +14,17 @@ export default function GlobalCTA() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim()) return;
+    
+    // Check if Calendly is available globally (loaded via Chatbot component)
+    if ((window as any).Calendly) {
+      (window as any).Calendly.initPopupWidget({
+        url: 'https://calendly.com/damnx-nexus/30min'
+      });
+    } else {
+      // Fallback if the script isn't loaded yet
+      window.open('https://calendly.com/damnx-nexus/30min', '_blank');
+    }
+    
     setSent(true);
   }
 
@@ -202,11 +213,11 @@ export default function GlobalCTA() {
                     <div className="grid grid-cols-2 gap-4">
                        <div className="flex flex-col gap-2">
                          <label className="text-[11px] font-semibold text-[#0a0a0a]/60 tracking-wide">
-                           Select Your Budget
+                           Select Your Service
                          </label>
                          <input
                             type="text"
-                            placeholder="$10k - $25k"
+                            placeholder="e.g. Website Development"
                             className="w-full rounded-lg bg-[#f8f9fa] px-4 py-3 text-sm text-[#0a0a0a] placeholder-[#0a0a0a]/30 outline-none border border-transparent focus:border-gray-200 focus:bg-white transition-all"
                           />
                        </div>
