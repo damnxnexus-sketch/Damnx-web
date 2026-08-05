@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
+import { useChat } from "@/app/context/ChatContext";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -31,82 +32,87 @@ const COUNTRIES: Country[] = [
   { name: "India", flag: "🇮🇳", currency: "INR", symbol: "₹", rate: 83.5, timezone: "IST", payment: ["UPI", "NEFT/RTGS", "Credit Card"], tax: "GST 18%", support: "24/7" },
 ];
 
-interface Plan {
+interface DetailedService {
   name: string;
   tagline: string;
-  usdBase: number;
-  usdTop: number;
-  monthlyUsd?: number;
+  inrBase?: number;
   features: string[];
-  featured?: boolean;
-  deliveryWeeks: string;
 }
 
-const PLANS: Plan[] = [
+const SERVICES: DetailedService[] = [
   {
-    name: "Starter",
-    tagline: "For MVPs and early-stage products",
-    usdBase: 3000,
-    usdTop: 10000,
-    features: [
-      "Up to 10 pages / screens",
-      "Standard UI design",
-      "Mobile responsive",
-      "Basic CMS integration",
-      "6 months maintenance",
-      "Dedicated project manager",
-    ],
-    deliveryWeeks: "4–6 weeks",
+    name: "Website Development",
+    tagline: "Custom web platforms built for speed.",
+    inrBase: 100000,
+    features: ["Next.js & React", "Headless CMS", "SEO Optimized", "Core Web Vitals"],
   },
   {
-    name: "Growth",
-    tagline: "For scaling businesses",
-    usdBase: 10000,
-    usdTop: 30000,
-    features: [
-      "Unlimited pages / screens",
-      "Custom design system",
-      "AI or 3rd-party integrations",
-      "Advanced analytics",
-      "1-year free maintenance",
-      "Dedicated team of 3",
-      "Priority support",
-    ],
-    featured: true,
-    deliveryWeeks: "8–12 weeks",
+    name: "Mobile Applications",
+    tagline: "Native and cross-platform experiences.",
+    inrBase: 150000,
+    features: ["React Native / Expo", "iOS & Android", "App Store deployment", "Offline support"],
   },
   {
-    name: "Enterprise",
-    tagline: "For global-scale operations",
-    usdBase: 30000,
-    usdTop: 100000,
-    features: [
-      "Full-scale custom architecture",
-      "Multi-region cloud deployment",
-      "Enterprise security & compliance",
-      "Dedicated engineering team",
-      "2-year free maintenance",
-      "24/7 SLA support",
-      "Quarterly strategy reviews",
-    ],
-    deliveryWeeks: "12–24 weeks",
+    name: "AI & Chatbots",
+    tagline: "Intelligent systems built for scale.",
+    inrBase: 200000,
+    features: ["LLM Integration", "RAG Pipelines", "AI Agents", "FastAPI backend"],
+  },
+  {
+    name: "Digital Marketing",
+    tagline: "Data-driven SEO & performance marketing.",
+    inrBase: 100000,
+    features: ["SEO Strategy", "Paid Media", "Content Creation", "Growth Analytics"],
+  },
+  {
+    name: "UI/UX Design",
+    tagline: "Human-centered design systems.",
+    features: ["Figma Prototypes", "User Research", "Wireframing", "Design Systems"],
+  },
+  {
+    name: "Cloud & DevOps",
+    tagline: "Scalable cloud infrastructure.",
+    features: ["AWS / Azure", "CI/CD Pipelines", "Docker & Kubernetes", "Reliability engineering"],
+  },
+  {
+    name: "Brand Identity",
+    tagline: "Modern, distinctive brand systems.",
+    features: ["Logo & Typography", "Color Systems", "Brand Strategy", "Guidelines"],
+  },
+  {
+    name: "Enterprise Software",
+    tagline: "Custom internal systems & ERPs.",
+    features: ["SaaS Architecture", "Multi-tenant", "Role-based access", "Automated workflows"],
   },
 ];
 
-function fmt(usd: number, c: Country): string {
-  const v = Math.round((usd * c.rate) / 500) * 500;
-  if (v >= 1_000_000) return `${c.symbol}${(v / 1_000_000).toFixed(1)}M`;
-  if (v >= 1_000) return `${c.symbol}${(v / 1_000).toFixed(0)}K`;
-  return `${c.symbol}${v.toLocaleString()}`;
+function formatPrice(inr: number | undefined, country: Country): string {
+  if (!inr) return "Custom Quote";
+
+  if (country.currency === "INR") {
+    const lakhs = inr / 100000;
+    return `₹${lakhs} Lakh${lakhs > 1 ? "s" : ""}`;
+  }
+
+  // Convert INR to USD based on the 83.5 exchange rate, then to target currency
+  const usd = inr / 83.5;
+  const targetVal = usd * country.rate;
+
+  // Round to nearest 100 for clean numbers
+  const rounded = Math.round(targetVal / 100) * 100;
+  
+  return `${country.symbol}${rounded.toLocaleString()}`;
 }
 
 export default function GlobalPricing() {
   const [country, setCountry] = useState<Country>(COUNTRIES[0]);
+  const { openChat } = useChat();
 
   return (
     <section id="pricing" className="bg-[#0a0a0a] py-24 sm:py-36 overflow-hidden">
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        {/* Header */}
+        
+        {/* Header & Country Selector */}
         <div className="mb-14 sm:mb-20">
           <motion.p
             initial={{ opacity: 0, x: -16 }}
@@ -131,13 +137,12 @@ export default function GlobalPricing() {
               <span className="text-white/25">Your currency.</span>
             </motion.h2>
 
-            {/* Country selector */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.15 }}
-              className="flex-shrink-0"
+              className="flex-shrink-0 lg:max-w-md"
             >
               <p className="text-xs font-bold tracking-widest uppercase text-white/30 mb-3">
                 View pricing in
@@ -162,7 +167,7 @@ export default function GlobalPricing() {
           </div>
         </div>
 
-        {/* Pricing cards */}
+        {/* Pricing Cards Grid */}
         <AnimatePresence mode="wait">
           <motion.div
             key={country.currency}
@@ -170,34 +175,20 @@ export default function GlobalPricing() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.35, ease: EASE }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 mb-10"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-10"
           >
-            {PLANS.map((plan, i) => (
+            {SERVICES.map((plan, i) => (
               <div
                 key={plan.name}
-                className={`relative rounded-3xl flex flex-col ${
-                  plan.featured
-                    ? "bg-white"
-                    : "border border-white/8 bg-white/[0.04]"
-                }`}
+                className="relative rounded-3xl flex flex-col border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] hover:border-white/20 transition-colors duration-300"
               >
-                {plan.featured && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="rounded-full bg-[#E5231B] px-4 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white">
-                      Most Popular
-                    </span>
-                  </div>
-                )}
-
-                <div className="p-7 sm:p-8 flex flex-col flex-1 gap-7">
+                <div className="p-6 sm:p-7 flex flex-col flex-1 gap-6">
                   {/* Plan header */}
                   <div>
-                    <h3
-                      className={`text-xl font-black tracking-tight mb-1 ${plan.featured ? "text-[#0a0a0a]" : "text-white"}`}
-                    >
+                    <h3 className="text-xl font-black tracking-tight mb-1 text-white">
                       {plan.name}
                     </h3>
-                    <p className={`text-xs ${plan.featured ? "text-[#0a0a0a]/45" : "text-white/35"}`}>
+                    <p className="text-[13px] text-white/40 leading-relaxed min-h-[40px]">
                       {plan.tagline}
                     </p>
                   </div>
@@ -205,38 +196,27 @@ export default function GlobalPricing() {
                   {/* Price */}
                   <div>
                     <div className="flex items-baseline gap-1">
+                      {plan.inrBase && <span className="text-lg text-white/30 mr-1 tracking-wider font-semibold uppercase text-[10px]">Base</span>}
                       <span
-                        className={`font-black leading-none tracking-tighter ${plan.featured ? "text-[#0a0a0a]" : "text-white"}`}
-                        style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)" }}
+                        className={`font-black leading-none tracking-tighter ${!plan.inrBase ? "text-[#E5231B]" : "text-white"}`}
+                        style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)" }}
                       >
-                        {fmt(plan.usdBase, country)}
-                      </span>
-                      <span className={`text-lg ${plan.featured ? "text-[#0a0a0a]/30" : "text-white/25"}`}>
-                        –
-                      </span>
-                      <span
-                        className={`font-black leading-none tracking-tighter ${plan.featured ? "text-[#E5231B]" : "text-white/60"}`}
-                        style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)" }}
-                      >
-                        {fmt(plan.usdTop, country)}
+                        {formatPrice(plan.inrBase, country)}
                       </span>
                     </div>
-                    <p className={`text-[11px] mt-1 ${plan.featured ? "text-[#0a0a0a]/35" : "text-white/25"}`}>
-                      {country.currency} · {plan.deliveryWeeks}
-                    </p>
                   </div>
 
                   {/* Divider */}
-                  <div className={`h-px ${plan.featured ? "bg-[#0a0a0a]/8" : "bg-white/8"}`} />
+                  <div className="h-px bg-white/10" />
 
                   {/* Features */}
-                  <ul className="flex flex-col gap-3 flex-1">
+                  <ul className="flex flex-col gap-3 flex-1 mb-2">
                     {plan.features.map((feat) => (
                       <li key={feat} className="flex items-start gap-3">
-                        <div className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${plan.featured ? "bg-[#E5231B]" : "bg-white/10"}`}>
-                          <Check size={8} className={plan.featured ? "text-white" : "text-white/60"} strokeWidth={3} />
+                        <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white/10">
+                          <Check size={8} className="text-white/80" strokeWidth={3} />
                         </div>
-                        <span className={`text-sm ${plan.featured ? "text-[#0a0a0a]/70" : "text-white/50"}`}>
+                        <span className="text-xs text-white/60">
                           {feat}
                         </span>
                       </li>
@@ -244,16 +224,12 @@ export default function GlobalPricing() {
                   </ul>
 
                   {/* CTA */}
-                  <a
-                    href="#contact"
-                    className={`w-full rounded-xl py-3.5 text-center text-sm font-bold transition-all duration-300 ${
-                      plan.featured
-                        ? "bg-[#0a0a0a] text-white hover:bg-[#E5231B]"
-                        : "border border-white/20 text-white hover:border-white/40 hover:bg-white/8"
-                    }`}
+                  <button
+                    onClick={openChat}
+                    className="w-full rounded-xl py-3.5 text-center text-[13px] tracking-wide font-bold transition-all duration-300 border border-white/10 text-white hover:border-[#E5231B] hover:bg-[#E5231B]"
                   >
-                    Get Started
-                  </a>
+                    Start Project
+                  </button>
                 </div>
               </div>
             ))}
@@ -270,24 +246,21 @@ export default function GlobalPricing() {
             transition={{ duration: 0.3 }}
             className="grid grid-cols-1 sm:grid-cols-3 gap-4"
           >
-            <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-5">
+            <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
               <p className="text-[10px] font-bold tracking-widest uppercase text-white/30 mb-2">Payment Methods</p>
               <p className="text-sm font-semibold text-white/70">{country.payment.join(" · ")}</p>
             </div>
-            <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-5">
+            <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
               <p className="text-[10px] font-bold tracking-widest uppercase text-white/30 mb-2">Tax Information</p>
               <p className="text-sm font-semibold text-white/70">{country.tax}</p>
             </div>
-            <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-5">
+            <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
               <p className="text-[10px] font-bold tracking-widest uppercase text-white/30 mb-2">Support Hours</p>
               <p className="text-sm font-semibold text-white/70">{country.support} · Global coverage</p>
             </div>
           </motion.div>
         </AnimatePresence>
 
-        <p className="mt-8 text-center text-xs text-white/20">
-          All prices are estimates based on standard project scope. Contact us for a precise quote tailored to your requirements.
-        </p>
       </div>
     </section>
   );
