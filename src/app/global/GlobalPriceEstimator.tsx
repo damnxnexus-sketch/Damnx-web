@@ -106,6 +106,7 @@ function formatPrice(inr: number | undefined, country: Country): string {
 
 export default function GlobalPricing() {
   const [country, setCountry] = useState<Country>(COUNTRIES[0]);
+  const [showAll, setShowAll] = useState(false);
   const { openChat } = useChat();
 
   return (
@@ -177,7 +178,7 @@ export default function GlobalPricing() {
             transition={{ duration: 0.35, ease: EASE }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-10"
           >
-            {SERVICES.map((plan, i) => (
+            {(showAll ? SERVICES : SERVICES.slice(0, 4)).map((plan, i) => (
               <div
                 key={plan.name}
                 className="relative rounded-3xl flex flex-col border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] hover:border-white/20 transition-colors duration-300"
@@ -235,6 +236,16 @@ export default function GlobalPricing() {
             ))}
           </motion.div>
         </AnimatePresence>
+
+        {/* View All Button */}
+        <div className="flex justify-center mb-16">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+          >
+            {showAll ? "Show Less" : "View All Services"}
+          </button>
+        </div>
 
         {/* Payment & Tax info */}
         <AnimatePresence mode="wait">
