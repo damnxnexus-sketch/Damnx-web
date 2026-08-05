@@ -29,7 +29,7 @@ export default function BackButton() {
         exit={{ opacity: 0, x: -15 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
         onClick={handleBack}
-        className="fixed top-7 left-6 z-50 flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/8 bg-black/50 backdrop-blur-md text-zinc-400 hover:text-white hover:border-white/20 hover:bg-black/75 transition-all shadow-[0_8px_32px_rgba(0,0,0,0.5)] cursor-pointer group"
+        className="fixed top-[84px] sm:top-7 left-4 sm:left-6 z-50 flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/8 bg-black/50 backdrop-blur-md text-zinc-400 hover:text-white hover:border-white/20 hover:bg-black/75 transition-all shadow-[0_8px_32px_rgba(0,0,0,0.5)] cursor-pointer group"
         aria-label="Go back"
       >
         <ArrowLeft 
